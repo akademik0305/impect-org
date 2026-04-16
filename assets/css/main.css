@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+
+/* fonts */
+@font-face {
+  font-family: 'Prosto One';
+  src: url('~/assets/fonts/ProstoOne-Regular.woff2') format('woff2'),
+    url('~/assets/fonts/ProstoOne-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* inter */
+@font-face {
+  font-family: 'Inter';
+  src: url('Inter-Italic.woff2') format('woff2'),
+    url('~/assets/fonts/Inter-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('~/assets/fonts/Inter-Regular.woff2') format('woff2'),
+    url('~/assets/fonts/Inter-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* nuxt ui */
+:root {
+  --ui-radius: var(--radius-lg);
+}
+
+/* Fon ranglari o'zgaruvchilari (global CSS da ham bo'lishi kerak) */
+.hotel-theme {}
+
+/* custom themes */
+@theme {
+  --color-primary: #c5a059;
+  --color-secondary: #1a1a1a;
+  --color-background: #fdfcf9;
+  --ui-primary: var(--color-main);
+
+
+  /* fonts */
+  --font-inter: 'Inter', sans-serif;
+  --font-prosto: 'Prosto One'
+
+    /* font sizes */
+    --text-tiny: 10px;
+
+  /* margins */
+  --spacing-4.5: 18px;
+  --spacing-7.5: 30px;
+  --spacing-15: 60px;
+  --spacing-45: 180px;
+
+  /* shadow */
+  --shadow-modal: 0px -4px 18px 0px #0000000F;
+
+  /* sizes */
+  --xs: 450px;
+  --sm: 640px;
+  --md: 768px;
+  --lg: 1024px;
+  --xl: 1280px;
+  --xxl: 1536px;
+  /* breakpoint */
+  --breakpoint-xs: 450px
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  outline: none;
+}
+
+/* transition */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s linear;
+  opacity: 1;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  top: -100px;
+  opacity: 0;
+}
+
+/* container */
+.container {
+  width: 100%;
+  max-width: var(--xl);
+  margin: 0 auto;
+  padding: 0 20px;
+
+}
+
+@media (max-width: 1440px) {
+  .container {
+    max-width: var(--xl);
+  }
+}
+
+@media (max-width: 1280px) {
+  .container {
+    max-width: var(--lg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    max-width: var(--md);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: var(--sm);
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+    max-width: var(--xs);
+  }
+}
+
+@media (max-width: 450px) {
+  .container {
+    max-width: 100%
+  }
+}
+
+
+/* custom scrolbar */
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: var(--color-secondary);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-gray-200);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background-color: var(--color-primary);
+}
+
+
+/* swiper custom styles */
+swiper-container::part(wrapper) {
+  padding: 10px 0;
+}
+
+/* swiper-container::part(pagination) {
+} */
+
+swiper-container::part(bullet) {
+  width: 16px;
+  height: 10px;
+  background-color: var(--color-text);
+  border-radius: 10px;
+}
+
+swiper-container::part(bullet-active) {
+  width: 20px;
+  height: 10px;
+  background-color: var(--color-main);
+  border-radius: 10px;
+}
+
+
+swiper-slide {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
