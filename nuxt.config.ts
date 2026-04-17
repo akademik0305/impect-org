@@ -10,9 +10,9 @@ export default defineNuxtConfig({
 
 	ssr: true,
 	// SEO va meta
-	experimental: {
-		payloadExtraction: false,
-	},
+	// experimental: {
+	// 	payloadExtraction: false,
+	// },
 
 	
 	runtimeConfig: {
