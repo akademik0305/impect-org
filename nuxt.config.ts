@@ -8,28 +8,19 @@ export default defineNuxtConfig({
 		preference: "light",
 	},
 
-	ssr: true,
+	ssr: false,
 	// SEO va meta
 	// experimental: {
 	// 	payloadExtraction: false,
 	// },
 
-	
 	runtimeConfig: {
 		public: {
 			// apiBaseUrl: process.env.API_BASE_URL,
 		},
 	},
 
-	modules: [
-		"@nuxt/eslint",
-		"@nuxt/ui",
-		"@nuxtjs/i18n",
-		"@pinia/nuxt",
-		"@nuxtjs/sitemap",
-		"@nuxtjs/seo",
-		"nuxt-schema-org",
-	],
+	modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n", "@pinia/nuxt"],
 
 	vite: {
 		plugins: [tailwindcss()],
@@ -39,6 +30,9 @@ export default defineNuxtConfig({
 	i18n: {
 		defaultLocale: "uz",
 		langDir: "./locales/",
+		bundle: {
+			optimizeTranslationDirective: false,
+		},
 		locales: [
 			{
 				code: "uz",
@@ -56,15 +50,6 @@ export default defineNuxtConfig({
 				file: "en.json",
 			},
 		],
-		detectBrowserLanguage: false
-	},
-
-	sitemap: {
-		// routes: [
-		// 	'/',
-		// 	// '/about',
-		// 	// '/contact',
-		// 	// '/cart',
-		// ]
+		detectBrowserLanguage: false,
 	},
 })
