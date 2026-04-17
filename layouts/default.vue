@@ -15,10 +15,10 @@
 </script>
 <template>
 	<div class="wrapper flex flex-col min-h-screen">
-		<UiNavbar />
+		<!-- <UiNavbar /> -->
 		<div class="flex-1">
 			<NuxtPage />
 		</div>
-		<UiFooter />
+		<!-- <UiFooter /> -->
 	</div>
 </template>
