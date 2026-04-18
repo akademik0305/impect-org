@@ -1,75 +1,109 @@
-<!-- pages/index.vue -->
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue"
+const { t, locale, locales, setLocale } = useI18n()
 
-const projectCore = {
-	title:
-		"O'zbekistonda ayollar tashabbuslarini rivojlantirish orqali fuqarolik faolligini oshirish",
-	code: "UNDEF Project No. UDF-23-987-UZB",
-	period: "2025 - 2027",
-	regions: "Farg'ona va Toshkent",
-}
-
-const projectTasks = [
+// ── COMPUTED DATA (i18n bilan) ──────────────────────────
+const projectTasks = computed(() => [
 	{
-		title: "Xaritalash va Tahlil",
-		desc: "40 ta ayollar NNTlarining ehtiyojlarini chuqur o'rganish va tahlil qilish.",
+		title: t("tasks.items[0].title"),
+		desc: t("tasks.items[0].desc"),
 		img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
 	},
 	{
-		title: "Hamkorlik Tarmog'i",
-		desc: "Tajriba almashish va hamkorlik uchun kuchli platforma yaratish.",
+		title: t("tasks.items[1].title"),
+		desc: t("tasks.items[1].desc"),
 		img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=800",
 	},
 	{
-		title: "Salohiyatni Oshirish",
-		desc: "Liderlik va strategik rejalashtirish bo'yicha amaliy treninglar.",
+		title: t("tasks.items[2].title"),
+		desc: t("tasks.items[2].desc"),
 		img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
 	},
 	{
-		title: "Advokatsiya",
-		desc: "Gender tengligi va ijtimoiy tashabbuslarni milliy darajada ilgari surish.",
+		title: t("tasks.items[3].title"),
+		desc: t("tasks.items[3].desc"),
 		img: "https://images.unsplash.com/photo-1573161158365-59b7033d749d?auto=format&fit=crop&q=80&w=800",
 	},
 	{
-		title: "Amaliy Toolkit",
-		desc: "Strategik qo'llanmalar va ma'lumotnomalar tayyorlash va tarqatish.",
+		title: t("tasks.items[4].title"),
+		desc: t("tasks.items[4].desc"),
 		img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
 	},
 	{
-		title: "Barqaror Rivojlanish",
-		desc: "Mahalliy tashabbuslarni milliy darajaga olib chiqish va mustahkamlash.",
+		title: t("tasks.items[5].title"),
+		desc: t("tasks.items[5].desc"),
 		img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
 	},
-]
+])
 
-const team = [
+const team = computed(() => [
 	{
-		name: "Azizkhon Khakimov",
-		role: "Markaz direktori",
+		name: t("team.members[0].name"),
+		role: t("team.members[0].role"),
+		bio: t("team.members[0].bio"),
 		img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
-		bio: "20 yillik tajribaga ega boshqaruv va rivojlanish mutaxassisi. Markaziy Osiyo mintaqasidagi fuqarolik jamiyati rivojlanishiga ulkan hissa qo'shgan.",
 	},
 	{
-		name: "Gulnora Alimova",
-		role: "Loyiha koordinatori",
+		name: t("team.members[1].name"),
+		role: t("team.members[1].role"),
+		bio: t("team.members[1].bio"),
 		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-		bio: "Gender tengligi va ayollar yetakchiligi sohasidagi mutaxassis. BMT va xalqaro tashkilotlar bilan keng hamkorlik tajribasiga ega.",
 	},
 	{
-		name: "Bekzod Umarov",
-		role: "Bosh mutaxassis",
+		name: t("team.members[2].name"),
+		role: t("team.members[2].role"),
+		bio: t("team.members[2].bio"),
 		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
-		bio: "Strategik reja va monitoring bo'yicha ekspert. Ilmiy tadqiqot va amaliy loyihalarni muvaffaqiyatli boshqarish tajribasiga ega.",
 	},
 	{
-		name: "Dildora Karimova",
-		role: "Moliyaviy maslahatchi",
+		name: t("team.members[3].name"),
+		role: t("team.members[3].role"),
+		bio: t("team.members[3].bio"),
 		img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
-		bio: "Xalqaro moliya va grantlar menejment sohasida 15 yillik tajribaga ega. Bir nechta xalqaro loyihalarni moliyaviy jihatdan boshqargan.",
 	},
-]
+])
 
+const reels = computed(() => [
+	{ id: "VIDEO_ID_1", title: t("reels.items[0]") },
+	{ id: "VIDEO_ID_2", title: t("reels.items[1]") },
+	{ id: "VIDEO_ID_3", title: t("reels.items[2]") },
+	{ id: "VIDEO_ID_4", title: t("reels.items[3]") },
+])
+
+const navLinks = computed(() => [
+	["#hero", t("nav.project")],
+	["#tasks", t("nav.activity")],
+	["#impact", t("nav.impact")],
+	["#team", t("nav.team")],
+])
+
+const tickerItems = computed(() => [
+	t("ticker[0]"),
+	t("ticker[1]"),
+	t("ticker[2]"),
+	t("ticker[3]"),
+	t("ticker[4]"),
+	t("ticker[5]"),
+])
+
+const heroStats = computed(() => [
+	["40+", t("hero.stat.ngo")],
+	["2", t("hero.stat.region")],
+	[t("hero.stat.yearsVal"), t("hero.stat.years")],
+])
+
+const footerContacts = computed(() => [
+	["📞", t("footer.phone")],
+	["✉️", t("footer.email")],
+	["📍", t("footer.address")],
+])
+
+const counters = ref([
+	{ value: 0, target: 40, suffix: "+", labelKey: "impact.stat1" },
+	{ value: 0, target: 6, suffix: " ta", labelKey: "impact.stat2" },
+	{ value: 0, target: 3, suffix: "", labelKey: "impact.stat3" },
+])
+
+// ── STATE ───────────────────────────────────────────────
 const isScrolled = ref(false)
 const scrollProgress = ref(0)
 const showBackTop = ref(false)
@@ -81,21 +115,16 @@ const modal = ref({ open: false, type: null, data: null })
 const form = ref({ name: "", email: "", message: "" })
 const formSent = ref(false)
 
-const counters = ref([
-	{ value: 0, target: 40, suffix: "+", label: "Hamkor NNTlar" },
-	{ value: 0, target: 6, suffix: " ta", label: "Asosiy yo'nalish" },
-	{ value: 0, target: 3, suffix: "", label: "Yil davomida" },
-])
-
+// ── SCROLL ──────────────────────────────────────────────
 function onScroll() {
 	const scrollY = window.scrollY
 	const maxScroll = document.body.scrollHeight - window.innerHeight
+
 	isScrolled.value = scrollY > 60
 	scrollProgress.value = (scrollY / maxScroll) * 100
 	showBackTop.value = scrollY > 400
 
-	const ids = ["hero", "tasks", "impact", "team"]
-	for (const id of ids) {
+	for (const id of ["hero", "tasks", "reels", "impact", "team"]) {
 		const el = document.getElementById(id)
 		if (el && el.offsetTop <= scrollY + 120) activeSection.value = id
 	}
@@ -106,18 +135,19 @@ function onScroll() {
 			counted.value = true
 			counters.value.forEach((c, i) => {
 				const step = c.target / 40
-				const t = setInterval(() => {
+				const timer = setInterval(() => {
 					counters.value[i].value = Math.min(
 						counters.value[i].value + step,
 						c.target,
 					)
-					if (counters.value[i].value >= c.target) clearInterval(t)
+					if (counters.value[i].value >= c.target) clearInterval(timer)
 				}, 30)
 			})
 		}
 	}
 }
 
+// ── MODAL ───────────────────────────────────────────────
 function openModal(type, data = null) {
 	modal.value = { open: true, type, data }
 	document.body.style.overflow = "hidden"
@@ -131,7 +161,12 @@ function submitForm() {
 	formSent.value = true
 	form.value = { name: "", email: "", message: "" }
 }
+function openModalAndCloseMobile() {
+	openModal("contact")
+	mobileNavOpen.value = false
+}
 
+// ── LIFECYCLE ───────────────────────────────────────────
 onMounted(() => {
 	window.addEventListener("scroll", onScroll, { passive: true })
 
@@ -160,16 +195,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<div class="min-h-screen bg-white font-sans overflow-x-hidden">
+	<main class="min-h-screen bg-white font-sans overflow-x-hidden">
 		<!-- SCROLL PROGRESS -->
 		<div
 			class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-blue-600 to-violet-500 z-[1001] transition-all duration-100"
 			:style="{ width: scrollProgress + '%' }"
 		/>
 
-		<!-- ══════════════════════════════════
-         HEADER
-    ══════════════════════════════════ -->
+		<!-- ══════════════════════════════════  HEADER ══════════════════════════════════ -->
 		<header
 			class="fixed top-0 w-full z-[900] px-6 lg:px-10 py-5 flex justify-between items-center transition-all duration-300"
 			:class="
@@ -180,15 +213,15 @@ onUnmounted(() => {
 		>
 			<div class="flex items-center gap-4">
 				<div
-					class="w-11 h-11 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-lg"
+					class="w-32 h-auto max-h-12 rounded-xl flex items-center justify-center p-1.5"
 				>
 					<img
-						src="https://upload.wikimedia.org/wikipedia/commons/e/ee/UN_Democracy_Fund_Logo.png"
+						src="~/assets/images/logo/logo.png"
 						alt="UNDEF"
 						class="object-contain w-full"
 					/>
 				</div>
-				<div>
+				<!-- <div>
 					<h1
 						class="font-black text-lg tracking-tight leading-none transition-colors duration-300"
 						:class="isScrolled ? 'text-slate-900' : 'text-white'"
@@ -198,46 +231,66 @@ onUnmounted(() => {
 					<p
 						class="text-[9px] uppercase tracking-[0.25em] font-bold text-blue-400"
 					>
-						Markaziy Osiyo Rivojlanish Markazi
+						{{ $t("nav.orgSubtitle") }}
 					</p>
-				</div>
+				</div> -->
 			</div>
 
-			<nav class="hidden lg:flex items-center gap-8">
-				<a
-					v-for="[href, label] in [
-						['#hero', 'Loyiha'],
-						['#tasks', 'Faoliyat'],
-						['#impact', 'Ta\'sir'],
-						['#team', 'Jamoa'],
-					]"
-					:key="href"
-					:href="href"
-					class="text-[11px] font-bold uppercase tracking-widest relative pb-0.5 transition-colors duration-200 group"
-					:class="
-						isScrolled
-							? 'text-slate-500 hover:text-slate-900'
-							: 'text-white/90 hover:text-white'
-					"
-				>
-					{{ label }}
-					<span
-						class="absolute bottom-0 left-0 h-[1.5px] bg-blue-600 transition-all duration-300"
+			<!-- Desktop nav -->
+			<nav class="hidden lg:flex items-center gap-4">
+				<div v-for="[href, label] in navLinks" :key="href" class="w-25">
+					<a
+						:href="href"
+						class="text-[11px] font-bold uppercase tracking-widest relative pb-0.5 transition-colors duration-200 group text-center"
 						:class="
-							activeSection === href.replace('#', '')
-								? 'w-full'
-								: 'w-0 group-hover:w-full'
+							isScrolled
+								? 'text-slate-500 hover:text-slate-900'
+								: 'text-white/90 hover:text-white'
 						"
-					/>
-				</a>
-				<button
-					@click="openModal('contact')"
-					class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-200 shadow-lg shadow-blue-600/30 hover:-translate-y-0.5"
+					>
+						{{ label }}
+						<span
+							class="absolute bottom-0 left-0 h-[1.5px] bg-blue-600 transition-all duration-300"
+							:class="
+								activeSection === href.replace('#', '')
+									? 'w-full'
+									: 'w-0 group-hover:w-full'
+							"
+						/>
+					</a>
+				</div>
+
+				<!-- Lang switcher -->
+				<div
+					class="flex items-center gap-1 border rounded-full px-1 py-1"
+					:class="isScrolled ? 'border-blue-600' : 'border-white/20'"
 				>
-					Bog'lanish
+					<button
+						v-for="lang in locales"
+						:key="lang"
+						class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200"
+						:class="
+							locale === lang.code
+								? 'bg-blue-600 text-white shadow'
+								: isScrolled
+									? 'text-slate-500 hover:text-slate-900'
+									: 'text-white/70 hover:text-white'
+						"
+						@click="setLocale(lang.code)"
+					>
+						{{ lang.code }}
+					</button>
+				</div>
+
+				<button
+					class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-200 shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 w-32"
+					@click="openModal('contact')"
+				>
+					{{ t("nav.contact") }}
 				</button>
 			</nav>
 
+			<!-- Hamburger -->
 			<button
 				class="lg:hidden flex flex-col gap-[5px] p-1"
 				@click="mobileNavOpen = !mobileNavOpen"
@@ -264,12 +317,7 @@ onUnmounted(() => {
 			>
 				<ul class="space-y-1">
 					<li
-						v-for="[href, label] in [
-							['#hero', 'Loyiha'],
-							['#tasks', 'Faoliyat'],
-							['#impact', 'Ta\'sir'],
-							['#team', 'Jamoa'],
-						]"
+						v-for="[href, label] in navLinks"
 						:key="href"
 						class="border-b border-slate-100"
 					>
@@ -280,15 +328,30 @@ onUnmounted(() => {
 							>{{ label }}</a
 						>
 					</li>
-					<li class="pt-4">
+					<!-- Lang switcher mobile -->
+					<li class="pt-4 pb-2">
+						<div class="flex gap-2">
+							<button
+								v-for="lang in locales"
+								:key="lang"
+								class="flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border"
+								:class="
+									locale === lang.code
+										? 'bg-blue-600 text-white border-blue-600'
+										: 'text-slate-500 border-slate-200 hover:border-blue-300'
+								"
+								@click="setLocale(lang.code)"
+							>
+								{{ lang.code }}
+							</button>
+						</div>
+					</li>
+					<li class="pt-2">
 						<button
 							class="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold uppercase tracking-widest"
-							@click="
-								openModal('contact')
-								"
+							@click="openModalAndCloseMobil"
 						>
-						<!-- mobileNavOpen = false -->
-							Bog'lanish
+							{{ t("nav.contact") }}
 						</button>
 					</li>
 				</ul>
@@ -302,12 +365,13 @@ onUnmounted(() => {
 			/>
 		</Transition>
 
-		<!-- ══════════════════════════════════ HERO ══════════════════════════════════ -->
+		<!-- ══════════════════════════════════
+         HERO
+    ══════════════════════════════════ -->
 		<section
 			id="hero"
 			class="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#05080f]"
 		>
-			<!-- Orqa fon -->
 			<div class="absolute inset-0 z-0 pointer-events-none">
 				<div class="hero-mesh" />
 				<div class="hero-grid" />
@@ -317,7 +381,6 @@ onUnmounted(() => {
 				<div class="shape shape-4" />
 			</div>
 
-			<!-- Kontent -->
 			<div
 				class="relative z-10 w-full max-w-6xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
 			>
@@ -329,47 +392,41 @@ onUnmounted(() => {
 						<span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
 						<span
 							class="text-blue-300 text-[10px] font-black uppercase tracking-[0.3em]"
-							>UNDEF · UDF-23-987-UZB</span
 						>
+							{{ t("hero.badge.label") }}
+						</span>
 					</div>
 
 					<h2
 						class="text-white font-black text-5xl xl:text-6xl leading-[1.05] tracking-tight mb-6"
 					>
-						O'zbekistonda<br />
-						<span class="hero-gradient-text">Ayollar</span><br />
-						Tashabbuslarini<br />
-						Rivojlantirish
+						{{ t("hero.title1") }}<br />
+						<span class="hero-gradient-text">{{ t("hero.title2") }}</span
+						><br />
+						{{ t("hero.title3") }}<br />
+						{{ t("hero.title4") }}
 					</h2>
 
 					<p class="text-slate-400 text-base leading-relaxed mb-10 max-w-md">
-						Farg'ona va Toshkent viloyatlarida 40+ NNT bilan hamkorlikda
-						fuqarolik jamiyatini mustahkamlash — 2025–2027.
+						{{ t("hero.desc") }}
 					</p>
 
 					<div class="flex flex-wrap gap-3">
 						<a
 							href="#tasks"
 							class="bg-blue-600 hover:bg-blue-500 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-blue-600/30 hover:-translate-y-0.5"
-							>Loyihani o'rganish</a
+							>{{ t("hero.btnExplore") }}</a
 						>
 						<button
 							class="border border-white/20 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-white/8 transition-all duration-300"
 							@click="openModal('video')"
 						>
-							▶ Video
+							{{ t("hero.btnVideo") }}
 						</button>
 					</div>
 
 					<div class="flex gap-8 mt-12 pt-8 border-t border-white/8">
-						<div
-							v-for="[num, lbl] in [
-								['40+', 'Hamkor NNT'],
-								['2', 'Viloyat'],
-								['3 yil', 'Davomiyligi'],
-							]"
-							:key="num"
-						>
+						<div v-for="[num, lbl] in heroStats" :key="lbl">
 							<div class="text-white font-black text-2xl tracking-tight">
 								{{ num }}
 							</div>
@@ -382,7 +439,7 @@ onUnmounted(() => {
 					</div>
 				</div>
 
-				<!-- O'ng: GIF karta -->
+				<!-- O'ng: karta -->
 				<div class="relative hidden lg:block">
 					<div
 						class="absolute -top-4 -right-4 w-full h-full rounded-3xl border border-blue-600/20 bg-blue-600/5"
@@ -408,10 +465,10 @@ onUnmounted(() => {
 								</div>
 								<div>
 									<div class="text-white text-sm font-bold">
-										3-Bosqich yakunlanmoqda
+										{{ t("hero.card.milestone") }}
 									</div>
 									<div class="text-slate-400 text-[11px]">
-										Milestone 3 · 2026
+										{{ t("hero.card.milestoneSub") }}
 									</div>
 								</div>
 							</div>
@@ -421,15 +478,14 @@ onUnmounted(() => {
 								/>
 							</div>
 							<div class="flex justify-between mt-1.5">
-								<span class="text-slate-500 text-[10px] font-bold"
-									>Jarayon</span
-								>
+								<span class="text-slate-500 text-[10px] font-bold">{{
+									t("hero.card.process")
+								}}</span>
 								<span class="text-blue-400 text-[10px] font-black">78%</span>
 							</div>
 						</div>
 					</div>
 
-					<!-- Floating badge -->
 					<div
 						class="absolute -bottom-5 -left-5 bg-white rounded-2xl px-4 py-3 shadow-2xl flex items-center gap-3"
 					>
@@ -443,16 +499,17 @@ onUnmounted(() => {
 							</svg>
 						</div>
 						<div>
-							<div class="text-slate-900 text-sm font-black">40+ NNT</div>
+							<div class="text-slate-900 text-sm font-black">
+								{{ t("hero.badge.ngo") }}
+							</div>
 							<div class="text-slate-400 text-[10px] font-bold">
-								Hamkor tashkilotlar
+								{{ t("hero.badge.ngoSub") }}
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Scroll hint -->
 			<div
 				class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 animate-bounce"
 			>
@@ -467,14 +524,7 @@ onUnmounted(() => {
 			<div class="ticker-track flex gap-16 whitespace-nowrap">
 				<template v-for="_ in 2" :key="_">
 					<span
-						v-for="item in [
-							'40+ Hamkor NNTlar',
-							'Farg\'ona va Toshkent',
-							'2025–2027 Loyiha davri',
-							'UNDEF moliyalashtirmoqda',
-							'3-Bosqich amalga oshirilmoqda',
-							'2026 May: Davra Suhbati',
-						]"
+						v-for="item in tickerItems"
 						:key="item + _"
 						class="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest"
 					>
@@ -494,12 +544,12 @@ onUnmounted(() => {
 					<p
 						class="text-blue-600 text-[11px] font-black uppercase tracking-[0.4em] mb-3"
 					>
-						Biz nima qilyapmiz?
+						{{ t("tasks.label") }}
 					</p>
 					<h2
 						class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight"
 					>
-						Loyihaning asosiy yo'nalishlari
+						{{ t("tasks.title") }}
 					</h2>
 				</div>
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -533,7 +583,7 @@ onUnmounted(() => {
 							<button
 								class="mt-5 flex items-center gap-2 text-blue-600 font-black text-[11px] uppercase tracking-widest group-hover:gap-4 transition-all duration-300"
 							>
-								Batafsil
+								{{ t("tasks.more") }}
 								<svg
 									class="w-4 h-4 group-hover:translate-x-1 transition-transform"
 									fill="none"
@@ -546,6 +596,100 @@ onUnmounted(() => {
 							</button>
 						</div>
 					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ══════════════════════════════════
+         PROJECT REELS
+    ══════════════════════════════════ -->
+		<section id="reels" class="py-28 bg-white px-6 overflow-hidden">
+			<div class="max-w-6xl mx-auto">
+				<div
+					class="from-top flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14"
+				>
+					<div>
+						<h2 class="text-4xl md:text-5xl font-black tracking-tight">
+							{{ t("reels.title") }} <span class="reels-gradient">Reels</span>
+						</h2>
+						<p class="text-slate-400 text-sm font-medium mt-2">
+							{{ t("reels.subtitle") }}
+						</p>
+					</div>
+					<a
+						href="https://www.instagram.com/weempower_uz"
+						target="_blank"
+						class="inline-flex items-center gap-2 text-sm font-bold text-sky-500 hover:text-sky-600 transition-colors"
+					>
+						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+							<path
+								d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
+							/>
+						</svg>
+						@weempower_uz
+					</a>
+				</div>
+
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+					<div
+						v-for="(reel, i) in reels"
+						:key="reel.id"
+						class="reel-card from-bottom group"
+						:style="{ animationDelay: `${i * 100}ms` }"
+					>
+						<div class="reel-phone">
+							<div class="reel-notch" />
+							<div class="reel-video-wrap">
+								<iframe
+									:src="`https://www.youtube.com/embed/${reel.id}?rel=0&modestbranding=1&controls=1&playsinline=1`"
+									:title="reel.title"
+									frameborder="0"
+									allow="
+										accelerometer;
+										autoplay;
+										clipboard-write;
+										encrypted-media;
+										gyroscope;
+										picture-in-picture;
+									"
+									allowfullscreen
+									class="w-full h-full"
+									loading="lazy"
+								/>
+							</div>
+							<div class="reel-label">
+								<svg
+									class="w-3.5 h-3.5 fill-white opacity-70"
+									viewBox="0 0 24 24"
+								>
+									<path
+										d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
+									/>
+								</svg>
+								<span>{{ t("reels.label") }}</span>
+							</div>
+						</div>
+						<p
+							class="text-center text-xs font-bold text-slate-500 mt-3 px-1 truncate"
+						>
+							{{ reel.title }}
+						</p>
+					</div>
+				</div>
+
+				<div class="from-bottom text-center mt-14">
+					<a
+						href="https://www.youtube.com/@weempower_uz"
+						target="_blank"
+						class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-0.5 shadow-xl"
+					>
+						<svg class="w-4 h-4 fill-red-500" viewBox="0 0 24 24">
+							<path
+								d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
+							/>
+						</svg>
+						{{ t("reels.cta") }}
+					</a>
 				</div>
 			</div>
 		</section>
@@ -568,24 +712,21 @@ onUnmounted(() => {
 						<p
 							class="text-blue-400 text-[11px] font-black uppercase tracking-[0.4em] mb-4"
 						>
-							Ta'sir ko'rsatgichlari
+							{{ t("impact.label") }}
 						</p>
 						<h2
 							class="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-8"
 						>
-							Ayollar yetakchiligi —<br /><em class="text-blue-400 not-italic"
-								>jamiyat tayanchi</em
-							>
+							{{ t("impact.title1") }}<br />
+							<em class="text-blue-400 not-italic">{{ t("impact.title2") }}</em>
 						</h2>
 						<p class="text-slate-300 text-lg leading-relaxed mb-10">
-							Loyiha 3-bosqich (Milestone 3) yakuniga yetmoqda. Biz 40 ta
-							tashkilotni birlashtirdik va ular hozirda o'z hududlarida ijtimoiy
-							o'zgarishlar qilmoqda.
+							{{ t("impact.desc") }}
 						</p>
 						<div class="flex gap-10 flex-wrap">
 							<div
 								v-for="c in counters"
-								:key="c.label"
+								:key="c.labelKey"
 								class="border-l-4 border-blue-600 pl-5"
 							>
 								<div class="text-5xl font-black tracking-tight">
@@ -594,7 +735,7 @@ onUnmounted(() => {
 								<div
 									class="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-500 mt-1"
 								>
-									{{ c.label }}
+									{{ t(c.labelKey) }}
 								</div>
 							</div>
 						</div>
@@ -613,13 +754,13 @@ onUnmounted(() => {
 						<blockquote
 							class="text-lg italic text-slate-200 leading-relaxed mb-4"
 						>
-							"Ushbu loyiha bizga nafaqat bilim, balki bir-birimizni
-							qo'llab-quvvatlash uchun katta tarmoq berdi."
+							{{ t("impact.quote") }}
 						</blockquote>
 						<cite
 							class="text-[11px] font-black uppercase tracking-widest text-blue-400 not-italic"
-							>— Hamkor NNT rahbari, Farg'ona</cite
 						>
+							{{ t("impact.cite") }}
+						</cite>
 					</div>
 				</div>
 			</div>
@@ -634,12 +775,12 @@ onUnmounted(() => {
 					<p
 						class="text-blue-600 text-[11px] font-black uppercase tracking-[0.4em] mb-3"
 					>
-						Jamoamiz
+						{{ t("team.label") }}
 					</p>
 					<h2
 						class="text-4xl md:text-6xl font-black text-slate-900 tracking-tight"
 					>
-						Loyihani boshqarayotgan ekspertlar
+						{{ t("team.title") }}
 					</h2>
 				</div>
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -663,8 +804,9 @@ onUnmounted(() => {
 							>
 								<span
 									class="text-white text-[11px] font-black uppercase tracking-widest"
-									>Batafsil →</span
 								>
+									{{ t("team.more") }}
+								</span>
 							</div>
 						</div>
 						<h4 class="text-lg font-black text-slate-900 mb-1 tracking-tight">
@@ -720,10 +862,9 @@ onUnmounted(() => {
 							TARAQQIYOT.
 						</h2>
 						<p
-							class="text-slate-500 text-xs font-bold uppercase tracking-widest leading-loose mb-8"
+							class="text-slate-500 text-xs font-bold uppercase tracking-widest leading-loose mb-8 whitespace-pre-line"
 						>
-							BMT Demokratik Jamg'armasi (UNDEF) ko'magida<br />O'zbekistonda
-							fuqarolik jamiyatini rivojlantirish.
+							{{ t("footer.org") }}
 						</p>
 						<div class="flex gap-3">
 							<a
@@ -740,15 +881,11 @@ onUnmounted(() => {
 						<h4
 							class="text-xs font-black uppercase tracking-[0.3em] text-slate-600 mb-6 italic"
 						>
-							Aloqa ma'lumotlari
+							{{ t("footer.contactTitle") }}
 						</h4>
-						<ul class="space-y-0">
+						<ul>
 							<li
-								v-for="[icon, text] in [
-									['📞', '+998 (73) 244-11-22'],
-									['✉️', 'info@taraqqiyotngo.uz'],
-									['📍', 'Farg\'ona, Mustaqillik ko\'chasi, 12-uy'],
-								]"
+								v-for="[icon, text] in footerContacts"
 								:key="icon"
 								class="flex gap-3 text-sm text-slate-400 border-b border-white/6 py-3"
 							>
@@ -760,16 +897,16 @@ onUnmounted(() => {
 
 					<div class="from-right bg-blue-600 rounded-3xl p-8">
 						<h4 class="text-white font-black text-xl mb-3 leading-tight">
-							Hamkor bo'lishni xohlaysizmi?
+							{{ t("footer.ctaTitle") }}
 						</h4>
 						<p class="text-blue-100 text-sm mb-6 leading-relaxed">
-							Loyihamizga qo'shiling va o'zgarishlarning bir qismi bo'ling.
+							{{ t("footer.ctaDesc") }}
 						</p>
 						<button
 							class="w-full bg-white text-blue-600 font-black py-3.5 rounded-2xl text-xs uppercase tracking-widest hover:scale-[1.02] hover:shadow-xl transition-all duration-200"
 							@click="openModal('contact')"
 						>
-							Ariza yuborish
+							{{ t("footer.ctaBtn") }}
 						</button>
 					</div>
 				</div>
@@ -777,15 +914,13 @@ onUnmounted(() => {
 				<div
 					class="border-t border-white/8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-600"
 				>
-					<span>© 2026 TARAQQIYOT MARKAZI. Barcha huquqlar himoyalangan.</span>
-					<span>UNDEF mulki</span>
+					<span>{{ t("footer.copy") }}</span>
+					<span>{{ t("footer.undef") }}</span>
 				</div>
 			</div>
 		</footer>
 
-		<!-- ══════════════════════════════════
-         BACK TO TOP
-    ══════════════════════════════════ -->
+		<!-- BACK TO TOP -->
 		<Transition name="fade">
 			<button
 				v-if="showBackTop"
@@ -821,50 +956,54 @@ onUnmounted(() => {
 
 						<!-- Contact -->
 						<template v-if="modal.type === 'contact'">
-							<h3 class="text-2xl font-black mb-1">Bog'lanish</h3>
+							<h3 class="text-2xl font-black mb-1">
+								{{ t("modal.contactTitle") }}
+							</h3>
 							<p
 								class="text-[11px] font-black uppercase tracking-widest text-blue-600 mb-6"
 							>
-								Bizga xabar yuboring
+								{{ t("modal.contactSubtitle") }}
 							</p>
 							<div v-if="!formSent" class="flex flex-col gap-3">
 								<input
 									v-model="form.name"
 									type="text"
-									placeholder="Ismingiz"
+									:placeholder="t('modal.name')"
 									class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 transition-colors"
 								/>
 								<input
 									v-model="form.email"
 									type="email"
-									placeholder="Email manzilingiz"
+									:placeholder="t('modal.email')"
 									class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 transition-colors"
 								/>
 								<textarea
 									v-model="form.message"
 									rows="3"
-									placeholder="Xabaringiz..."
+									:placeholder="t('modal.message')"
 									class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-blue-500 transition-colors resize-none"
 								/>
 								<button
 									class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all hover:-translate-y-0.5 shadow-lg shadow-blue-600/30"
 									@click="submitForm"
 								>
-									Yuborish
+									{{ t("modal.send") }}
 								</button>
 							</div>
 							<div v-else class="text-center py-8">
 								<div class="text-5xl mb-4">✅</div>
-								<h4 class="text-xl font-black mb-2">Xabar yuborildi!</h4>
-								<p class="text-slate-500 text-sm">
-									Tez orada siz bilan bog'lanamiz.
-								</p>
+								<h4 class="text-xl font-black mb-2">
+									{{ t("modal.sentTitle") }}
+								</h4>
+								<p class="text-slate-500 text-sm">{{ t("modal.sentDesc") }}</p>
 							</div>
 						</template>
 
 						<!-- Video -->
 						<template v-else-if="modal.type === 'video'">
-							<h3 class="text-xl font-black mb-4">Loyiha haqida video</h3>
+							<h3 class="text-xl font-black mb-4">
+								{{ t("modal.videoTitle") }}
+							</h3>
 							<div
 								class="aspect-video rounded-2xl overflow-hidden bg-slate-900"
 							>
@@ -898,7 +1037,7 @@ onUnmounted(() => {
 				</Transition>
 			</div>
 		</Transition>
-	</div>
+	</main>
 </template>
 
 <style>
@@ -1080,5 +1219,89 @@ body {
 .scale-leave-to {
 	transform: scale(0.92);
 	opacity: 0;
+}
+
+/* ── PROJECT REELS ── */
+.reels-gradient {
+	background: linear-gradient(135deg, #e1306c, #f77737);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.reel-card {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Telefon ramkasi */
+.reel-phone {
+	position: relative;
+	background: #1a1d27;
+	border-radius: 28px;
+	overflow: hidden;
+	aspect-ratio: 9/16;
+	box-shadow:
+		0 0 0 1.5px rgba(255, 255, 255, 0.08),
+		0 20px 60px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.06);
+	transition:
+		transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.4s;
+}
+
+.reel-card:hover .reel-phone {
+	transform: translateY(-8px) scale(1.02);
+	box-shadow:
+		0 0 0 1.5px rgba(225, 48, 108, 0.4),
+		0 32px 80px rgba(0, 0, 0, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Kamera teshigi */
+.reel-notch {
+	position: absolute;
+	top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 48px;
+	height: 5px;
+	background: rgba(255, 255, 255, 0.12);
+	border-radius: 3px;
+	z-index: 10;
+}
+
+/* Video area */
+.reel-video-wrap {
+	position: absolute;
+	inset: 0;
+	border-radius: 28px;
+	overflow: hidden;
+}
+.reel-video-wrap iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+/* Pastki label */
+.reel-label {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 1rem 0.75rem 0.75rem;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	z-index: 5;
+}
+.reel-label span {
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 0.6rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
 }
 </style>

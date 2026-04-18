@@ -34,22 +34,10 @@ export default defineNuxtConfig({
 			optimizeTranslationDirective: false,
 		},
 		locales: [
-			{
-				code: "uz",
-				name: "uz",
-				file: "uz.json",
-			},
-			{
-				code: "ru",
-				name: "ru",
-				file: "ru.json",
-			},
-			{
-				code: "en",
-				name: "en",
-				file: "en.json",
-			},
-		],
+      { code: 'uz', file: 'uz.json', name: 'O\'zbek' },
+      { code: 'ru', file: 'ru.json', name: 'Русский' },
+      { code: 'en', file: 'en.json', name: 'English' },
+    ],
 		detectBrowserLanguage: false,
 	},
 })

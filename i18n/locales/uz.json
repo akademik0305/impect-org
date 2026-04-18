@@ -1,85 +1,147 @@
 {
-  "hi": "Hello",
-  "search": "Qidiruv",
-  "sum": "UZS",
-  "personal_info": "Shaxsiy malumotlar",
-  "orders": "Buyurtmalar",
-  "personal_cabinet": "Shaxsiy kabinet",
-  "edit": "Tahrirlash",
-  "logout": "Chiqish",
-  "resend_code": "Kodni qayta yuborish",
-  "show": "Ko'rsatish",
-  "empty_data_product": "Mahsulotlar topilmadi",
-  "empty_cart": "Hozircha savatingizda mahsulotlar mavjud emas",
-  "orders_history": "Buyurtmalar tarixi",
-  "continue": "Davom etish",
-  "phone_number": "Telefo'n raqam",
-  "enter_code": "Yuborilgan kodni kiriting",
-  "firstname": "Ism",
-  "lastname": "Familiya",
-  "second_phone": "Qo'shimcha telefon raqam ",
-  "order_success_message": "Buyurtmangiz qabul qilindi tez orada operatorlarimiz siz bilan aloqaga \t\t\t\tchiqishadi",
-  "delete": "O'chirish",
-  "empty": "Tugagan",
-  "add_to_cart": "Savatga",
-  "contact": "Biz bilan bog'lanish",
-  "email": "Email",
-  "phone": "Telefon",
-  "footer_copy": "Barcha huquqlar himoyalangan. \t\t\t\tTovarlarning ko'rsatilgan qiymati va ularni sotib olish shartlari joriy \t\t\t\tsanaga amal qiladi",
-  "login_or_register": "Kirish yoki ro'yxatdan o'tish",
-  "home_page": "Asosiy sahifa",
-  "categories": "Kategoriyalar",
-  "about_product": "Mahsulot haqida qisqacha",
-  "save": "Saqlash",
-  "change_phone": "Raqamni o'zgartish",
-  "cart": "Korzinka",
-  "products": "Mahsulotlar",
-  "clear": "Tozalash",
-  "product_price": "dona mahsulot narxi",
-  "all": "Barchasi",
-  "order": "Rasmiylashtirish",
-  "popular_categories": "Ommabop kategoriyalar",
-  "all_summ": "Jami",
-  "wishlist": "Sevimlilar",
-  "need_register_for_wishlist": "Saqlanganlarga qo'shish uchun ro'yhatdan o'tishiz kerak",
-  "need_login_for_see_wishlist": "Saqlanganlarni ko'rish uchun tizimga kirishingiz kerak",
-  "need_login_for_order": "Buyurtmani rashmiylashtirish uchun ro'yhatdan o'tishingiz kerak",
-  "code_error": "Tasdiqlash kodi noto'g'ri",
-  "enter_phone": "Telefon raqamini kiriting",
-  "wrong_number": "Telefon raqamini to`g`ri kiriting",
-  "wrong_code": "Kod 4 belgidan iborat bo‘lishi kerak",
-  "enter_name": "Ismingizni kiriting",
-  "wrong_name": "Ism kamida 3ta belgidan iborat bo'lishi kerak",
-  "enter_lastname": "Familiyangizni kiriting",
-  "delivery_price": "Yetkazib berish narxi",
-  "all_price": "Umumiy narxi",
-  "date": "Sana",
-  "name": "Nomi",
-  "count": "Miqdori",
-  "price": "Narxi",
-  "type": "Turi",
-  "payments": "To'lovlar",
-  "payments_history": "To'lovlar tarixi",
-  "payment_type": "To'lov turi",
-  "amount": "To'lov summasi",
-  "catalog": "Katalog",
-  "balance": "Balans",
-  "company_cards": "Kompaniya karta raqamlari",
-  "card_number": "Karta raqami",
-  "card_name": "Karta nomi",
-  "card_number_copied": "Karta raqamidan nusxa olindi",
-  "login": "Kirish",
-  "enter_address": "Manzilni kiriting",
-  "address": "Manzil",
-  "delivery": "Yetkazib berish",
-  "take_self": "Olib ketish",
-  "our_address": "Bizni manzilimiz",
-  "our_advantages": "Bizning afzalliklarimiz",
-  "work_video": "Ish jarayonidan lavhalar",
-  "our_employees": "Bizning jamoa",
-  "view_details": "Batafsil",
-  "empty_data": "Malumot yo'q",
-  "loading": "Yuklanmoqda",
-  "search_by_name_phone": "Qidirish",
-  "exclusive_rooms": "Eksklyuziv Xonalar"
+  "nav": {
+    "orgSubtitle": "Markaziy Osiyo Rivojlanish Markazi",
+    "project": "Loyiha",
+    "activity": "Faoliyat",
+    "impact": "Ta'sir",
+    "team": "Jamoa",
+    "contact": "Bog'lanish"
+  },
+  "hero": {
+    "title1": "O'zbekistonda",
+    "title2": "Ayollar",
+    "title3": "Tashabbuslarini",
+    "title4": "Rivojlantirish",
+    "desc": "Farg'ona va Toshkent viloyatlarida 40+ NNT bilan hamkorlikda fuqarolik jamiyatini mustahkamlash — 2025–2027.",
+    "btnExplore": "Loyihani o'rganish",
+    "btnVideo": "▶ Video",
+    "stat": {
+      "ngo": "Hamkor NNT",
+      "region": "Viloyat",
+      "years": "Davomiyligi",
+      "yearsVal": "3 yil"
+    },
+    "card": {
+      "milestone": "3-Bosqich yakunlanmoqda",
+      "milestoneSub": "Milestone 3 · 2026",
+      "process": "Jarayon"
+    },
+    "badge": {
+      "ngo": "40+ NNT",
+      "ngoSub": "Hamkor tashkilotlar",
+      "label": "UNDEF · UDF-23-987-UZB"
+    }
+  },
+  "ticker": [
+    "40+ Hamkor NNTlar",
+    "Farg'ona va Toshkent",
+    "2025–2027 Loyiha davri",
+    "UNDEF moliyalashtirmoqda",
+    "3-Bosqich amalga oshirilmoqda",
+    "2026 May: Davra Suhbati"
+  ],
+  "tasks": {
+    "label": "Biz nima qilyapmiz?",
+    "title": "Loyihaning asosiy yo'nalishlari",
+    "more": "Batafsil",
+    "items": [
+      {
+        "title": "Xaritalash va Tahlil",
+        "desc": "40 ta ayollar NNTlarining ehtiyojlarini chuqur o'rganish va tahlil qilish."
+      },
+      {
+        "title": "Hamkorlik Tarmog'i",
+        "desc": "Tajriba almashish va hamkorlik uchun kuchli platforma yaratish."
+      },
+      {
+        "title": "Salohiyatni Oshirish",
+        "desc": "Liderlik va strategik rejalashtirish bo'yicha amaliy treninglar."
+      },
+      {
+        "title": "Advokatsiya",
+        "desc": "Gender tengligi va ijtimoiy tashabbuslarni milliy darajada ilgari surish."
+      },
+      {
+        "title": "Amaliy Toolkit",
+        "desc": "Strategik qo'llanmalar va ma'lumotnomalar tayyorlash va tarqatish."
+      },
+      {
+        "title": "Barqaror Rivojlanish",
+        "desc": "Mahalliy tashabbuslarni milliy darajaga olib chiqish va mustahkamlash."
+      }
+    ]
+  },
+  "reels": {
+    "title": "Project",
+    "subtitle": "Instagram formatidagi qisqa video–hisobotlar",
+    "label": "YouTube Shorts",
+    "cta": "Barcha Reelslarni ko'rish",
+    "items": [
+      "NNT faoliyati haqida",
+      "Ayollar tashabbusi",
+      "Farg'ona viloyati",
+      "Loyiha natijalari"
+    ]
+  },
+  "impact": {
+    "label": "Ta'sir ko'rsatgichlari",
+    "title1": "Ayollar yetakchiligi —",
+    "title2": "jamiyat tayanchi",
+    "desc": "Loyiha 3-bosqich (Milestone 3) yakuniga yetmoqda. Biz 40 ta tashkilotni birlashtirdik va ular hozirda o'z hududlarida ijtimoiy o'zgarishlar qilmoqda.",
+    "stat1": "Hamkor NNTlar",
+    "stat2": "Asosiy yo'nalish",
+    "stat3": "Yil davomida",
+    "quote": "\"Ushbu loyiha bizga nafaqat bilim, balki bir-birimizni qo'llab-quvvatlash uchun katta tarmoq berdi.\"",
+    "cite": "— Hamkor NNT rahbari, Farg'ona"
+  },
+  "team": {
+    "label": "Jamoamiz",
+    "title": "Loyihani boshqarayotgan ekspertlar",
+    "more": "Batafsil →",
+    "members": [
+      {
+        "name": "Azizkhon Khakimov",
+        "role": "Markaz direktori",
+        "bio": "20 yillik tajribaga ega boshqaruv va rivojlanish mutaxassisi. Markaziy Osiyo mintaqasidagi fuqarolik jamiyati rivojlanishiga ulkan hissa qo'shgan."
+      },
+      {
+        "name": "Gulnora Alimova",
+        "role": "Loyiha koordinatori",
+        "bio": "Gender tengligi va ayollar yetakchiligi sohasidagi mutaxassis. BMT va xalqaro tashkilotlar bilan keng hamkorlik tajribasiga ega."
+      },
+      {
+        "name": "Bekzod Umarov",
+        "role": "Bosh mutaxassis",
+        "bio": "Strategik reja va monitoring bo'yicha ekspert. Ilmiy tadqiqot va amaliy loyihalarni muvaffaqiyatli boshqarish tajribasiga ega."
+      },
+      {
+        "name": "Dildora Karimova",
+        "role": "Moliyaviy maslahatchi",
+        "bio": "Xalqaro moliya va grantlar menejment sohasida 15 yillik tajribaga ega. Bir nechta xalqaro loyihalarni moliyaviy jihatdan boshqargan."
+      }
+    ]
+  },
+  "footer": {
+    "org": "BMT Demokratik Jamg'armasi (UNDEF) ko'magida\nO'zbekistonda fuqarolik jamiyatini rivojlantirish.",
+    "contactTitle": "Aloqa ma'lumotlari",
+    "phone": "+998 (73) 244-11-22",
+    "email": "info taraqqiyotngo.uz",
+    "address": "Farg'ona, Mustaqillik ko'chasi, 12-uy",
+    "ctaTitle": "Hamkor bo'lishni xohlaysizmi?",
+    "ctaDesc": "Loyihamizga qo'shiling va o'zgarishlarning bir qismi bo'ling.",
+    "ctaBtn": "Ariza yuborish",
+    "copy": "© 2026 TARAQQIYOT MARKAZI. Barcha huquqlar himoyalangan.",
+    "undef": "UNDEF mulki"
+  },
+  "modal": {
+    "contactTitle": "Bog'lanish",
+    "contactSubtitle": "Bizga xabar yuboring",
+    "name": "Ismingiz",
+    "email": "Email manzilingiz",
+    "message": "Xabaringiz...",
+    "send": "Yuborish",
+    "sentTitle": "Xabar yuborildi!",
+    "sentDesc": "Tez orada siz bilan bog'lanamiz.",
+    "videoTitle": "Loyiha haqida video"
+  }
 }
