@@ -2,42 +2,52 @@
 import tailwindcss from "@tailwindcss/vite"
 
 export default defineNuxtConfig({
-	compatibilityDate: "2024-11-01",
-	devtools: { enabled: true },
-	colorMode: {
-		preference: "light",
-	},
+				compatibilityDate: "2024-11-01",
+				devtools: { enabled: true },
+				colorMode: {
+								preference: "light",
+				},
 
-	ssr: false,
-	// SEO va meta
-	// experimental: {
-	// 	payloadExtraction: false,
-	// },
+				ssr: false,
+				// SEO va meta
+				// experimental: {
+				// 	payloadExtraction: false,
+				// },
 
-	runtimeConfig: {
-		public: {
-			// apiBaseUrl: process.env.API_BASE_URL,
-		},
-	},
+				runtimeConfig: {
+								public: {
+												// apiBaseUrl: process.env.API_BASE_URL,
+								},
+				},
 
-	modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxtjs/i18n", "@pinia/nuxt"],
+				modules: [
+								"@nuxt/eslint",
+								"@nuxt/ui",
+								"@nuxtjs/i18n",
+								"@pinia/nuxt",
+								"@nuxtjs/supabase",
+				],
 
-	vite: {
-		plugins: [tailwindcss()],
-	},
-	css: ["~/assets/css/main.css"],
+				supabase: {
+								redirect: false, // o'zimiz boshqaramiz
+				},
 
-	i18n: {
-		defaultLocale: "uz",
-		langDir: "./locales/",
-		bundle: {
-			optimizeTranslationDirective: false,
-		},
-		locales: [
-      { code: 'uz', file: 'uz.json', name: 'O\'zbek' },
-      { code: 'ru', file: 'ru.json', name: 'Русский' },
-      { code: 'en', file: 'en.json', name: 'English' },
-    ],
-		detectBrowserLanguage: false,
-	},
+				vite: {
+								plugins: [tailwindcss()],
+				},
+				css: ["~/assets/css/main.css"],
+
+				i18n: {
+								defaultLocale: "uz",
+								langDir: "./locales/",
+								bundle: {
+												optimizeTranslationDirective: false,
+								},
+								locales: [
+												{ code: "uz", file: "uz.json", name: "O'zbek" },
+												{ code: "ru", file: "ru.json", name: "Русский" },
+												{ code: "en", file: "en.json", name: "English" },
+								],
+								detectBrowserLanguage: false,
+				},
 })

@@ -143,5 +143,18 @@
     "sentTitle": "Xabar yuborildi!",
     "sentDesc": "Tez orada siz bilan bog'lanamiz.",
     "videoTitle": "Loyiha haqida video"
+  },
+  "detail": {
+    "back": "Orqaga qaytish",
+    "taskLabel": "Yo'nalish",
+    "resultsTitle": "Kutilayotgan natijalar",
+    "projectInfo": "Loyiha ma'lumotlari",
+    "period": "Loyiha davri",
+    "regions": "Hududlar",
+    "regionsVal": "Farg'ona va Toshkent",
+    "funder": "Moliyalashtiruvchi",
+    "code": "Loyiha kodi",
+    "prev": "Oldingi yo'nalish",
+    "next": "Keyingi yo'nalish"
   }
 }

@@ -1,5 +1,6 @@
 <script setup>
 const { t, locale, locales, setLocale } = useI18n()
+const localePath = useLocalePath()
 
 // ── COMPUTED DATA (i18n bilan) ──────────────────────────
 const projectTasks = computed(() => [
@@ -37,10 +38,13 @@ const projectTasks = computed(() => [
 
 const team = computed(() => [
 	{
-		name: t("team.members[0].name"),
-		role: t("team.members[0].role"),
-		bio: t("team.members[0].bio"),
-		img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+		// name: t("team.members[0].name"),
+		// role: t("team.members[0].role"),
+		// bio: t("team.members[0].bio"),
+		name: "Feruza Madaliyeva",
+		role: "NNT rahbari",
+		bio: "loyiha experti",
+		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
 	},
 	{
 		name: t("team.members[1].name"),
@@ -161,10 +165,10 @@ function submitForm() {
 	formSent.value = true
 	form.value = { name: "", email: "", message: "" }
 }
-function openModalAndCloseMobile() {
-	openModal("contact")
-	mobileNavOpen.value = false
-}
+// function openModalAndCloseMobile() {
+// 	openModal("contact")
+// 	mobileNavOpen.value = false
+// }
 
 // ── LIFECYCLE ───────────────────────────────────────────
 onMounted(() => {
@@ -282,12 +286,12 @@ onUnmounted(() => {
 					</button>
 				</div>
 
-				<button
+				<!-- <button
 					class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-200 shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 w-32"
 					@click="openModal('contact')"
 				>
 					{{ t("nav.contact") }}
-				</button>
+				</button> -->
 			</nav>
 
 			<!-- Hamburger -->
@@ -411,7 +415,7 @@ onUnmounted(() => {
 						{{ t("hero.desc") }}
 					</p>
 
-					<div class="flex flex-wrap gap-3">
+					<!-- <div class="flex flex-wrap gap-3">
 						<a
 							href="#tasks"
 							class="bg-blue-600 hover:bg-blue-500 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-blue-600/30 hover:-translate-y-0.5"
@@ -423,7 +427,7 @@ onUnmounted(() => {
 						>
 							{{ t("hero.btnVideo") }}
 						</button>
-					</div>
+					</div> -->
 
 					<div class="flex gap-8 mt-12 pt-8 border-t border-white/8">
 						<div v-for="[num, lbl] in heroStats" :key="lbl">
@@ -448,7 +452,7 @@ onUnmounted(() => {
 						class="relative bg-white/5 backdrop-blur-xl border border-white/12 rounded-3xl overflow-hidden"
 					>
 						<img
-							src="~/assets/images/png/banner.png"
+							src="~/assets/images/jpg/team.jpg"
 							alt="Women Empowerment"
 							class="w-full aspect-[4/3] object-cover opacity-85"
 						/>
@@ -580,8 +584,13 @@ onUnmounted(() => {
 							<p class="text-slate-500 text-sm leading-relaxed">
 								{{ task.desc }}
 							</p>
-							<button
-								class="mt-5 flex items-center gap-2 text-blue-600 font-black text-[11px] uppercase tracking-widest group-hover:gap-4 transition-all duration-300"
+							<NuxtLink
+								:to="
+									localePath(
+										`/projects/${['xaritalash', 'hamkorlik', 'salohiyat', 'advokatsiya', 'toolkit', 'rivojlanish'][i]}`,
+									)
+								"
+								class="mt-5 inline-flex items-center gap-2 text-blue-600 font-black text-[11px] uppercase tracking-widest group-hover:gap-4 transition-all duration-300"
 							>
 								{{ t("tasks.more") }}
 								<svg
@@ -593,7 +602,7 @@ onUnmounted(() => {
 								>
 									<path d="M5 12h14M12 5l7 7-7 7" />
 								</svg>
-							</button>
+							</NuxtLink>
 						</div>
 					</div>
 				</div>

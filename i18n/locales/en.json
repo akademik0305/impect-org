@@ -143,5 +143,18 @@
     "sentTitle": "Message sent!",
     "sentDesc": "We will get back to you shortly.",
     "videoTitle": "Project video"
+  },
+  "detail": {
+    "back": "Go back",
+    "taskLabel": "Direction",
+    "resultsTitle": "Expected results",
+    "projectInfo": "Project information",
+    "period": "Project period",
+    "regions": "Regions",
+    "regionsVal": "Fergana & Tashkent",
+    "funder": "Funded by",
+    "code": "Project code",
+    "prev": "Previous direction",
+    "next": "Next direction"
   }
 }
