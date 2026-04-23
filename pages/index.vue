@@ -47,9 +47,12 @@ const team = computed(() => [
 		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
 	},
 	{
-		name: t("team.members[1].name"),
-		role: t("team.members[1].role"),
-		bio: t("team.members[1].bio"),
+		// name: t("team.members[1].name"),
+		// role: t("team.members[1].role"),
+		// bio: t("team.members[1].bio"),
+		name: "Nargiza Xudaynazarova",
+		role: "NNT rahbari",
+		bio: "loyiha experti",
 		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
 	},
 	{
@@ -66,12 +69,24 @@ const team = computed(() => [
 	},
 ])
 
-const reels = computed(() => [
-	{ id: "VIDEO_ID_1", title: t("reels.items[0]") },
-	{ id: "VIDEO_ID_2", title: t("reels.items[1]") },
-	{ id: "VIDEO_ID_3", title: t("reels.items[2]") },
-	{ id: "VIDEO_ID_4", title: t("reels.items[3]") },
-])
+// ── REELS — Supabase dan ─────────────────────────────────
+const supabase = useSupabaseClient()
+
+const { data: reelsData } = await useAsyncData("reels", async () => {
+	const { data } = await supabase
+		.from("reels")
+		.select("id, video_id, title_uz, title_ru, title_en")
+		.eq("active", true)
+		.order("order_index", { ascending: true })
+	return data ?? []
+})
+
+const reels = computed(() => {
+	return (reelsData.value ?? []).map(r => ({
+		id: r.video_id,
+		title: r[`title_${locale.value}`] || r.title_uz || r.video_id,
+	}))
+})
 
 const navLinks = computed(() => [
 	["#hero", t("nav.project")],
@@ -609,6 +624,8 @@ onUnmounted(() => {
 			</div>
 		</section>
 
+		<ProjectStages />
+
 		<!-- ══════════════════════════════════
          PROJECT REELS
     ══════════════════════════════════ -->
@@ -688,7 +705,7 @@ onUnmounted(() => {
 
 				<div class="from-bottom text-center mt-14">
 					<a
-						href="https://www.youtube.com/@weempower_uz"
+						href="https://www.youtube.com/@taraqqiyotngo/shorts"
 						target="_blank"
 						class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-0.5 shadow-xl"
 					>
