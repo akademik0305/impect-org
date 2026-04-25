@@ -100,24 +100,29 @@
     "more": "View profile →",
     "members": [
       {
-        "name": "Azizkhon Khakimov",
-        "role": "Center Director",
-        "bio": "Management and development specialist with 20 years of experience. Has made a significant contribution to the development of civil society in Central Asia."
+        "name": "Feruza Madaliyeva",
+        "role": "Project expert",
+        "bio": "NGO leader"
       },
       {
-        "name": "Gulnora Alimova",
-        "role": "Project Coordinator",
-        "bio": "Expert in gender equality and women's leadership. Has extensive experience collaborating with the UN and international organizations."
+        "name": "Nargiza Xudaynazarova",
+        "role": "Project coordinator",
+        "bio": "Women's empowerment project manager"
       },
       {
-        "name": "Bekzod Umarov",
-        "role": "Senior Specialist",
-        "bio": "Expert in strategic planning and monitoring. Has successfully managed scientific and applied projects."
+        "name": "Zafar Saydaliyev",
+        "role": "Project expert",
+        "bio": "Monitoring and evaluation"
       },
       {
-        "name": "Dildora Karimova",
-        "role": "Financial Advisor",
-        "bio": "15 years of experience in international finance and grants management. Has successfully overseen multiple international projects."
+        "name": "Saida Gaziyeva",
+        "role": "Project specialist",
+        "bio": "Translator"
+      },
+      {
+        "name": "Alisher Orzibiyev",
+        "role": "Project accountant",
+        "bio": "Project accountant"
       }
     ]
   },
@@ -155,6 +160,7 @@
     "funder": "Funded by",
     "code": "Project code",
     "prev": "Previous direction",
-    "next": "Next direction"
+    "next": "Next direction",
+    "resultsLabel": "Results"
   }
 }

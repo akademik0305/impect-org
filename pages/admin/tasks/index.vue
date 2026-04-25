@@ -1,63 +1,47 @@
 <script setup>
-// definePageMeta({ middleware: 'admin-auth', layout: 'admin' })
+definePageMeta({ middleware: "admin-auth" })
 
-const tasks = ref([
-	{
-		slug: "xaritalash",
-		uz: "Xaritalash va tahlil",
-		ru: "Картирование",
-		en: "Mapping & Analysis",
-		updatedAt: "2025-01-15",
-		status: "published",
-	},
-	{
-		slug: "hamkorlik",
-		uz: "Hamkorlik tarmog'i",
-		ru: "Сеть партнёрств",
-		en: "Partnership Network",
-		updatedAt: "2025-01-14",
-		status: "published",
-	},
-	{
-		slug: "salohiyat",
-		uz: "Salohiyatni oshirish",
-		ru: "Повышение потенциала",
-		en: "Capacity Building",
-		updatedAt: "2025-01-10",
-		status: "published",
-	},
-	{
-		slug: "advokatsiya",
-		uz: "Advokatsiya",
-		ru: "Адвокатирование",
-		en: "Advocacy",
-		updatedAt: "2025-01-08",
-		status: "draft",
-	},
-	{
-		slug: "toolkit",
-		uz: "Toolkit ishlab chiqish",
-		ru: "Разработка инструментов",
-		en: "Toolkit Development",
-		updatedAt: "2025-01-05",
-		status: "published",
-	},
-	{
-		slug: "rivojlanish",
-		uz: "Barqaror rivojlanish",
-		ru: "Устойчивое развитие",
-		en: "Sustainable Development",
-		updatedAt: "2024-12-28",
-		status: "published",
-	},
-])
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
-// Filter
-const filterStatus = ref("all") // all | published | draft
+// ── HOLAT ─────────────────────────────────────────────────
+const tasks = ref([])
+const dbLoading = ref(true)
+const dbError = ref(null)
+
+// ── SUPABASE: YUKLASH ─────────────────────────────────────
+async function fetchTasks() {
+	dbLoading.value = true
+	dbError.value = null
+
+	const { data, error } = await supabase
+		.from("tasks")
+		.select("slug, status, uz, ru, en, updated_at")
+		.order("updated_at", { ascending: false })
+
+	if (error) {
+		dbError.value = error.message
+	} else {
+		tasks.value = (data ?? []).map(t => ({
+			slug: t.slug,
+			uz: t.uz?.title ?? t.slug,
+			ru: t.ru?.title ?? "",
+			en: t.en?.title ?? "",
+			status: t.status,
+			updatedAt: t.updated_at,
+		}))
+	}
+	dbLoading.value = false
+}
+
+onMounted(fetchTasks)
+
+// ── FILTER ────────────────────────────────────────────────
+const filterStatus = ref("all")
 const searchQuery = ref("")
 
-const filteredTasks = computed(() => {
-	return tasks.value.filter(t => {
+const filteredTasks = computed(() =>
+	tasks.value.filter(t => {
 		const matchStatus =
 			filterStatus.value === "all" || t.status === filterStatus.value
 		const q = searchQuery.value.toLowerCase()
@@ -67,22 +51,24 @@ const filteredTasks = computed(() => {
 			t.slug.includes(q) ||
 			(t.ru && t.ru.toLowerCase().includes(q))
 		return matchStatus && matchSearch
-	})
-})
+	}),
+)
 
 function formatDate(d) {
 	return new Date(d).toLocaleDateString("uz-UZ", {
-		day: "2-digit",
-		month: "short",
-		year: "numeric",
+		// day: "2-digit",
+		// month: "short",
+		// year: "numeric",
 	})
 }
 
+// ── LOGOUT ────────────────────────────────────────────────
 async function logout() {
-	navigateTo("/admin/login")
+	await supabase.auth.signOut()
+	await navigateTo("/admin/login")
 }
 
-// ── YANGI TASK ───────────────────────────────────────────
+// ── YANGI TASK ────────────────────────────────────────────
 const showAddModal = ref(false)
 const addLoading = ref(false)
 const addForm = ref({ slug: "", uz: "", ru: "", en: "", status: "draft" })
@@ -118,8 +104,22 @@ async function handleAdd() {
 		return
 	}
 	addLoading.value = true
-	// TODO: await supabase.from('tasks').insert({...})
-	await new Promise(r => setTimeout(r, 800))
+	addError.value = ""
+
+	const { error } = await supabase.from("tasks").insert({
+		slug: addForm.value.slug,
+		status: addForm.value.status,
+		uz: { title: addForm.value.uz },
+		ru: { title: addForm.value.ru },
+		en: { title: addForm.value.en },
+	})
+
+	if (error) {
+		addError.value = error.message
+		addLoading.value = false
+		return
+	}
+
 	tasks.value.unshift({
 		slug: addForm.value.slug,
 		uz: addForm.value.uz,
@@ -129,16 +129,19 @@ async function handleAdd() {
 		updatedAt: new Date().toISOString(),
 	})
 	addLoading.value = false
+	const slug = addForm.value.slug
 	closeAddModal()
-	navigateTo(`/admin/tasks/${addForm.value.slug}`)
+	await navigateTo(`/admin/tasks/${slug}`)
 }
 
-// ── O'CHIRISH ────────────────────────────────────────────
+// ── O'CHIRISH ─────────────────────────────────────────────
 const deleteTarget = ref(null)
 const deleteLoading = ref(false)
+const deleteError = ref("")
 
 function openDeleteModal(task) {
 	deleteTarget.value = task
+	deleteError.value = ""
 }
 function closeDeleteModal() {
 	deleteTarget.value = null
@@ -147,8 +150,19 @@ function closeDeleteModal() {
 async function handleDelete() {
 	if (!deleteTarget.value) return
 	deleteLoading.value = true
-	// TODO: await supabase.from('tasks').delete().eq('slug', deleteTarget.value.slug)
-	await new Promise(r => setTimeout(r, 700))
+	deleteError.value = ""
+
+	const { error } = await supabase
+		.from("tasks")
+		.delete()
+		.eq("slug", deleteTarget.value.slug)
+
+	if (error) {
+		deleteError.value = error.message
+		deleteLoading.value = false
+		return
+	}
+
 	tasks.value = tasks.value.filter(t => t.slug !== deleteTarget.value.slug)
 	deleteLoading.value = false
 	closeDeleteModal()
@@ -156,27 +170,47 @@ async function handleDelete() {
 </script>
 
 <template>
-	<div class="dash">
+	<div class="font-[DM_Sans,sans-serif] min-h-screen bg-slate-50 flex flex-col">
 		<!-- TOPBAR -->
-		<header class="topbar">
-			<div class="topbar-left">
-				<div class="topbar-logo">
+		<header
+			class="h-[60px] bg-[#05080f] border-b border-white/[0.06] flex items-center justify-between px-6 sticky top-0 z-[100]"
+		>
+			<div class="flex items-center gap-3">
+				<div
+					class="w-[34px] h-[34px] rounded-[10px] bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center flex-shrink-0"
+				>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="white">
 						<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
 					</svg>
 				</div>
-				<div>
-					<span class="topbar-title">TARAQQIYOT</span>
-					<span class="topbar-badge">Admin</span>
+				<div class="flex items-center">
+					<span class="text-white font-black text-[0.95rem] tracking-[0.03em]"
+						>TARAQQIYOT</span
+					>
+					<span
+						class="ml-2 bg-blue-600/25 text-blue-400 text-[0.6rem] font-black uppercase tracking-[0.15em] px-2 py-0.5 rounded-full border border-blue-600/30"
+						>Admin</span
+					>
 				</div>
 			</div>
-			<div class="topbar-right">
-				<div class="topbar-user">
-					<div class="user-avatar">A</div>
-					<span class="user-name">Admin</span>
+			<div class="flex items-center gap-4">
+				<div class="flex items-center gap-2">
+					<div
+						class="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white text-[0.7rem] font-black"
+					>
+						{{ user?.email?.[0]?.toUpperCase() ?? "A" }}
+					</div>
+					<span
+						class="text-slate-400 text-[0.8rem] font-semibold max-w-[180px] truncate hidden sm:block"
+						>{{ user?.email ?? "Admin" }}</span
+					>
 				</div>
-				<button class="logout-btn" @click="logout">
+				<button
+					class="flex items-center gap-1.5 bg-transparent border border-white/10 text-slate-500 hover:text-white hover:border-white/20 px-3.5 py-1.5 rounded-lg text-[0.75rem] font-bold transition-all duration-200 cursor-pointer"
+					@click="logout"
+				>
 					<svg
+						class="w-3.5 h-3.5"
 						viewBox="0 0 24 24"
 						fill="none"
 						stroke="currentColor"
@@ -191,12 +225,18 @@ async function handleDelete() {
 			</div>
 		</header>
 
-		<div class="dash-body">
+		<div class="flex flex-1 min-h-[calc(100vh-60px)]">
 			<!-- SIDEBAR -->
-			<aside class="sidebar">
-				<nav class="sidebar-nav">
-					<NuxtLink to="/admin" class="nav-item">
+			<aside
+				class="w-[220px] bg-[#05080f] border-r border-white/[0.06] flex flex-col justify-between p-6 pb-6 sticky top-[60px] h-[calc(100vh-60px)]"
+			>
+				<nav class="flex flex-col gap-1">
+					<NuxtLink
+						to="/admin"
+						class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 text-[0.8rem] font-bold no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-400"
+					>
 						<svg
+							class="w-4 h-4"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -209,8 +249,12 @@ async function handleDelete() {
 						</svg>
 						Dashboard
 					</NuxtLink>
-					<NuxtLink to="/admin/tasks" class="nav-item active">
+					<NuxtLink
+						to="/admin/tasks"
+						class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-blue-400 text-[0.8rem] font-bold no-underline bg-blue-600/15 border border-blue-600/20"
+					>
 						<svg
+							class="w-4 h-4"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -223,8 +267,12 @@ async function handleDelete() {
 						</svg>
 						Tasklar
 					</NuxtLink>
-					<NuxtLink to="/admin/reels" class="nav-item">
+					<NuxtLink
+						to="/admin/reels"
+						class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-500 text-[0.8rem] font-bold no-underline transition-all duration-200 hover:bg-white/5 hover:text-slate-400"
+					>
 						<svg
+							class="w-4 h-4"
 							viewBox="0 0 24 24"
 							fill="none"
 							stroke="currentColor"
@@ -236,249 +284,126 @@ async function handleDelete() {
 						Reels
 					</NuxtLink>
 				</nav>
-				<div class="sidebar-info">
-					<span class="info-dot" :class="dbError ? 'dot-error' : 'dot-ok'" />
+				<div
+					class="flex items-center gap-2 text-[0.65rem] font-bold text-[#1e3a5f]"
+				>
+					<span
+						class="w-1.5 h-1.5 rounded-full"
+						:class="dbError ? 'bg-red-500' : 'bg-green-500'"
+					/>
 					<span>{{ dbError ? "Ulanishda xato" : "Supabase ulangan" }}</span>
 				</div>
 			</aside>
 
 			<!-- MAIN -->
-			<main class="dash-main">
-				<div class="page-header">
-					<div>
-						<p class="page-eyebrow">Kontent boshqaruvi</p>
-						<h1 class="page-title">Tasklar</h1>
+			<main class="flex-1 p-8 overflow-y-auto">
+				<!-- Loading skeleton -->
+				<template v-if="dbLoading">
+					<div class="h-14 bg-slate-200 rounded-xl mb-6 animate-pulse" />
+					<div class="h-12 bg-slate-200 rounded-xl mb-5 animate-pulse" />
+					<div
+						class="bg-white rounded-3xl border border-slate-100 overflow-hidden"
+					>
+						<div
+							v-for="n in 5"
+							:key="n"
+							class="h-[72px] bg-slate-100 mx-6 my-3 rounded-xl animate-pulse"
+						/>
 					</div>
-					<button class="new-task-btn" @click="openAddModal">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2.5"
+				</template>
+
+				<!-- DB xato -->
+				<div
+					v-else-if="dbError"
+					class="flex items-start gap-4 bg-red-50 border border-red-200 rounded-2xl p-6"
+				>
+					<svg
+						class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+					>
+						<circle cx="12" cy="12" r="10" />
+						<line x1="12" y1="8" x2="12" y2="12" />
+						<line x1="12" y1="16" x2="12.01" y2="16" />
+					</svg>
+					<div>
+						<p class="text-[0.9rem] font-black text-red-700 mb-1">
+							Supabase ga ulanishda xato
+						</p>
+						<p class="text-[0.78rem] text-red-500 font-mono mb-3">
+							{{ dbError }}
+						</p>
+						<button
+							class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-lg text-[0.75rem] font-bold transition-colors cursor-pointer border-none"
+							@click="fetchTasks"
 						>
-							<line x1="12" y1="5" x2="12" y2="19" />
-							<line x1="5" y1="12" x2="19" y2="12" />
-						</svg>
-						Yangi task
-					</button>
+							Qayta urinish
+						</button>
+					</div>
 				</div>
 
-				<!-- Toolbar: search + filter -->
-				<div class="toolbar">
-					<div class="search-wrap">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-						>
-							<circle cx="11" cy="11" r="8" />
-							<line x1="21" y1="21" x2="16.65" y2="16.65" />
-						</svg>
-						<input
-							v-model="searchQuery"
-							type="text"
-							class="search-input"
-							placeholder="Task nomi yoki slug bo'yicha qidirish..."
-						/>
+				<template v-else>
+					<!-- Page header -->
+					<div class="flex items-center justify-between mb-6">
+						<div>
+							<p
+								class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-[0.12em] mb-1"
+							>
+								Kontent boshqaruvi
+							</p>
+							<h1
+								class="text-[1.75rem] font-black text-slate-900 tracking-tight leading-none"
+							>
+								Tasklar
+							</h1>
+						</div>
 						<button
-							v-if="searchQuery"
-							class="search-clear"
-							@click="searchQuery = ''"
+							class="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-800 text-white px-5 py-2.5 rounded-xl border-none cursor-pointer text-[0.78rem] font-black uppercase tracking-[0.08em] shadow-[0_4px_16px_rgba(26,86,219,0.3)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(26,86,219,0.4)] transition-all duration-200"
+							@click="openAddModal"
 						>
 							<svg
+								class="w-3.5 h-3.5"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.5"
+							>
+								<line x1="12" y1="5" x2="12" y2="19" />
+								<line x1="5" y1="12" x2="19" y2="12" />
+							</svg>
+							Yangi task
+						</button>
+					</div>
+
+					<!-- Toolbar -->
+					<div class="flex items-center gap-4 mb-5 flex-wrap">
+						<!-- Search -->
+						<div class="relative flex items-center flex-1 min-w-[240px]">
+							<svg
+								class="absolute left-3 w-[15px] h-[15px] text-slate-400 pointer-events-none"
 								viewBox="0 0 24 24"
 								fill="none"
 								stroke="currentColor"
 								stroke-width="2"
 							>
-								<line x1="18" y1="6" x2="6" y2="18" />
-								<line x1="6" y1="6" x2="18" y2="18" />
+								<circle cx="11" cy="11" r="8" />
+								<line x1="21" y1="21" x2="16.65" y2="16.65" />
 							</svg>
-						</button>
-					</div>
-
-					<div class="filter-tabs">
-						<button
-							v-for="f in [
-								{ key: 'all', label: 'Barchasi' },
-								{ key: 'published', label: 'Nashr' },
-								{ key: 'draft', label: 'Qoralama' },
-							]"
-							:key="f.key"
-							class="filter-tab"
-							:class="{ active: filterStatus === f.key }"
-							@click="filterStatus = f.key"
-						>
-							{{ f.label }}
-							<span class="filter-count">
-								{{
-									f.key === "all"
-										? tasks.length
-										: tasks.filter(t => t.status === f.key).length
-								}}
-							</span>
-						</button>
-					</div>
-				</div>
-
-				<!-- Table -->
-				<div class="table-card">
-					<div class="task-list">
-						<TransitionGroup name="tl">
-							<div
-								v-for="(task, i) in filteredTasks"
-								:key="task.slug"
-								class="task-row"
-								:style="{ animationDelay: `${i * 50}ms` }"
-							>
-								<div class="task-num">{{ String(i + 1).padStart(2, "0") }}</div>
-
-								<div class="task-info">
-									<div class="task-title-uz">{{ task.uz }}</div>
-									<div class="task-langs">
-										<span class="tlang"
-											><span class="ldot ru">RU</span>
-											{{ task.ru || "—" }}</span
-										>
-										<span class="tlang"
-											><span class="ldot en">EN</span>
-											{{ task.en || "—" }}</span
-										>
-									</div>
-								</div>
-
-								<div class="task-slug">{{ task.slug }}</div>
-								<div class="task-date">{{ formatDate(task.updatedAt) }}</div>
-
-								<div class="task-status">
-									<span :class="['status-badge', task.status]">
-										{{ task.status === "published" ? "Nashr" : "Qoralama" }}
-									</span>
-								</div>
-
-								<div class="task-actions">
-									<NuxtLink
-										:to="`/admin/tasks/${task.slug}`"
-										class="act-btn edit"
-									>
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path
-												d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-											/>
-											<path
-												d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
-											/>
-										</svg>
-										Tahrirlash
-									</NuxtLink>
-									<NuxtLink
-										:to="`/projects/${task.slug}`"
-										target="_blank"
-										class="act-btn view"
-									>
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path
-												d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
-											/>
-										</svg>
-										Ko'rish
-									</NuxtLink>
-									<button class="act-btn delete" @click="openDeleteModal(task)">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<polyline points="3 6 5 6 21 6" />
-											<path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-											<path d="M10 11v6M14 11v6" />
-										</svg>
-										O'chirish
-									</button>
-								</div>
-							</div>
-						</TransitionGroup>
-
-						<!-- Qidiruv natijasi bo'sh -->
-						<div v-if="filteredTasks.length === 0" class="empty-state">
-							<div class="empty-icon">
-								<svg
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="1.5"
-								>
-									<circle cx="11" cy="11" r="8" />
-									<line x1="21" y1="21" x2="16.65" y2="16.65" />
-								</svg>
-							</div>
-							<p class="empty-title">
-								{{ searchQuery ? `"${searchQuery}" topilmadi` : "Task yo'q" }}
-							</p>
-							<p class="empty-sub">
-								{{
-									searchQuery
-										? "Boshqa kalit so'z bilan qidiring"
-										: "Yangi task qo'shish uchun tugmani bosing"
-								}}
-							</p>
+							<input
+								v-model="searchQuery"
+								type="text"
+								placeholder="Task nomi yoki slug bo'yicha qidirish..."
+								class="w-full bg-white border-[1.5px] border-slate-100 focus:border-blue-600 rounded-xl py-2.5 pl-10 pr-9 text-[0.85rem] text-slate-900 outline-none placeholder:text-slate-300 transition-colors duration-200"
+							/>
 							<button
-								v-if="!searchQuery"
-								class="empty-btn"
-								@click="openAddModal"
+								v-if="searchQuery"
+								class="absolute right-2.5 bg-transparent border-none cursor-pointer text-slate-400 hover:text-slate-700 p-1 rounded transition-colors"
+								@click="searchQuery = ''"
 							>
-								Task qo'shish
-							</button>
-							<button v-else class="empty-btn" @click="searchQuery = ''">
-								Tozalash
-							</button>
-						</div>
-					</div>
-
-					<!-- Table footer -->
-					<div v-if="filteredTasks.length > 0" class="table-footer">
-						<span>{{ filteredTasks.length }} ta task ko'rsatilmoqda</span>
-						<div class="lang-pills">
-							<span class="lang-pill active">UZ</span>
-							<span class="lang-pill">RU</span>
-							<span class="lang-pill">EN</span>
-						</div>
-					</div>
-				</div>
-			</main>
-		</div>
-
-		<!-- ══ YANGI TASK MODAL ══ -->
-		<Transition name="overlay">
-			<div
-				v-if="showAddModal"
-				class="modal-overlay"
-				@click.self="closeAddModal"
-			>
-				<Transition name="mscale">
-					<div v-if="showAddModal" class="modal">
-						<div class="modal-header">
-							<div>
-								<h3 class="modal-title">Yangi task qo'shish</h3>
-								<p class="modal-sub">
-									Asosiy ma'lumotlarni kiriting, qolganini keyinchalik
-									to'ldirish mumkin
-								</p>
-							</div>
-							<button class="modal-close" @click="closeAddModal">
 								<svg
+									class="w-3.5 h-3.5"
 									viewBox="0 0 24 24"
 									fill="none"
 									stroke="currentColor"
@@ -490,29 +415,326 @@ async function handleDelete() {
 							</button>
 						</div>
 
-						<div class="modal-body">
-							<div class="mfield">
-								<label class="mfield-label"
-									><span class="ldot uz">UZ</span> O'zbekcha sarlavha
-									<span class="req">*</span></label
+						<!-- Filter tabs -->
+						<div
+							class="flex bg-white border-[1.5px] border-slate-100 rounded-xl overflow-hidden"
+						>
+							<button
+								v-for="f in [
+									{ key: 'all', label: 'Barchasi' },
+									{ key: 'published', label: 'Nashr' },
+									{ key: 'draft', label: 'Qoralama' },
+								]"
+								:key="f.key"
+								class="flex items-center gap-1.5 px-4 py-2 border-none cursor-pointer text-[0.75rem] font-bold transition-all duration-200 whitespace-nowrap"
+								:class="
+									filterStatus === f.key
+										? 'bg-[#05080f] text-blue-400'
+										: 'bg-transparent text-slate-400 hover:bg-slate-50 hover:text-slate-700'
+								"
+								@click="filterStatus = f.key"
+							>
+								{{ f.label }}
+								<span
+									class="px-1.5 py-0.5 rounded-md text-[0.65rem] font-black"
+									:class="
+										filterStatus === f.key
+											? 'bg-blue-400/15 text-blue-400'
+											: 'bg-black/[0.06] text-current'
+									"
 								>
+									{{
+										f.key === "all"
+											? tasks.length
+											: tasks.filter(t => t.status === f.key).length
+									}}
+								</span>
+							</button>
+						</div>
+					</div>
+
+					<!-- Table -->
+					<div
+						class="bg-white border border-slate-100 rounded-3xl overflow-hidden"
+					>
+						<div>
+							<TransitionGroup name="tl">
+								<div
+									v-for="(task, i) in filteredTasks"
+									:key="task.slug"
+									class="task-row items-center gap-4 px-7 py-[1.1rem] border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors duration-150"
+									:style="{ animationDelay: `${i * 50}ms` }"
+								>
+									<!-- Tartib raqami -->
+									<div
+										class="text-[0.75rem] font-black text-slate-300 tracking-[0.05em]"
+									>
+										{{ String(i + 1).padStart(2, "0") }}
+									</div>
+
+									<!-- Info -->
+									<div class="min-w-0">
+										<div
+											class="text-[0.9rem] font-black text-slate-900 truncate mb-1"
+										>
+											{{ task.uz }}
+										</div>
+										<div class="flex gap-2">
+											<span
+												class="flex items-center gap-1 text-[0.7rem] text-slate-400 font-medium truncate max-w-[130px]"
+											>
+												<span
+													class="inline-flex items-center justify-center w-5 h-3.5 rounded-[3px] bg-amber-100 text-amber-600 text-[0.55rem] font-black uppercase flex-shrink-0"
+													>RU</span
+												>
+												{{ task.ru || "—" }}
+											</span>
+											<span
+												class="flex items-center gap-1 text-[0.7rem] text-slate-400 font-medium truncate max-w-[130px]"
+											>
+												<span
+													class="inline-flex items-center justify-center w-5 h-3.5 rounded-[3px] bg-green-100 text-green-700 text-[0.55rem] font-black uppercase flex-shrink-0"
+													>EN</span
+												>
+												{{ task.en || "—" }}
+											</span>
+										</div>
+									</div>
+
+									<!-- Slug -->
+									<div
+										class="text-[0.72rem] font-bold text-slate-400 font-mono bg-slate-50 px-2.5 py-1 rounded-md truncate"
+									>
+										{{ task.slug }}
+									</div>
+
+									<!-- Sana -->
+									<div
+										class="text-[0.75rem] text-slate-400 font-semibold whitespace-nowrap"
+									>
+										{{ formatDate(task.updatedAt) }}
+									</div>
+
+									<!-- Status -->
+									<div>
+										<span
+											class="px-3 py-1 rounded-full text-[0.65rem] font-black uppercase tracking-[0.08em] whitespace-nowrap"
+											:class="
+												task.status === 'published'
+													? 'bg-green-50 text-green-600'
+													: 'bg-amber-50 text-amber-600'
+											"
+										>
+											{{ task.status === "published" ? "Nashr" : "Qoralama" }}
+										</span>
+									</div>
+
+									<!-- Amallar -->
+									<div class="flex gap-1.5">
+										<NuxtLink
+											:to="`/admin/tasks/${task.slug}`"
+											class="flex items-center gap-1 px-3 py-1.5 rounded-[9px] text-[0.68rem] font-black uppercase tracking-[0.04em] no-underline whitespace-nowrap transition-all duration-200 bg-[#05080f] text-blue-400 hover:bg-blue-600 hover:text-white"
+										>
+											<svg
+												class="w-3 h-3"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
+												<path
+													d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+												/>
+												<path
+													d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+												/>
+											</svg>
+											Tahrirlash
+										</NuxtLink>
+										<NuxtLink
+											:to="`/projects/${task.slug}`"
+											target="_blank"
+											class="flex items-center gap-1 px-3 py-1.5 rounded-[9px] text-[0.68rem] font-black uppercase tracking-[0.04em] no-underline whitespace-nowrap transition-all duration-200 bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+										>
+											<svg
+												class="w-3 h-3"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
+												<path
+													d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
+												/>
+											</svg>
+											Ko'rish
+										</NuxtLink>
+										<button
+											class="flex items-center gap-1 px-3 py-1.5 rounded-[9px] text-[0.68rem] font-black uppercase tracking-[0.04em] whitespace-nowrap transition-all duration-200 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border-none cursor-pointer"
+											@click="openDeleteModal(task)"
+										>
+											<svg
+												class="w-3 h-3"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2"
+											>
+												<polyline points="3 6 5 6 21 6" />
+												<path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+												<path d="M10 11v6M14 11v6" />
+											</svg>
+											O'chirish
+										</button>
+									</div>
+								</div>
+							</TransitionGroup>
+
+							<!-- Bo'sh holat -->
+							<div
+								v-if="filteredTasks.length === 0"
+								class="flex flex-col items-center justify-center py-16 text-center px-8"
+							>
+								<div
+									class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-4"
+								>
+									<svg
+										class="w-6 h-6 text-slate-300"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<circle cx="11" cy="11" r="8" />
+										<line x1="21" y1="21" x2="16.65" y2="16.65" />
+									</svg>
+								</div>
+								<p class="text-[1rem] font-black text-slate-700 mb-1.5">
+									{{ searchQuery ? `"${searchQuery}" topilmadi` : "Task yo'q" }}
+								</p>
+								<p class="text-[0.82rem] text-slate-400 mb-6">
+									{{
+										searchQuery
+											? "Boshqa kalit so'z bilan qidiring"
+											: "Yangi task qo'shish uchun tugmani bosing"
+									}}
+								</p>
+								<button
+									v-if="!searchQuery"
+									class="bg-[#05080f] text-blue-400 hover:bg-blue-600 hover:text-white px-6 py-2.5 rounded-xl border-none cursor-pointer text-[0.78rem] font-black uppercase tracking-[0.08em] transition-all duration-200"
+									@click="openAddModal"
+								>
+									Task qo'shish
+								</button>
+								<button
+									v-else
+									class="bg-[#05080f] text-blue-400 hover:bg-blue-600 hover:text-white px-6 py-2.5 rounded-xl border-none cursor-pointer text-[0.78rem] font-black uppercase tracking-[0.08em] transition-all duration-200"
+									@click="searchQuery = ''"
+								>
+									Tozalash
+								</button>
+							</div>
+						</div>
+
+						<!-- Table footer -->
+						<div
+							v-if="filteredTasks.length > 0"
+							class="flex items-center justify-between px-7 py-4 bg-slate-50 border-t border-slate-100 text-[0.72rem] text-slate-400 font-semibold"
+						>
+							<span>{{ filteredTasks.length }} ta task ko'rsatilmoqda</span>
+							<div class="flex gap-1.5">
+								<!-- <span
+									class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-[0.1em] bg-[#05080f] text-blue-400 border border-[#05080f]"
+									>UZ</span
+								>
+								<span
+									class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-[0.1em] border border-slate-200 text-slate-400"
+									>RU</span
+								>
+								<span
+									class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-[0.1em] border border-slate-200 text-slate-400"
+									>EN</span
+								> -->
+							</div>
+						</div>
+					</div>
+				</template>
+			</main>
+		</div>
+
+		<!-- ══ YANGI TASK MODAL ══ -->
+		<Transition name="overlay">
+			<div
+				v-if="showAddModal"
+				class="fixed inset-0 bg-[#05080f]/75 backdrop-blur-[8px] z-[500] flex items-center justify-center p-6"
+				@click.self="closeAddModal"
+			>
+				<Transition name="mscale">
+					<div
+						v-if="showAddModal"
+						class="bg-white rounded-3xl w-full max-w-[520px] shadow-[0_40px_100px_rgba(0,0,0,0.25)] overflow-hidden"
+					>
+						<div class="flex items-start justify-between p-7 pb-0 gap-4">
+							<div>
+								<h3 class="text-[1.15rem] font-black text-slate-900 mb-1">
+									Yangi task qo'shish
+								</h3>
+								<p
+									class="text-[0.78rem] text-slate-400 font-medium leading-relaxed"
+								>
+									Asosiy ma'lumotlarni kiriting, qolganini keyinchalik
+									to'ldirish mumkin
+								</p>
+							</div>
+							<button
+								class="w-8 h-8 rounded-lg border-none bg-slate-50 hover:bg-slate-100 cursor-pointer flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all flex-shrink-0"
+								@click="closeAddModal"
+							>
+								<svg
+									class="w-3.5 h-3.5"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+								>
+									<line x1="18" y1="6" x2="6" y2="18" />
+									<line x1="6" y1="6" x2="18" y2="18" />
+								</svg>
+							</button>
+						</div>
+
+						<div class="p-7 flex flex-col gap-4">
+							<!-- UZ -->
+							<div class="flex flex-col gap-1.5">
+								<label
+									class="flex items-center gap-1.5 text-[0.7rem] font-black text-slate-500 uppercase tracking-[0.12em]"
+								>
+									<span
+										class="inline-flex items-center justify-center w-5 h-3.5 rounded-[3px] bg-blue-100 text-blue-600 text-[0.55rem] font-black"
+										>UZ</span
+									>
+									O'zbekcha sarlavha <span class="text-red-500">*</span>
+								</label>
 								<input
 									v-model="addForm.uz"
 									type="text"
-									class="mfield-input"
-									placeholder="Masalan: Xaritalash va tahlil"
 									autofocus
+									placeholder="Masalan: Xaritalash va tahlil"
+									class="w-full bg-slate-50 border-[1.5px] border-slate-100 focus:border-blue-600 focus:bg-white rounded-xl px-4 py-3 text-[0.9rem] outline-none placeholder:text-slate-300 transition-all duration-200"
 								/>
 							</div>
 
-							<div class="mfield">
-								<label class="mfield-label">
+							<!-- Slug -->
+							<div class="flex flex-col gap-1.5">
+								<label
+									class="flex items-center gap-1.5 text-[0.7rem] font-black text-slate-500 uppercase tracking-[0.12em]"
+								>
 									<svg
+										class="w-3 h-3"
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"
 										stroke-width="2"
-										style="width: 13px; height: 13px"
 									>
 										<path
 											d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"
@@ -521,69 +743,105 @@ async function handleDelete() {
 											d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"
 										/>
 									</svg>
-									Slug <span class="req">*</span>
+									Slug <span class="text-red-500">*</span>
 								</label>
-								<div class="slug-wrap">
-									<span class="slug-prefix">/projects/</span>
+								<div
+									class="flex items-center bg-slate-50 border-[1.5px] border-slate-100 focus-within:border-blue-600 focus-within:bg-white rounded-xl overflow-hidden transition-all duration-200"
+								>
+									<span
+										class="px-4 py-3 text-[0.82rem] text-slate-400 font-semibold whitespace-nowrap font-mono border-r border-slate-100"
+										>/projects/</span
+									>
 									<input
 										v-model="addForm.slug"
 										type="text"
-										class="slug-input"
 										placeholder="xaritalash"
+										class="flex-1 bg-transparent border-none px-3 py-3 text-[0.9rem] font-mono text-slate-900 outline-none"
 									/>
 								</div>
-								<p class="mfield-hint">
+								<p class="text-[0.7rem] text-slate-400 font-medium">
 									Avtomatik to'ldiriladi. Faqat kichik harf, raqam, tire.
 								</p>
 							</div>
 
-							<div class="mfield">
-								<label class="mfield-label"
-									><span class="ldot ru">RU</span> Ruscha sarlavha</label
+							<!-- RU -->
+							<div class="flex flex-col gap-1.5">
+								<label
+									class="flex items-center gap-1.5 text-[0.7rem] font-black text-slate-500 uppercase tracking-[0.12em]"
 								>
+									<span
+										class="inline-flex items-center justify-center w-5 h-3.5 rounded-[3px] bg-amber-100 text-amber-600 text-[0.55rem] font-black"
+										>RU</span
+									>
+									Ruscha sarlavha
+								</label>
 								<input
 									v-model="addForm.ru"
 									type="text"
-									class="mfield-input"
 									placeholder="Масален: Картирование"
+									class="w-full bg-slate-50 border-[1.5px] border-slate-100 focus:border-blue-600 focus:bg-white rounded-xl px-4 py-3 text-[0.9rem] outline-none placeholder:text-slate-300 transition-all duration-200"
 								/>
 							</div>
 
-							<div class="mfield">
-								<label class="mfield-label"
-									><span class="ldot en">EN</span> Inglizcha sarlavha</label
+							<!-- EN -->
+							<div class="flex flex-col gap-1.5">
+								<label
+									class="flex items-center gap-1.5 text-[0.7rem] font-black text-slate-500 uppercase tracking-[0.12em]"
 								>
+									<span
+										class="inline-flex items-center justify-center w-5 h-3.5 rounded-[3px] bg-green-100 text-green-700 text-[0.55rem] font-black"
+										>EN</span
+									>
+									Inglizcha sarlavha
+								</label>
 								<input
 									v-model="addForm.en"
 									type="text"
-									class="mfield-input"
 									placeholder="Masalan: Mapping & Analysis"
+									class="w-full bg-slate-50 border-[1.5px] border-slate-100 focus:border-blue-600 focus:bg-white rounded-xl px-4 py-3 text-[0.9rem] outline-none placeholder:text-slate-300 transition-all duration-200"
 								/>
 							</div>
 
-							<div class="mfield">
-								<label class="mfield-label">Holat</label>
-								<div class="stoggle">
+							<!-- Status -->
+							<div class="flex flex-col gap-1.5">
+								<label
+									class="text-[0.7rem] font-black text-slate-500 uppercase tracking-[0.12em]"
+									>Holat</label
+								>
+								<div class="flex gap-2">
 									<button
-										class="stoggle-btn"
-										:class="{ active: addForm.status === 'draft' }"
+										class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-[1.5px] cursor-pointer text-[0.78rem] font-bold transition-all duration-200"
+										:class="
+											addForm.status === 'draft'
+												? 'border-blue-600 bg-blue-50 text-blue-600'
+												: 'border-slate-100 bg-slate-50 text-slate-400'
+										"
 										@click="addForm.status = 'draft'"
 									>
-										<span class="sdot amber" /> Qoralama
+										<span class="w-2 h-2 rounded-full bg-amber-400" /> Qoralama
 									</button>
 									<button
-										class="stoggle-btn"
-										:class="{ active: addForm.status === 'published' }"
+										class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-[1.5px] cursor-pointer text-[0.78rem] font-bold transition-all duration-200"
+										:class="
+											addForm.status === 'published'
+												? 'border-blue-600 bg-blue-50 text-blue-600'
+												: 'border-slate-100 bg-slate-50 text-slate-400'
+										"
 										@click="addForm.status = 'published'"
 									>
-										<span class="sdot green" /> Nashr
+										<span class="w-2 h-2 rounded-full bg-green-500" /> Nashr
 									</button>
 								</div>
 							</div>
 
+							<!-- Xato -->
 							<Transition name="err">
-								<div v-if="addError" class="merror">
+								<div
+									v-if="addError"
+									class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3.5 py-2.5 text-red-700 text-[0.78rem] font-semibold"
+								>
 									<svg
+										class="w-3.5 h-3.5 flex-shrink-0"
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"
@@ -598,31 +856,33 @@ async function handleDelete() {
 							</Transition>
 						</div>
 
-						<div class="modal-footer">
-							<button class="btn-cancel" @click="closeAddModal">
+						<div
+							class="flex gap-3 px-7 py-5 bg-slate-50 border-t border-slate-100"
+						>
+							<button
+								class="flex-1 py-2.5 rounded-xl border-[1.5px] border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 text-[0.78rem] font-bold cursor-pointer transition-all duration-200"
+								@click="closeAddModal"
+							>
 								Bekor qilish
 							</button>
 							<button
-								class="btn-submit"
+								class="flex-[2] flex items-center justify-center gap-2 py-2.5 rounded-xl border-none bg-gradient-to-r from-blue-600 to-blue-800 text-white text-[0.78rem] font-black cursor-pointer shadow-[0_4px_16px_rgba(26,86,219,0.3)] hover:shadow-[0_8px_20px_rgba(26,86,219,0.4)] hover:-translate-y-px disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
 								:disabled="addLoading"
 								@click="handleAdd"
 							>
-								<span
-									v-if="!addLoading"
-									style="display: flex; align-items: center; gap: 0.4rem"
-								>
+								<template v-if="!addLoading">
 									<svg
+										class="w-3.5 h-3.5"
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"
 										stroke-width="2.5"
-										style="width: 13px; height: 13px"
 									>
 										<line x1="12" y1="5" x2="12" y2="19" />
 										<line x1="5" y1="12" x2="19" y2="12" />
 									</svg>
 									Yaratish va tahrirlashga o'tish
-								</span>
+								</template>
 								<span v-else class="spinner" />
 							</button>
 						</div>
@@ -635,14 +895,20 @@ async function handleDelete() {
 		<Transition name="overlay">
 			<div
 				v-if="deleteTarget"
-				class="modal-overlay"
+				class="fixed inset-0 bg-[#05080f]/75 backdrop-blur-[8px] z-[500] flex items-center justify-center p-6"
 				@click.self="closeDeleteModal"
 			>
 				<Transition name="mscale">
-					<div v-if="deleteTarget" class="modal modal-sm">
-						<div class="modal-header">
-							<div class="del-icon">
+					<div
+						v-if="deleteTarget"
+						class="bg-white rounded-3xl w-full max-w-[420px] shadow-[0_40px_100px_rgba(0,0,0,0.25)] overflow-hidden"
+					>
+						<div class="flex items-start justify-between p-7 pb-0 gap-4">
+							<div
+								class="w-12 h-12 rounded-[14px] bg-red-50 flex items-center justify-center text-red-500 flex-shrink-0"
+							>
 								<svg
+									class="w-5 h-5"
 									viewBox="0 0 24 24"
 									fill="none"
 									stroke="currentColor"
@@ -655,8 +921,12 @@ async function handleDelete() {
 									/>
 								</svg>
 							</div>
-							<button class="modal-close" @click="closeDeleteModal">
+							<button
+								class="w-8 h-8 rounded-lg border-none bg-slate-50 hover:bg-slate-100 cursor-pointer flex items-center justify-center text-slate-400 hover:text-slate-700 transition-all flex-shrink-0 ml-auto"
+								@click="closeDeleteModal"
+							>
 								<svg
+									class="w-3.5 h-3.5"
 									viewBox="0 0 24 24"
 									fill="none"
 									stroke="currentColor"
@@ -667,39 +937,64 @@ async function handleDelete() {
 								</svg>
 							</button>
 						</div>
-						<div class="modal-body">
-							<h3 class="del-title">Taskni o'chirishni tasdiqlang</h3>
-							<p class="del-desc">
-								<strong>{{ deleteTarget.uz }}</strong> va uning barcha
-								tarjimalari (<code>{{ deleteTarget.slug }}</code
+						<div class="px-7 py-5">
+							<h3 class="text-[1.05rem] font-black text-slate-900 mb-3">
+								Taskni o'chirishni tasdiqlang
+							</h3>
+							<p class="text-[0.85rem] text-slate-500 leading-relaxed">
+								<strong class="text-slate-900">{{ deleteTarget.uz }}</strong> va
+								uning barcha tarjimalari (<code
+									class="bg-slate-100 px-1.5 py-0.5 rounded text-[0.8rem] text-slate-600"
+									>{{ deleteTarget.slug }}</code
 								>) o'chiriladi. Bu amalni qaytarib bo'lmaydi.
 							</p>
+							<Transition name="err">
+								<div
+									v-if="deleteError"
+									class="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3.5 py-2.5 text-red-700 text-[0.78rem] font-semibold mt-3"
+								>
+									<svg
+										class="w-3.5 h-3.5 flex-shrink-0"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<circle cx="12" cy="12" r="10" />
+										<line x1="12" y1="8" x2="12" y2="12" />
+										<line x1="12" y1="16" x2="12.01" y2="16" />
+									</svg>
+									{{ deleteError }}
+								</div>
+							</Transition>
 						</div>
-						<div class="modal-footer">
-							<button class="btn-cancel" @click="closeDeleteModal">
+						<div
+							class="flex gap-3 px-7 py-5 bg-slate-50 border-t border-slate-100"
+						>
+							<button
+								class="flex-1 py-2.5 rounded-xl border-[1.5px] border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 text-[0.78rem] font-bold cursor-pointer transition-all duration-200"
+								@click="closeDeleteModal"
+							>
 								Bekor qilish
 							</button>
 							<button
-								class="btn-delete"
+								class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-none bg-gradient-to-r from-red-600 to-red-700 text-white text-[0.78rem] font-black cursor-pointer shadow-[0_4px_16px_rgba(220,38,38,0.25)] hover:shadow-[0_8px_20px_rgba(220,38,38,0.35)] hover:-translate-y-px disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
 								:disabled="deleteLoading"
 								@click="handleDelete"
 							>
-								<span
-									v-if="!deleteLoading"
-									style="display: flex; align-items: center; gap: 0.4rem"
-								>
+								<template v-if="!deleteLoading">
 									<svg
+										class="w-3.5 h-3.5"
 										viewBox="0 0 24 24"
 										fill="none"
 										stroke="currentColor"
 										stroke-width="2.5"
-										style="width: 13px; height: 13px"
 									>
 										<polyline points="3 6 5 6 21 6" />
 										<path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
 									</svg>
 									Ha, o'chirish
-								</span>
+								</template>
 								<span v-else class="spinner" />
 							</button>
 						</div>
@@ -712,356 +1007,12 @@ async function handleDelete() {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;900&display=swap");
-* {
-	box-sizing: border-box;
-}
-.dash {
-	font-family: "DM Sans", sans-serif;
-	min-height: 100vh;
-	background: #f8fafc;
-	display: flex;
-	flex-direction: column;
-}
 
-.topbar {
-	height: 60px;
-	background: #05080f;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 1.5rem;
-	position: sticky;
-	top: 0;
-	z-index: 100;
-}
-.topbar-left {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-}
-.topbar-logo {
-	width: 34px;
-	height: 34px;
-	border-radius: 10px;
-	background: linear-gradient(135deg, #1a56db, #7c3aed);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.topbar-title {
-	color: #fff;
-	font-weight: 900;
-	font-size: 0.95rem;
-	letter-spacing: 0.03em;
-}
-.topbar-badge {
-	background: rgba(26, 86, 219, 0.25);
-	color: #60a5fa;
-	font-size: 0.6rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.15em;
-	padding: 0.2rem 0.6rem;
-	border-radius: 20px;
-	margin-left: 0.5rem;
-	border: 1px solid rgba(26, 86, 219, 0.3);
-}
-.topbar-right {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-}
-.topbar-user {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-.user-avatar {
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
-	background: linear-gradient(135deg, #1a56db, #7c3aed);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #fff;
-	font-size: 0.7rem;
-	font-weight: 900;
-}
-.user-name {
-	color: #94a3b8;
-	font-size: 0.8rem;
-	font-weight: 600;
-}
-.logout-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	background: none;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	color: #64748b;
-	padding: 0.4rem 0.9rem;
-	border-radius: 8px;
-	cursor: pointer;
-	font-size: 0.75rem;
-	font-weight: 700;
-	font-family: inherit;
-	transition: all 0.2s;
-}
-.logout-btn svg {
-	width: 14px;
-	height: 14px;
-}
-.logout-btn:hover {
-	color: #fff;
-	border-color: rgba(255, 255, 255, 0.2);
-}
-
-.dash-body {
-	display: flex;
-	flex: 1;
-	min-height: calc(100vh - 60px);
-}
-
-.sidebar {
-	width: 220px;
-	background: #05080f;
-	border-right: 1px solid rgba(255, 255, 255, 0.06);
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	padding: 1.5rem 1rem;
-	position: sticky;
-	top: 60px;
-	height: calc(100vh - 60px);
-}
-.sidebar-nav {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-}
-.nav-item {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	padding: 0.7rem 1rem;
-	border-radius: 12px;
-	color: #475569;
-	font-size: 0.8rem;
-	font-weight: 700;
-	text-decoration: none;
-	transition: all 0.2s;
-}
-.nav-item svg {
-	width: 16px;
-	height: 16px;
-}
-.nav-item:hover {
-	background: rgba(255, 255, 255, 0.05);
-	color: #94a3b8;
-}
-.nav-item.active {
-	background: rgba(26, 86, 219, 0.15);
-	color: #60a5fa;
-	border: 1px solid rgba(26, 86, 219, 0.2);
-}
-.sidebar-info {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	font-size: 0.65rem;
-	color: #1e3a5f;
-	font-weight: 700;
-}
-.info-dot {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: #1e3a5f;
-}
-
-.dash-main {
-	flex: 1;
-	padding: 2rem;
-	overflow-y: auto;
-}
-
-.page-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 1.5rem;
-}
-.page-eyebrow {
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: #94a3b8;
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
-	margin-bottom: 0.3rem;
-}
-.page-title {
-	font-size: 1.75rem;
-	font-weight: 900;
-	color: #0f172a;
-	letter-spacing: -0.03em;
-}
-.new-task-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	background: linear-gradient(135deg, #1a56db, #1e40af);
-	color: #fff;
-	padding: 0.65rem 1.25rem;
-	border-radius: 12px;
-	border: none;
-	cursor: pointer;
-	font-size: 0.78rem;
-	font-weight: 800;
-	font-family: inherit;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	box-shadow: 0 4px 16px rgba(26, 86, 219, 0.3);
-	transition: all 0.2s;
-}
-.new-task-btn svg {
-	width: 14px;
-	height: 14px;
-}
-.new-task-btn:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 24px rgba(26, 86, 219, 0.4);
-}
-
-/* TOOLBAR */
-.toolbar {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	margin-bottom: 1.25rem;
-	flex-wrap: wrap;
-}
-.search-wrap {
-	flex: 1;
-	min-width: 240px;
-	position: relative;
-	display: flex;
-	align-items: center;
-}
-.search-wrap > svg {
-	position: absolute;
-	left: 12px;
-	width: 15px;
-	height: 15px;
-	color: #94a3b8;
-	pointer-events: none;
-}
-.search-input {
-	width: 100%;
-	background: #fff;
-	border: 1.5px solid #f1f5f9;
-	border-radius: 12px;
-	padding: 0.65rem 2.5rem 0.65rem 2.5rem;
-	font-size: 0.85rem;
-	font-family: inherit;
-	color: #0f172a;
-	outline: none;
-	transition: border-color 0.2s;
-}
-.search-input:focus {
-	border-color: #1a56db;
-}
-.search-input::placeholder {
-	color: #cbd5e1;
-}
-.search-clear {
-	position: absolute;
-	right: 10px;
-	background: none;
-	border: none;
-	cursor: pointer;
-	color: #94a3b8;
-	display: flex;
-	align-items: center;
-	padding: 4px;
-	border-radius: 4px;
-	transition: color 0.2s;
-}
-.search-clear svg {
-	width: 13px;
-	height: 13px;
-}
-.search-clear:hover {
-	color: #334155;
-}
-
-.filter-tabs {
-	display: flex;
-	background: #fff;
-	border: 1.5px solid #f1f5f9;
-	border-radius: 12px;
-	overflow: hidden;
-}
-.filter-tab {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	padding: 0.55rem 1rem;
-	border: none;
-	background: none;
-	cursor: pointer;
-	font-size: 0.75rem;
-	font-weight: 700;
-	font-family: inherit;
-	color: #94a3b8;
-	transition: all 0.2s;
-	white-space: nowrap;
-}
-.filter-tab.active {
-	background: #05080f;
-	color: #60a5fa;
-}
-.filter-tab:not(.active):hover {
-	background: #f8fafc;
-	color: #334155;
-}
-.filter-count {
-	background: rgba(0, 0, 0, 0.06);
-	color: inherit;
-	padding: 0.1rem 0.4rem;
-	border-radius: 6px;
-	font-size: 0.65rem;
-	font-weight: 800;
-}
-.filter-tab.active .filter-count {
-	background: rgba(96, 165, 250, 0.15);
-	color: #60a5fa;
-}
-
-/* TABLE */
-.table-card {
-	background: #fff;
-	border: 1px solid #f1f5f9;
-	border-radius: 24px;
-	overflow: hidden;
-}
-
+/* Grid layout — Tailwind arbitrary values bilan murakkab */
 .task-row {
 	display: grid;
-	grid-template-columns: 44px 1fr 110px 110px 100px 250px;
-	align-items: center;
-	gap: 1rem;
-	padding: 1.1rem 1.75rem;
-	border-bottom: 1px solid #f8fafc;
-	transition: background 0.15s;
+	grid-template-columns: 44px 1fr 110px 110px 100px 300px;
 	animation: rowIn 0.5s ease both;
-}
-.task-row:last-child {
-	border-bottom: none;
-}
-.task-row:hover {
-	background: #f8fafc;
 }
 @keyframes rowIn {
 	from {
@@ -1073,6 +1024,8 @@ async function handleDelete() {
 		transform: none;
 	}
 }
+
+/* TransitionGroup animatsiyalar */
 .tl-enter-active {
 	transition: all 0.35s ease;
 }
@@ -1088,572 +1041,7 @@ async function handleDelete() {
 	transform: translateX(20px);
 }
 
-.task-num {
-	font-size: 0.75rem;
-	font-weight: 900;
-	color: #cbd5e1;
-	letter-spacing: 0.05em;
-}
-.task-info {
-	min-width: 0;
-}
-.task-title-uz {
-	font-size: 0.9rem;
-	font-weight: 800;
-	color: #0f172a;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	margin-bottom: 0.25rem;
-}
-.task-langs {
-	display: flex;
-	gap: 0.5rem;
-}
-.tlang {
-	display: flex;
-	align-items: center;
-	gap: 0.3rem;
-	font-size: 0.7rem;
-	color: #94a3b8;
-	font-weight: 500;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 130px;
-}
-.ldot {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 20px;
-	height: 14px;
-	border-radius: 3px;
-	font-size: 0.55rem;
-	font-weight: 900;
-	text-transform: uppercase;
-	flex-shrink: 0;
-}
-.ldot.uz {
-	background: #eff6ff;
-	color: #1a56db;
-}
-.ldot.ru {
-	background: #fef3c7;
-	color: #d97706;
-}
-.ldot.en {
-	background: #f0fdf4;
-	color: #16a34a;
-}
-
-.task-slug {
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: #94a3b8;
-	font-family: monospace;
-	background: #f8fafc;
-	padding: 0.25rem 0.6rem;
-	border-radius: 6px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-.task-date {
-	font-size: 0.75rem;
-	color: #94a3b8;
-	font-weight: 600;
-	white-space: nowrap;
-}
-.status-badge {
-	padding: 0.3rem 0.75rem;
-	border-radius: 20px;
-	font-size: 0.65rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	white-space: nowrap;
-}
-.status-badge.published {
-	background: #f0fdf4;
-	color: #16a34a;
-}
-.status-badge.draft {
-	background: #fffbeb;
-	color: #d97706;
-}
-
-.task-actions {
-	display: flex;
-	gap: 0.4rem;
-}
-.act-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.3rem;
-	padding: 0.4rem 0.75rem;
-	border-radius: 9px;
-	font-size: 0.68rem;
-	font-weight: 800;
-	text-decoration: none;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	transition: all 0.2s;
-	border: none;
-	cursor: pointer;
-	font-family: inherit;
-	white-space: nowrap;
-}
-.act-btn svg {
-	width: 11px;
-	height: 11px;
-}
-.act-btn.edit {
-	background: #05080f;
-	color: #60a5fa;
-}
-.act-btn.edit:hover {
-	background: #1a56db;
-	color: #fff;
-}
-.act-btn.view {
-	background: #f1f5f9;
-	color: #64748b;
-}
-.act-btn.view:hover {
-	background: #e2e8f0;
-	color: #334155;
-}
-.act-btn.delete {
-	background: #fff0f0;
-	color: #ef4444;
-}
-.act-btn.delete:hover {
-	background: #ef4444;
-	color: #fff;
-}
-
-.table-footer {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1rem 1.75rem;
-	background: #f8fafc;
-	border-top: 1px solid #f1f5f9;
-	font-size: 0.72rem;
-	color: #94a3b8;
-	font-weight: 600;
-}
-.lang-pills {
-	display: flex;
-	gap: 0.4rem;
-}
-.lang-pill {
-	padding: 0.25rem 0.65rem;
-	border-radius: 20px;
-	font-size: 0.6rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
-	border: 1px solid #e2e8f0;
-	color: #94a3b8;
-}
-.lang-pill.active {
-	background: #05080f;
-	color: #60a5fa;
-	border-color: #05080f;
-}
-
-.empty-state {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 4rem 2rem;
-	text-align: center;
-}
-.empty-icon {
-	width: 56px;
-	height: 56px;
-	border-radius: 16px;
-	background: #f8fafc;
-	border: 1px solid #f1f5f9;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-bottom: 1rem;
-}
-.empty-icon svg {
-	width: 24px;
-	height: 24px;
-	color: #cbd5e1;
-}
-.empty-title {
-	font-size: 1rem;
-	font-weight: 800;
-	color: #334155;
-	margin-bottom: 0.5rem;
-}
-.empty-sub {
-	font-size: 0.82rem;
-	color: #94a3b8;
-	margin-bottom: 1.5rem;
-}
-.empty-btn {
-	background: #05080f;
-	color: #60a5fa;
-	padding: 0.6rem 1.5rem;
-	border-radius: 10px;
-	border: none;
-	cursor: pointer;
-	font-size: 0.78rem;
-	font-weight: 800;
-	font-family: inherit;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	transition: all 0.2s;
-}
-.empty-btn:hover {
-	background: #1a56db;
-	color: #fff;
-}
-
-/* MODALS */
-.modal-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(5, 8, 15, 0.75);
-	backdrop-filter: blur(8px);
-	z-index: 500;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1.5rem;
-}
-.modal {
-	background: #fff;
-	border-radius: 24px;
-	width: 100%;
-	max-width: 520px;
-	box-shadow: 0 40px 100px rgba(0, 0, 0, 0.25);
-	overflow: hidden;
-}
-.modal-sm {
-	max-width: 420px;
-}
-.modal-header {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	padding: 1.75rem 1.75rem 0;
-	gap: 1rem;
-}
-.modal-title {
-	font-size: 1.15rem;
-	font-weight: 900;
-	color: #0f172a;
-	margin-bottom: 0.3rem;
-}
-.modal-sub {
-	font-size: 0.78rem;
-	color: #94a3b8;
-	font-weight: 500;
-	line-height: 1.5;
-}
-.modal-close {
-	width: 32px;
-	height: 32px;
-	border-radius: 8px;
-	border: none;
-	background: #f8fafc;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #94a3b8;
-	transition: all 0.2s;
-	flex-shrink: 0;
-}
-.modal-close svg {
-	width: 14px;
-	height: 14px;
-}
-.modal-close:hover {
-	background: #f1f5f9;
-	color: #334155;
-}
-.modal-body {
-	padding: 1.5rem 1.75rem;
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-}
-.modal-footer {
-	display: flex;
-	gap: 0.75rem;
-	padding: 1.25rem 1.75rem;
-	background: #f8fafc;
-	border-top: 1px solid #f1f5f9;
-}
-
-.mfield {
-	display: flex;
-	flex-direction: column;
-	gap: 0.45rem;
-}
-.mfield-label {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	font-size: 0.7rem;
-	font-weight: 800;
-	color: #64748b;
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
-}
-.req {
-	color: #ef4444;
-}
-.mfield-input {
-	width: 100%;
-	background: #f8fafc;
-	border: 1.5px solid #f1f5f9;
-	border-radius: 12px;
-	padding: 0.75rem 1rem;
-	font-size: 0.9rem;
-	font-family: inherit;
-	color: #0f172a;
-	outline: none;
-	transition:
-		border-color 0.2s,
-		background 0.2s;
-}
-.mfield-input:focus {
-	border-color: #1a56db;
-	background: #fff;
-}
-.mfield-input::placeholder {
-	color: #cbd5e1;
-}
-.mfield-hint {
-	font-size: 0.7rem;
-	color: #94a3b8;
-	font-weight: 500;
-}
-.slug-wrap {
-	display: flex;
-	align-items: center;
-	background: #f8fafc;
-	border: 1.5px solid #f1f5f9;
-	border-radius: 12px;
-	overflow: hidden;
-	transition: border-color 0.2s;
-}
-.slug-wrap:focus-within {
-	border-color: #1a56db;
-	background: #fff;
-}
-.slug-prefix {
-	padding: 0.75rem 0.5rem 0.75rem 1rem;
-	font-size: 0.82rem;
-	color: #94a3b8;
-	font-weight: 600;
-	white-space: nowrap;
-	font-family: monospace;
-}
-.slug-input {
-	flex: 1;
-	background: transparent;
-	border: none;
-	padding: 0.75rem 0.75rem 0.75rem 0;
-	font-size: 0.9rem;
-	font-family: monospace;
-	color: #0f172a;
-	outline: none;
-}
-.stoggle {
-	display: flex;
-	gap: 0.5rem;
-}
-.stoggle-btn {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 0.6rem;
-	border-radius: 10px;
-	border: 1.5px solid #f1f5f9;
-	background: #f8fafc;
-	cursor: pointer;
-	font-size: 0.78rem;
-	font-weight: 700;
-	font-family: inherit;
-	color: #94a3b8;
-	transition: all 0.2s;
-}
-.stoggle-btn.active {
-	border-color: #1a56db;
-	background: #eff6ff;
-	color: #1a56db;
-}
-.sdot {
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-}
-.sdot.amber {
-	background: #f59e0b;
-}
-.sdot.green {
-	background: #22c55e;
-}
-.merror {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	background: #fef2f2;
-	border: 1px solid #fecaca;
-	border-radius: 10px;
-	padding: 0.65rem 0.9rem;
-	color: #dc2626;
-	font-size: 0.78rem;
-	font-weight: 600;
-}
-.merror svg {
-	width: 14px;
-	height: 14px;
-	flex-shrink: 0;
-}
-.err-enter-active,
-.err-leave-active {
-	transition: all 0.25s;
-}
-.err-enter-from,
-.err-leave-to {
-	opacity: 0;
-	transform: translateY(-6px);
-}
-
-.btn-cancel {
-	flex: 1;
-	padding: 0.7rem;
-	border-radius: 10px;
-	border: 1.5px solid #e2e8f0;
-	background: #fff;
-	color: #64748b;
-	font-size: 0.78rem;
-	font-weight: 700;
-	font-family: inherit;
-	cursor: pointer;
-	transition: all 0.2s;
-}
-.btn-cancel:hover {
-	border-color: #cbd5e1;
-	color: #334155;
-}
-.btn-submit {
-	flex: 2;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 0.7rem;
-	border-radius: 10px;
-	border: none;
-	background: linear-gradient(135deg, #1a56db, #1e40af);
-	color: #fff;
-	font-size: 0.78rem;
-	font-weight: 800;
-	font-family: inherit;
-	cursor: pointer;
-	box-shadow: 0 4px 16px rgba(26, 86, 219, 0.3);
-	transition: all 0.2s;
-}
-.btn-submit:hover:not(:disabled) {
-	transform: translateY(-1px);
-	box-shadow: 0 8px 20px rgba(26, 86, 219, 0.4);
-}
-.btn-submit:disabled {
-	opacity: 0.7;
-	cursor: not-allowed;
-}
-.btn-delete {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 0.7rem;
-	border-radius: 10px;
-	border: none;
-	background: linear-gradient(135deg, #dc2626, #b91c1c);
-	color: #fff;
-	font-size: 0.78rem;
-	font-weight: 800;
-	font-family: inherit;
-	cursor: pointer;
-	box-shadow: 0 4px 16px rgba(220, 38, 38, 0.25);
-	transition: all 0.2s;
-}
-.btn-delete:hover:not(:disabled) {
-	transform: translateY(-1px);
-	box-shadow: 0 8px 20px rgba(220, 38, 38, 0.35);
-}
-.btn-delete:disabled {
-	opacity: 0.7;
-	cursor: not-allowed;
-}
-.spinner {
-	width: 16px;
-	height: 16px;
-	border: 2px solid rgba(255, 255, 255, 0.3);
-	border-top-color: #fff;
-	border-radius: 50%;
-	animation: spin 0.7s linear infinite;
-}
-@keyframes spin {
-	to {
-		transform: rotate(360deg);
-	}
-}
-
-.del-icon {
-	width: 48px;
-	height: 48px;
-	border-radius: 14px;
-	background: #fef2f2;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #ef4444;
-}
-.del-icon svg {
-	width: 22px;
-	height: 22px;
-}
-.del-title {
-	font-size: 1.05rem;
-	font-weight: 900;
-	color: #0f172a;
-	margin-bottom: 0.75rem;
-}
-.del-desc {
-	font-size: 0.85rem;
-	color: #64748b;
-	line-height: 1.6;
-}
-.del-desc strong {
-	color: #0f172a;
-}
-.del-desc code {
-	background: #f1f5f9;
-	padding: 0.1rem 0.4rem;
-	border-radius: 5px;
-	font-size: 0.8rem;
-	color: #475569;
-}
-
+/* Modal transitions */
 .overlay-enter-active,
 .overlay-leave-active {
 	transition: opacity 0.25s;
@@ -1674,12 +1062,38 @@ async function handleDelete() {
 	opacity: 0;
 }
 
+/* Error transition */
+.err-enter-active,
+.err-leave-active {
+	transition: all 0.25s;
+}
+.err-enter-from,
+.err-leave-to {
+	opacity: 0;
+	transform: translateY(-6px);
+}
+
+/* Spinner */
+.spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
 @media (max-width: 1100px) {
 	.task-row {
 		grid-template-columns: 44px 1fr 110px 200px;
 	}
-	.task-date,
-	.task-slug {
+	.task-row > :nth-child(3),
+	.task-row > :nth-child(4) {
 		display: none;
 	}
 }

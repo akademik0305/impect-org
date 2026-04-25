@@ -1,12 +1,28 @@
 <script setup>
-// definePageMeta({ middleware: 'admin-auth', layout: 'admin' })
+definePageMeta({ middleware: "admin-auth" })
 
 const route = useRoute()
 const slug = route.params.slug
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
+// ── HOLAT ─────────────────────────────────────────────────
+const dbLoading = ref(true)
+const dbError = ref(null)
 const saving = ref(false)
 const saved = ref(false)
+const saveError = ref(null)
+
 const activeLang = ref("uz")
+const taskStatus = ref("draft")
+const taskUpdatedAt = ref(null)
+
+// Rasm
+const imageUrl = ref(null)
+const imageUploading = ref(false)
+const imageError = ref(null)
+const fileInput = ref(null)
+const dragOver = ref(false)
 
 const LANGS = [
 	{ code: "uz", label: "O'zbekcha", flag: "🇺🇿" },
@@ -14,80 +30,173 @@ const LANGS = [
 	{ code: "en", label: "English", flag: "🇬🇧" },
 ]
 
-// 3 tildagi ma'lumotlar — keyinchalik Supabase dan keladi
 const formData = ref({
-	uz: {
-		title: "Xaritalash va tahlil",
-		desc: "Fergana va Surxondaryo viloyatlarida NNT va ayollar guruhlari faoliyatini xaritalash.",
-		sections: [
-			{
-				heading: "Maqsad",
-				text: "Viloyatlardagi NNTlarni aniqlash va faoliyatlarini tahlil qilish.",
-				list: [],
-			},
-			{
-				heading: "Jarayon",
-				text: "",
-				list: [
-					"Dala tadqiqotlari o'tkazish",
-					"Ma'lumotlar bazasini yaratish",
-					"Xaritalar tuzish",
-				],
-			},
-		],
-		results: [
-			"40+ NNT aniqlandi",
-			"2 ta viloyat qamrab olindi",
-			"Ma'lumotlar bazasi yaratildi",
-		],
-	},
-	ru: {
-		title: "Картирование и анализ",
-		desc: "Картирование деятельности НПО и женских групп в Ферганской и Сурхандарьинской областях.",
-		sections: [
-			{
-				heading: "Цель",
-				text: "Выявление НПО и анализ их деятельности в регионах.",
-				list: [],
-			},
-			{
-				heading: "Процесс",
-				text: "",
-				list: [
-					"Проведение полевых исследований",
-					"Создание базы данных",
-					"Составление карт",
-				],
-			},
-		],
-		results: ["Выявлено 40+ НПО", "Охвачено 2 области", "Создана база данных"],
-	},
-	en: {
-		title: "Mapping & Analysis",
-		desc: "Mapping NGO and women's group activities in Fergana and Surkhandarya regions.",
-		sections: [
-			{
-				heading: "Objective",
-				text: "Identifying NGOs and analyzing their activities in the regions.",
-				list: [],
-			},
-			{
-				heading: "Process",
-				text: "",
-				list: [
-					"Conducting field research",
-					"Creating a database",
-					"Drawing maps",
-				],
-			},
-		],
-		results: ["40+ NGOs identified", "2 regions covered", "Database created"],
-	},
+	uz: { title: "", desc: "", sections: [], results: [] },
+	ru: { title: "", desc: "", sections: [], results: [] },
+	en: { title: "", desc: "", sections: [], results: [] },
 })
 
 const currentData = computed(() => formData.value[activeLang.value])
 
-// Section helpers
+// ── SUPABASE: YUKLASH ─────────────────────────────────────
+async function fetchTask() {
+	dbLoading.value = true
+	dbError.value = null
+
+	const { data, error } = await supabase
+		.from("tasks")
+		.select("*")
+		.eq("slug", slug)
+		.single()
+
+	if (error) {
+		dbError.value = error.message
+	} else if (data) {
+		formData.value.uz = data.uz ?? {
+			title: "",
+			desc: "",
+			sections: [],
+			results: [],
+		}
+		formData.value.ru = data.ru ?? {
+			title: "",
+			desc: "",
+			sections: [],
+			results: [],
+		}
+		formData.value.en = data.en ?? {
+			title: "",
+			desc: "",
+			sections: [],
+			results: [],
+		}
+		taskStatus.value = data.status ?? "draft"
+		taskUpdatedAt.value = data.updated_at
+		imageUrl.value = data.image_url ?? null
+	}
+
+	dbLoading.value = false
+}
+
+onMounted(fetchTask)
+
+// ── RASM YUKLASH ──────────────────────────────────────────
+async function uploadImage(file) {
+	if (!file) return
+	if (!file.type.startsWith("image/")) {
+		imageError.value = "Faqat rasm fayllari qabul qilinadi (JPG, PNG, WebP)"
+		setTimeout(() => (imageError.value = null), 4000)
+		return
+	}
+	if (file.size > 5 * 1024 * 1024) {
+		imageError.value = "Fayl hajmi 5 MB dan oshmasligi kerak"
+		setTimeout(() => (imageError.value = null), 4000)
+		return
+	}
+
+	imageUploading.value = true
+	imageError.value = null
+
+	// Avvalgi rasmni o'chirish
+	if (imageUrl.value) {
+		const oldPath = imageUrl.value.split("/task-images/")[1]
+		if (oldPath) await supabase.storage.from("task-images").remove([oldPath])
+	}
+
+	const ext = file.name.split(".").pop()
+	const fileName = `${slug}-${Date.now()}.${ext}`
+
+	const { error: uploadError } = await supabase.storage
+		.from("task-images")
+		.upload(fileName, file, { upsert: true, contentType: file.type })
+
+	if (uploadError) {
+		imageError.value = uploadError.message
+		imageUploading.value = false
+		return
+	}
+
+	const { data: urlData } = supabase.storage
+		.from("task-images")
+		.getPublicUrl(fileName)
+
+	imageUrl.value = urlData.publicUrl
+
+	// Bazaga yozish
+	await supabase
+		.from("tasks")
+		.update({ image_url: imageUrl.value })
+		.eq("slug", slug)
+
+	imageUploading.value = false
+}
+
+async function removeImage() {
+	if (!imageUrl.value) return
+	const path = imageUrl.value.split("/task-images/")[1]
+	if (path) await supabase.storage.from("task-images").remove([path])
+	await supabase.from("tasks").update({ image_url: null }).eq("slug", slug)
+	imageUrl.value = null
+}
+
+function onFileChange(e) {
+	uploadImage(e.target.files[0])
+	e.target.value = ""
+}
+
+function onDrop(e) {
+	dragOver.value = false
+	uploadImage(e.dataTransfer.files[0])
+}
+
+// ── SAQLASH ───────────────────────────────────────────────
+async function handleSave() {
+	saving.value = true
+	saveError.value = null
+
+	const { error } = await supabase.from("tasks").upsert(
+		{
+			slug,
+			status: taskStatus.value,
+			uz: formData.value.uz,
+			ru: formData.value.ru,
+			en: formData.value.en,
+			image_url: imageUrl.value,
+			updated_at: new Date().toISOString(),
+		},
+		{ onConflict: "slug" },
+	)
+
+	saving.value = false
+
+	if (error) {
+		saveError.value = error.message
+		setTimeout(() => (saveError.value = null), 5000)
+		return
+	}
+
+	taskUpdatedAt.value = new Date().toISOString()
+	saved.value = true
+	setTimeout(() => (saved.value = false), 3000)
+}
+
+function formatDate(d) {
+	if (!d) return "—"
+	return new Date(d).toLocaleDateString("uz-UZ", {
+		day: "2-digit",
+		month: "short",
+		year: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	})
+}
+
+async function logout() {
+	await supabase.auth.signOut()
+	await navigateTo("/admin/login")
+}
+
+// ── SECTION HELPERS ───────────────────────────────────────
 function addSection(lang) {
 	formData.value[lang].sections.push({ heading: "", text: "", list: [] })
 }
@@ -107,9 +216,9 @@ function removeResult(lang, i) {
 	formData.value[lang].results.splice(i, 1)
 }
 
-// Completion check per lang
 function langCompletion(lang) {
 	const d = formData.value[lang]
+	if (!d) return 0
 	const filled = [
 		d.title,
 		d.desc,
@@ -117,49 +226,7 @@ function langCompletion(lang) {
 		...d.sections.map(s => s.heading),
 	].filter(Boolean).length
 	const total = 2 + d.results.length + d.sections.length
-	return Math.round((filled / total) * 100)
-}
-
-const supabase = useSupabaseClient()
-
-// Yuklash
-onMounted(async () => {
-	const { data } = await supabase
-		.from("tasks")
-		.select("*")
-		.eq("slug", slug)
-		.single()
-
-	if (data) {
-		formData.value.uz = data.uz
-		formData.value.ru = data.ru
-		formData.value.en = data.en
-	}
-})
-
-// Saqlash
-async function handleSave() {
-	saving.value = true
-
-	const { error } = await supabase.from("tasks").upsert(
-		{
-			slug,
-			uz: formData.value.uz,
-			ru: formData.value.ru,
-			en: formData.value.en,
-		},
-		{ onConflict: "slug" },
-	)
-
-	saving.value = false
-
-	if (error) {
-		alert("Xatolik: " + error.message)
-		return
-	}
-
-	saved.value = true
-	setTimeout(() => (saved.value = false), 3000)
+	return total === 0 ? 0 : Math.round((filled / total) * 100)
 }
 </script>
 
@@ -179,7 +246,13 @@ async function handleSave() {
 				</div>
 			</div>
 			<div class="topbar-right">
-				<NuxtLink to="/admin" class="back-link">
+				<div class="topbar-user">
+					<div class="user-avatar">
+						{{ user?.email?.[0]?.toUpperCase() ?? "A" }}
+					</div>
+					<span class="user-name">{{ user?.email ?? "Admin" }}</span>
+				</div>
+				<NuxtLink to="/admin/tasks" class="back-link">
 					<svg
 						viewBox="0 0 24 24"
 						fill="none"
@@ -188,18 +261,32 @@ async function handleSave() {
 					>
 						<path d="M19 12H5M12 5l-7 7 7 7" />
 					</svg>
-					Dashboard
+					Tasklar
 				</NuxtLink>
+				<Transition name="err">
+					<div v-if="saveError" class="save-error-toast">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<circle cx="12" cy="12" r="10" />
+							<line x1="12" y1="8" x2="12" y2="12" />
+							<line x1="12" y1="16" x2="12.01" y2="16" />
+						</svg>
+						{{ saveError }}
+					</div>
+				</Transition>
 				<button
 					class="save-btn"
 					:class="{ saving, saved }"
-					:disabled="saving"
+					:disabled="saving || dbLoading"
 					@click="handleSave"
 				>
-					<template v-if="saving">
-						<span class="btn-spinner" />
-						Saqlanmoqda...
-					</template>
+					<template v-if="saving"
+						><span class="btn-spinner" /> Saqlanmoqda...</template
+					>
 					<template v-else-if="saved">
 						<svg
 							viewBox="0 0 24 24"
@@ -231,40 +318,47 @@ async function handleSave() {
 		</header>
 
 		<div class="edit-body">
-			<!-- LEFT: form -->
 			<div class="edit-main">
-				<!-- Page title -->
-				<div class="edit-page-header">
-					<div class="edit-slug-badge">{{ slug }}</div>
-					<h1 class="edit-page-title">Taskni tahrirlash</h1>
-					<p class="edit-page-sub">3 tilda kontent kiritish</p>
-				</div>
+				<!-- Loading -->
+				<template v-if="dbLoading">
+					<div class="skeleton-title" />
+					<div class="skeleton-image" />
+					<div class="skeleton-tabs" />
+					<div class="skeleton-panel">
+						<div v-for="n in 3" :key="n" class="skeleton-block" />
+					</div>
+				</template>
 
-				<!-- Lang tabs -->
-				<div class="lang-tabs">
-					<button
-						v-for="lang in LANGS"
-						:key="lang.code"
-						class="lang-tab"
-						:class="{ active: activeLang === lang.code }"
-						@click="activeLang = lang.code"
+				<!-- DB xato -->
+				<div v-else-if="dbError" class="db-error">
+					<svg
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
 					>
-						<span class="lang-flag">{{ lang.flag }}</span>
-						<span class="lang-label">{{ lang.label }}</span>
-						<span
-							class="lang-progress"
-							:style="{ '--p': langCompletion(lang.code) + '%' }"
-						>
-							{{ langCompletion(lang.code) }}%
-						</span>
-					</button>
+						<circle cx="12" cy="12" r="10" />
+						<line x1="12" y1="8" x2="12" y2="12" />
+						<line x1="12" y1="16" x2="12.01" y2="16" />
+					</svg>
+					<div>
+						<p class="db-error-title">Taskni yuklashda xato</p>
+						<p class="db-error-msg">{{ dbError }}</p>
+						<button class="retry-btn" @click="fetchTask">Qayta urinish</button>
+					</div>
 				</div>
 
-				<!-- Form panels — transition on lang switch -->
-				<Transition name="panel" mode="out-in">
-					<div :key="activeLang" class="form-panel">
-						<!-- Title -->
-						<div class="form-group">
+				<template v-else>
+					<!-- Page header -->
+					<div class="edit-page-header">
+						<div class="edit-slug-badge">{{ slug }}</div>
+						<h1 class="edit-page-title">Taskni tahrirlash</h1>
+						<p class="edit-page-sub">3 tilda kontent kiritish</p>
+					</div>
+
+					<!-- ══ RASM YUKLASH ══ -->
+					<div class="form-group">
+						<div class="group-header">
 							<label class="form-label">
 								<svg
 									viewBox="0 0 24 24"
@@ -272,44 +366,151 @@ async function handleSave() {
 									stroke="currentColor"
 									stroke-width="2"
 								>
-									<path d="M4 6h16M4 12h8M4 18h16" />
+									<rect x="3" y="3" width="18" height="18" rx="2" />
+									<circle cx="8.5" cy="8.5" r="1.5" />
+									<polyline points="21 15 16 10 5 21" />
 								</svg>
-								Sarlavha
+								Asosiy rasm
 							</label>
-							<input
-								v-model="formData[activeLang].title"
-								type="text"
-								class="form-input"
-								:placeholder="`Sarlavha (${activeLang.toUpperCase()})`"
-							/>
+							<span class="img-hint"
+								>JPG · PNG · WebP &nbsp;·&nbsp; max 5 MB</span
+							>
 						</div>
 
-						<!-- Desc -->
-						<div class="form-group">
-							<label class="form-label">
+						<!-- Rasm bor -->
+						<div v-if="imageUrl" class="img-preview-wrap">
+							<img :src="imageUrl" class="img-preview" alt="Task rasmi" />
+							<!-- Overlay tugmalar -->
+							<div class="img-overlay">
+								<button class="img-btn replace" @click="fileInput.click()">
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+										<polyline points="17 8 12 3 7 8" />
+										<line x1="12" y1="3" x2="12" y2="15" />
+									</svg>
+									Almashtirish
+								</button>
+								<button class="img-btn del" @click="removeImage">
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<polyline points="3 6 5 6 21 6" />
+										<path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+									</svg>
+									O'chirish
+								</button>
+							</div>
+							<!-- Yuklash overlay -->
+							<div v-if="imageUploading" class="img-uploading">
+								<span class="spin-lg" />
+								<span>Yuklanmoqda...</span>
+							</div>
+						</div>
+
+						<!-- Rasm yo'q — drag zone -->
+						<div
+							v-else
+							class="upload-zone"
+							:class="{ 'dz-over': dragOver, 'dz-loading': imageUploading }"
+							@click="!imageUploading && fileInput.click()"
+							@dragover.prevent="dragOver = true"
+							@dragleave.prevent="dragOver = false"
+							@drop.prevent="onDrop"
+						>
+							<template v-if="!imageUploading">
+								<div class="uz-icon">
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.5"
+									>
+										<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+										<polyline points="17 8 12 3 7 8" />
+										<line x1="12" y1="3" x2="12" y2="15" />
+									</svg>
+								</div>
+								<p class="uz-title">Rasm yuklash</p>
+								<p class="uz-sub">Bosing yoki bu yerga sudrab tashlang</p>
+							</template>
+							<template v-else>
+								<span class="spin-lg" />
+								<p class="uz-title">Yuklanmoqda...</p>
+							</template>
+						</div>
+
+						<input
+							ref="fileInput"
+							type="file"
+							accept="image/*"
+							style="display: none"
+							@change="onFileChange"
+						/>
+
+						<Transition name="err">
+							<div v-if="imageError" class="img-err">
 								<svg
 									viewBox="0 0 24 24"
 									fill="none"
 									stroke="currentColor"
 									stroke-width="2"
 								>
-									<path
-										d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
-									/>
+									<circle cx="12" cy="12" r="10" />
+									<line x1="12" y1="8" x2="12" y2="12" />
+									<line x1="12" y1="16" x2="12.01" y2="16" />
 								</svg>
-								Qisqacha tavsif
-							</label>
-							<textarea
-								v-model="formData[activeLang].desc"
-								rows="3"
-								class="form-input form-textarea"
-								:placeholder="`Qisqacha tavsif (${activeLang.toUpperCase()})`"
-							/>
-						</div>
+								{{ imageError }}
+							</div>
+						</Transition>
+					</div>
 
-						<!-- Sections -->
-						<div class="form-group">
-							<div class="group-header">
+					<!-- Lang tabs -->
+					<div class="lang-tabs">
+						<button
+							v-for="lang in LANGS"
+							:key="lang.code"
+							class="lang-tab"
+							:class="{ active: activeLang === lang.code }"
+							@click="activeLang = lang.code"
+						>
+							<span class="lang-flag">{{ lang.flag }}</span>
+							<span>{{ lang.label }}</span>
+							<span class="lang-pct">{{ langCompletion(lang.code) }}%</span>
+						</button>
+					</div>
+
+					<!-- Form panels -->
+					<Transition name="panel" mode="out-in">
+						<div :key="activeLang" class="form-panel">
+							<div class="form-group">
+								<label class="form-label">
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+									>
+										<path d="M4 6h16M4 12h8M4 18h16" />
+									</svg>
+									Sarlavha
+								</label>
+								<input
+									v-model="formData[activeLang].title"
+									type="text"
+									class="form-input"
+									:placeholder="`Sarlavha (${activeLang.toUpperCase()})`"
+								/>
+							</div>
+
+							<div class="form-group">
 								<label class="form-label">
 									<svg
 										viewBox="0 0 24 24"
@@ -318,83 +519,66 @@ async function handleSave() {
 										stroke-width="2"
 									>
 										<path
-											d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+											d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"
 										/>
-										<polyline points="14 2 14 8 20 8" />
 									</svg>
-									Bo'limlar
+									Qisqacha tavsif
 								</label>
-								<button class="add-btn" @click="addSection(activeLang)">
-									<svg
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2.5"
-									>
-										<line x1="12" y1="5" x2="12" y2="19" />
-										<line x1="5" y1="12" x2="19" y2="12" />
-									</svg>
-									Bo'lim qo'shish
-								</button>
+								<textarea
+									v-model="formData[activeLang].desc"
+									rows="3"
+									class="form-input form-textarea"
+									:placeholder="`Qisqacha tavsif (${activeLang.toUpperCase()})`"
+								/>
 							</div>
 
-							<div class="sections-list">
-								<div
-									v-for="(section, si) in formData[activeLang].sections"
-									:key="si"
-									class="section-block"
-								>
-									<div class="section-header">
-										<span class="section-num">{{ si + 1 }}</span>
-										<input
-											v-model="section.heading"
-											type="text"
-											class="section-heading-input"
-											placeholder="Bo'lim sarlavhasi..."
-										/>
-										<button
-											class="remove-btn"
-											@click="removeSection(activeLang, si)"
+							<!-- Sections -->
+							<div class="form-group">
+								<div class="group-header">
+									<label class="form-label">
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
 										>
-											<svg
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<polyline points="3 6 5 6 21 6" />
-												<path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
-												<path
-													d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"
-												/>
-											</svg>
-										</button>
-									</div>
-
-									<textarea
-										v-model="section.text"
-										rows="2"
-										class="form-input form-textarea section-text"
-										placeholder="Matn (ixtiyoriy)..."
-									/>
-
-									<!-- List items -->
-									<div class="list-items">
-										<div
-											v-for="(item, li) in section.list"
-											:key="li"
-											class="list-item-row"
+											<path
+												d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+											/>
+											<polyline points="14 2 14 8 20 8" />
+										</svg>
+										Bo'limlar
+									</label>
+									<button class="add-btn" @click="addSection(activeLang)">
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2.5"
 										>
-											<span class="list-dot" />
+											<line x1="12" y1="5" x2="12" y2="19" />
+											<line x1="5" y1="12" x2="19" y2="12" />
+										</svg>
+										Bo'lim qo'shish
+									</button>
+								</div>
+								<div class="sections-list">
+									<div
+										v-for="(section, si) in formData[activeLang].sections"
+										:key="si"
+										class="section-block"
+									>
+										<div class="section-header">
+											<span class="section-num">{{ si + 1 }}</span>
 											<input
-												v-model="section.list[li]"
+												v-model="section.heading"
 												type="text"
-												class="list-input"
-												placeholder="Ro'yxat elementi..."
+												class="section-heading-input"
+												placeholder="Bo'lim sarlavhasi..."
 											/>
 											<button
-												class="icon-btn red"
-												@click="removeListItem(activeLang, si, li)"
+												class="remove-btn"
+												@click="removeSection(activeLang, si)"
 											>
 												<svg
 													viewBox="0 0 24 24"
@@ -402,14 +586,119 @@ async function handleSave() {
 													stroke="currentColor"
 													stroke-width="2"
 												>
-													<line x1="18" y1="6" x2="6" y2="18" />
-													<line x1="6" y1="6" x2="18" y2="18" />
+													<polyline points="3 6 5 6 21 6" />
+													<path
+														d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"
+													/>
+													<path
+														d="M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"
+													/>
 												</svg>
 											</button>
 										</div>
+										<textarea
+											v-model="section.text"
+											rows="2"
+											class="form-input form-textarea section-text"
+											placeholder="Matn (ixtiyoriy)..."
+										/>
+										<div class="list-items">
+											<div
+												v-for="(item, li) in section.list"
+												:key="li"
+												class="list-item-row"
+											>
+												<span class="list-dot" />
+												<input
+													v-model="section.list[li]"
+													type="text"
+													class="list-input"
+													placeholder="Ro'yxat elementi..."
+												/>
+												<button
+													class="icon-btn red"
+													@click="removeListItem(activeLang, si, li)"
+												>
+													<svg
+														viewBox="0 0 24 24"
+														fill="none"
+														stroke="currentColor"
+														stroke-width="2"
+													>
+														<line x1="18" y1="6" x2="6" y2="18" />
+														<line x1="6" y1="6" x2="18" y2="18" />
+													</svg>
+												</button>
+											</div>
+											<button
+												class="add-list-btn"
+												@click="addListItem(activeLang, si)"
+											>
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+												>
+													<line x1="12" y1="5" x2="12" y2="19" />
+													<line x1="5" y1="12" x2="19" y2="12" />
+												</svg>
+												Element qo'shish
+											</button>
+										</div>
+									</div>
+									<div
+										v-if="!formData[activeLang].sections.length"
+										class="empty-sections"
+									>
+										<p>Bo'lim yo'q. "Bo'lim qo'shish" tugmasini bosing.</p>
+									</div>
+								</div>
+							</div>
+
+							<!-- Results -->
+							<div class="form-group">
+								<div class="group-header">
+									<label class="form-label">
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
+											<polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+										</svg>
+										Natijalar (sidebar)
+									</label>
+									<button class="add-btn" @click="addResult(activeLang)">
+										<svg
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2.5"
+										>
+											<line x1="12" y1="5" x2="12" y2="19" />
+											<line x1="5" y1="12" x2="19" y2="12" />
+										</svg>
+										Natija qo'shish
+									</button>
+								</div>
+								<div class="results-list">
+									<div
+										v-for="(result, ri) in formData[activeLang].results"
+										:key="ri"
+										class="result-row"
+									>
+										<span class="result-num">{{ ri + 1 }}</span>
+										<input
+											v-model="formData[activeLang].results[ri]"
+											type="text"
+											class="list-input"
+											placeholder="Natija matni..."
+										/>
 										<button
-											class="add-list-btn"
-											@click="addListItem(activeLang, si)"
+											class="icon-btn red"
+											@click="removeResult(activeLang, ri)"
 										>
 											<svg
 												viewBox="0 0 24 24"
@@ -417,92 +706,25 @@ async function handleSave() {
 												stroke="currentColor"
 												stroke-width="2"
 											>
-												<line x1="12" y1="5" x2="12" y2="19" />
-												<line x1="5" y1="12" x2="19" y2="12" />
+												<line x1="18" y1="6" x2="6" y2="18" />
+												<line x1="6" y1="6" x2="18" y2="18" />
 											</svg>
-											Element qo'shish
 										</button>
 									</div>
-								</div>
-
-								<div
-									v-if="!formData[activeLang].sections.length"
-									class="empty-sections"
-								>
-									<p>Bo'lim yo'q. "Bo'lim qo'shish" tugmasini bosing.</p>
+									<div
+										v-if="!formData[activeLang].results.length"
+										class="empty-sections"
+									>
+										<p>Natija yo'q.</p>
+									</div>
 								</div>
 							</div>
 						</div>
-
-						<!-- Results -->
-						<div class="form-group">
-							<div class="group-header">
-								<label class="form-label">
-									<svg
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-									>
-										<polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-									</svg>
-									Natijalar (sidebar)
-								</label>
-								<button class="add-btn" @click="addResult(activeLang)">
-									<svg
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2.5"
-									>
-										<line x1="12" y1="5" x2="12" y2="19" />
-										<line x1="5" y1="12" x2="19" y2="12" />
-									</svg>
-									Natija qo'shish
-								</button>
-							</div>
-
-							<div class="results-list">
-								<div
-									v-for="(result, ri) in formData[activeLang].results"
-									:key="ri"
-									class="result-row"
-								>
-									<span class="result-num">{{ ri + 1 }}</span>
-									<input
-										v-model="formData[activeLang].results[ri]"
-										type="text"
-										class="list-input"
-										placeholder="Natija matni..."
-									/>
-									<button
-										class="icon-btn red"
-										@click="removeResult(activeLang, ri)"
-									>
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<line x1="18" y1="6" x2="6" y2="18" />
-											<line x1="6" y1="6" x2="18" y2="18" />
-										</svg>
-									</button>
-								</div>
-								<div
-									v-if="!formData[activeLang].results.length"
-									class="empty-sections"
-								>
-									<p>Natija yo'q.</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</Transition>
+					</Transition>
+				</template>
 			</div>
 
-			<!-- RIGHT: preview sidebar -->
+			<!-- SIDEBAR -->
 			<aside class="edit-sidebar">
 				<div class="preview-card">
 					<div class="preview-header">
@@ -526,13 +748,35 @@ async function handleSave() {
 						</NuxtLink>
 					</div>
 
-					<div class="preview-body">
+					<!-- Rasm thumbnail -->
+					<div class="sidebar-img-wrap">
+						<img
+							v-if="imageUrl"
+							:src="imageUrl"
+							class="sidebar-img"
+							alt="preview"
+						/>
+						<div v-else class="sidebar-img-empty">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+							>
+								<rect x="3" y="3" width="18" height="18" rx="2" />
+								<circle cx="8.5" cy="8.5" r="1.5" />
+								<polyline points="21 15 16 10 5 21" />
+							</svg>
+							<span>Rasm yuklanmagan</span>
+						</div>
+					</div>
+
+					<div v-if="!dbLoading" class="preview-body">
 						<div class="preview-title">{{ currentData.title || "—" }}</div>
 						<p class="preview-desc">
 							{{ currentData.desc || "Tavsif yo'q..." }}
 						</p>
-
-						<div v-if="currentData.results.length" class="preview-results">
+						<div v-if="currentData.results?.length" class="preview-results">
 							<p class="preview-results-label">Natijalar:</p>
 							<div
 								v-for="(r, i) in currentData.results"
@@ -546,9 +790,8 @@ async function handleSave() {
 					</div>
 				</div>
 
-				<!-- All langs completion -->
 				<div class="completion-card">
-					<p class="completion-title">Toʻldirilganlik</p>
+					<p class="completion-title">To'ldirilganlik</p>
 					<div v-for="lang in LANGS" :key="lang.code" class="completion-row">
 						<span class="completion-flag">{{ lang.flag }}</span>
 						<div class="completion-bar-wrap">
@@ -563,19 +806,48 @@ async function handleSave() {
 					</div>
 				</div>
 
-				<!-- Slug info -->
 				<div class="meta-card">
 					<div class="meta-row">
 						<span class="meta-key">Slug</span>
 						<code class="meta-val">{{ slug }}</code>
 					</div>
 					<div class="meta-row">
+						<span class="meta-key">Rasm</span>
+						<span
+							class="meta-val"
+							:style="{ color: imageUrl ? '#16a34a' : '#94a3b8' }"
+						>
+							{{ imageUrl ? "Yuklangan ✓" : "Yuklanmagan" }}
+						</span>
+					</div>
+					<div class="meta-row">
 						<span class="meta-key">Holat</span>
-						<span class="status-badge published">Nashr</span>
+						<div class="status-toggle">
+							<button
+								class="stoggle-btn"
+								:class="{ active: taskStatus === 'draft' }"
+								:disabled="dbLoading"
+								@click="taskStatus = 'draft'"
+							>
+								<span class="sdot amber" /> Qoralama
+							</button>
+							<button
+								class="stoggle-btn"
+								:class="{ active: taskStatus === 'published' }"
+								:disabled="dbLoading"
+								@click="taskStatus = 'published'"
+							>
+								<span class="sdot green" /> Nashr
+							</button>
+						</div>
 					</div>
 					<div class="meta-row">
 						<span class="meta-key">Tillar</span>
 						<span class="meta-val">UZ · RU · EN</span>
+					</div>
+					<div class="meta-row">
+						<span class="meta-key">Yangilangan</span>
+						<span class="meta-val">{{ formatDate(taskUpdatedAt) }}</span>
 					</div>
 				</div>
 			</aside>
@@ -596,7 +868,6 @@ async function handleSave() {
 	flex-direction: column;
 }
 
-/* TOPBAR */
 .topbar {
 	height: 60px;
 	background: #05080f;
@@ -646,6 +917,32 @@ async function handleSave() {
 	align-items: center;
 	gap: 0.75rem;
 }
+.topbar-user {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.user-avatar {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #1a56db, #7c3aed);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 0.7rem;
+	font-weight: 900;
+}
+.user-name {
+	color: #94a3b8;
+	font-size: 0.8rem;
+	font-weight: 600;
+	max-width: 160px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .back-link {
 	display: flex;
 	align-items: center;
@@ -668,7 +965,27 @@ async function handleSave() {
 	color: #94a3b8;
 	border-color: rgba(255, 255, 255, 0.2);
 }
-
+.save-error-toast {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	color: #dc2626;
+	padding: 0.45rem 0.85rem;
+	border-radius: 8px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	max-width: 280px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.save-error-toast svg {
+	width: 13px;
+	height: 13px;
+	flex-shrink: 0;
+}
 .save-btn {
 	display: flex;
 	align-items: center;
@@ -719,15 +1036,11 @@ async function handleSave() {
 	}
 }
 
-/* BODY */
 .edit-body {
 	display: flex;
 	flex: 1;
 	min-height: calc(100vh - 60px);
-	gap: 0;
 }
-
-/* MAIN */
 .edit-main {
 	flex: 1;
 	padding: 2rem;
@@ -735,8 +1048,95 @@ async function handleSave() {
 	min-width: 0;
 }
 
+/* SKELETON */
+.skeleton-title {
+	height: 80px;
+	background: #e2e8f0;
+	border-radius: 12px;
+	margin-bottom: 1.5rem;
+	animation: skpulse 1.5s ease-in-out infinite;
+}
+.skeleton-image {
+	height: 200px;
+	background: #e2e8f0;
+	border-radius: 20px;
+	margin-bottom: 1.5rem;
+	animation: skpulse 1.5s ease-in-out infinite;
+}
+.skeleton-tabs {
+	height: 56px;
+	background: #e2e8f0;
+	border-radius: 16px;
+	margin-bottom: 1.75rem;
+	animation: skpulse 1.5s ease-in-out infinite;
+}
+.skeleton-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+.skeleton-block {
+	height: 120px;
+	background: #e2e8f0;
+	border-radius: 20px;
+	animation: skpulse 1.5s ease-in-out infinite;
+}
+@keyframes skpulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.db-error {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	border-radius: 16px;
+	padding: 1.5rem;
+}
+.db-error > svg {
+	width: 22px;
+	height: 22px;
+	color: #ef4444;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+.db-error-title {
+	font-size: 0.9rem;
+	font-weight: 800;
+	color: #dc2626;
+	margin-bottom: 0.25rem;
+}
+.db-error-msg {
+	font-size: 0.78rem;
+	color: #ef4444;
+	font-family: monospace;
+	margin-bottom: 0.75rem;
+}
+.retry-btn {
+	background: #dc2626;
+	color: #fff;
+	border: none;
+	padding: 0.45rem 1rem;
+	border-radius: 8px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.retry-btn:hover {
+	background: #b91c1c;
+}
+
 .edit-page-header {
-	margin-bottom: 2rem;
+	margin-bottom: 1.75rem;
 }
 .edit-slug-badge {
 	display: inline-block;
@@ -764,7 +1164,162 @@ async function handleSave() {
 	font-weight: 600;
 }
 
-/* LANG TABS */
+/* ── RASM ── */
+.img-hint {
+	font-size: 0.68rem;
+	color: #94a3b8;
+	font-weight: 600;
+}
+
+.upload-zone {
+	border: 2px dashed #e2e8f0;
+	border-radius: 16px;
+	padding: 2.5rem 1.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	cursor: pointer;
+	transition: all 0.2s;
+	background: #f8fafc;
+	min-height: 168px;
+}
+.upload-zone:hover,
+.upload-zone.dz-over {
+	border-color: #1a56db;
+	background: #eff6ff;
+}
+.upload-zone.dz-loading {
+	pointer-events: none;
+	cursor: default;
+}
+.uz-icon {
+	width: 52px;
+	height: 52px;
+	border-radius: 16px;
+	background: #fff;
+	border: 1px solid #f1f5f9;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #94a3b8;
+}
+.uz-icon svg {
+	width: 24px;
+	height: 24px;
+}
+.uz-title {
+	font-size: 0.9rem;
+	font-weight: 800;
+	color: #334155;
+}
+.uz-sub {
+	font-size: 0.75rem;
+	color: #94a3b8;
+}
+.spin-lg {
+	width: 32px;
+	height: 32px;
+	border: 3px solid rgba(26, 86, 219, 0.2);
+	border-top-color: #1a56db;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.img-preview-wrap {
+	position: relative;
+	border-radius: 14px;
+	overflow: hidden;
+	background: #f1f5f9;
+}
+.img-preview {
+	width: 100%;
+	max-height: 280px;
+	object-fit: cover;
+	display: block;
+}
+.img-overlay {
+	position: absolute;
+	inset: 0;
+	background: rgba(5, 8, 15, 0.65);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+.img-preview-wrap:hover .img-overlay {
+	opacity: 1;
+}
+.img-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.55rem 1rem;
+	border-radius: 10px;
+	border: none;
+	cursor: pointer;
+	font-size: 0.72rem;
+	font-weight: 800;
+	font-family: inherit;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	transition: all 0.2s;
+}
+.img-btn svg {
+	width: 13px;
+	height: 13px;
+}
+.img-btn.replace {
+	background: #fff;
+	color: #0f172a;
+}
+.img-btn.replace:hover {
+	background: #eff6ff;
+	color: #1a56db;
+}
+.img-btn.del {
+	background: #fee2e2;
+	color: #dc2626;
+}
+.img-btn.del:hover {
+	background: #dc2626;
+	color: #fff;
+}
+.img-uploading {
+	position: absolute;
+	inset: 0;
+	background: rgba(5, 8, 15, 0.75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	color: #fff;
+	font-size: 0.82rem;
+	font-weight: 700;
+}
+
+.img-err {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	background: #fef2f2;
+	border: 1px solid #fecaca;
+	border-radius: 10px;
+	padding: 0.65rem 0.9rem;
+	color: #dc2626;
+	font-size: 0.78rem;
+	font-weight: 600;
+	margin-top: 0.75rem;
+}
+.img-err svg {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+}
+
 .lang-tabs {
 	display: flex;
 	gap: 0.5rem;
@@ -802,9 +1357,7 @@ async function handleSave() {
 .lang-flag {
 	font-size: 1rem;
 }
-.lang-label {
-}
-.lang-progress {
+.lang-pct {
 	font-size: 0.65rem;
 	font-weight: 800;
 	padding: 0.15rem 0.5rem;
@@ -812,12 +1365,11 @@ async function handleSave() {
 	background: rgba(26, 86, 219, 0.1);
 	color: #1a56db;
 }
-.lang-tab.active .lang-progress {
+.lang-tab.active .lang-pct {
 	background: rgba(96, 165, 250, 0.2);
 	color: #60a5fa;
 }
 
-/* PANEL TRANSITION */
 .panel-enter-active,
 .panel-leave-active {
 	transition: all 0.25s ease;
@@ -831,7 +1383,6 @@ async function handleSave() {
 	transform: translateX(-16px);
 }
 
-/* FORM */
 .form-panel {
 	display: flex;
 	flex-direction: column;
@@ -867,7 +1418,6 @@ async function handleSave() {
 .group-header .form-label {
 	margin-bottom: 0;
 }
-
 .form-input {
 	width: 100%;
 	background: #f8fafc;
@@ -894,8 +1444,6 @@ async function handleSave() {
 	min-height: 80px;
 	line-height: 1.6;
 }
-
-/* SECTIONS */
 .sections-list {
 	display: flex;
 	flex-direction: column;
@@ -970,8 +1518,6 @@ async function handleSave() {
 	font-size: 0.85rem;
 	min-height: 64px;
 }
-
-/* LIST */
 .list-items {
 	display: flex;
 	flex-direction: column;
@@ -1029,7 +1575,6 @@ async function handleSave() {
 	background: #fee2e2;
 	color: #ef4444;
 }
-
 .add-list-btn {
 	display: inline-flex;
 	align-items: center;
@@ -1055,7 +1600,6 @@ async function handleSave() {
 	color: #1a56db;
 	background: #eff6ff;
 }
-
 .add-btn {
 	display: flex;
 	align-items: center;
@@ -1081,8 +1625,6 @@ async function handleSave() {
 	background: #1a56db;
 	color: #fff;
 }
-
-/* RESULTS */
 .results-list {
 	display: flex;
 	flex-direction: column;
@@ -1106,7 +1648,6 @@ async function handleSave() {
 	justify-content: center;
 	flex-shrink: 0;
 }
-
 .empty-sections {
 	padding: 1.5rem;
 	text-align: center;
@@ -1128,7 +1669,6 @@ async function handleSave() {
 	top: 60px;
 	height: calc(100vh - 60px);
 }
-
 .preview-card {
 	background: #05080f;
 	border-radius: 24px;
@@ -1166,6 +1706,38 @@ async function handleSave() {
 .preview-link:hover {
 	color: #60a5fa;
 }
+
+.sidebar-img-wrap {
+	width: 100%;
+	aspect-ratio: 16/9;
+	overflow: hidden;
+	background: #0c1220;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.sidebar-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.sidebar-img-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
+	color: #1e293b;
+}
+.sidebar-img-empty svg {
+	width: 28px;
+	height: 28px;
+}
+.sidebar-img-empty span {
+	font-size: 0.68rem;
+	font-weight: 700;
+}
+
 .preview-body {
 	padding: 1.25rem;
 }
@@ -1273,8 +1845,9 @@ async function handleSave() {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0.6rem 0;
+	padding: 0.65rem 0;
 	border-bottom: 1px solid #f8fafc;
+	gap: 0.5rem;
 }
 .meta-row:last-child {
 	border-bottom: none;
@@ -1285,28 +1858,70 @@ async function handleSave() {
 	color: #94a3b8;
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
+	flex-shrink: 0;
 }
 .meta-val {
 	font-size: 0.78rem;
 	font-weight: 700;
 	color: #334155;
 	font-family: monospace;
+	text-align: right;
 }
-.status-badge {
-	padding: 0.25rem 0.65rem;
-	border-radius: 20px;
+.status-toggle {
+	display: flex;
+	gap: 0.35rem;
+}
+.stoggle-btn {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.3rem 0.65rem;
+	border-radius: 8px;
+	border: 1.5px solid #f1f5f9;
+	background: #f8fafc;
+	cursor: pointer;
 	font-size: 0.65rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
+	font-weight: 700;
+	font-family: inherit;
+	color: #94a3b8;
+	transition: all 0.2s;
 }
-.status-badge.published {
-	background: #f0fdf4;
-	color: #16a34a;
+.stoggle-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+.stoggle-btn.active {
+	border-color: #1a56db;
+	background: #eff6ff;
+	color: #1a56db;
+}
+.sdot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+}
+.sdot.amber {
+	background: #f59e0b;
+}
+.sdot.green {
+	background: #22c55e;
+}
+
+.err-enter-active,
+.err-leave-active {
+	transition: all 0.25s;
+}
+.err-enter-from,
+.err-leave-to {
+	opacity: 0;
+	transform: translateY(-4px);
 }
 
 @media (max-width: 1100px) {
 	.edit-sidebar {
+		display: none;
+	}
+	.user-name {
 		display: none;
 	}
 }

@@ -81,7 +81,7 @@ const stages = [
       </div>
 
       <div class="timeline-container">
-        <div class="central-line"></div>
+        <div class="central-line" />
 
         <div 
           v-for="(step, index) in stages" 

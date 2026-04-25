@@ -1,77 +1,42 @@
 <script setup>
 const { t, locale, locales, setLocale } = useI18n()
 const localePath = useLocalePath()
-
-// ── COMPUTED DATA (i18n bilan) ──────────────────────────
-const projectTasks = computed(() => [
-	{
-		title: t("tasks.items[0].title"),
-		desc: t("tasks.items[0].desc"),
-		img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
-	},
-	{
-		title: t("tasks.items[1].title"),
-		desc: t("tasks.items[1].desc"),
-		img: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=800",
-	},
-	{
-		title: t("tasks.items[2].title"),
-		desc: t("tasks.items[2].desc"),
-		img: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
-	},
-	{
-		title: t("tasks.items[3].title"),
-		desc: t("tasks.items[3].desc"),
-		img: "https://images.unsplash.com/photo-1573161158365-59b7033d749d?auto=format&fit=crop&q=80&w=800",
-	},
-	{
-		title: t("tasks.items[4].title"),
-		desc: t("tasks.items[4].desc"),
-		img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
-	},
-	{
-		title: t("tasks.items[5].title"),
-		desc: t("tasks.items[5].desc"),
-		img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
-	},
-])
-
-const team = computed(() => [
-	{
-		// name: t("team.members[0].name"),
-		// role: t("team.members[0].role"),
-		// bio: t("team.members[0].bio"),
-		name: "Feruza Madaliyeva",
-		role: "NNT rahbari",
-		bio: "loyiha experti",
-		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-	},
-	{
-		// name: t("team.members[1].name"),
-		// role: t("team.members[1].role"),
-		// bio: t("team.members[1].bio"),
-		name: "Nargiza Xudaynazarova",
-		role: "NNT rahbari",
-		bio: "loyiha experti",
-		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-	},
-	{
-		name: t("team.members[2].name"),
-		role: t("team.members[2].role"),
-		bio: t("team.members[2].bio"),
-		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
-	},
-	{
-		name: t("team.members[3].name"),
-		role: t("team.members[3].role"),
-		bio: t("team.members[3].bio"),
-		img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
-	},
-])
-
-// ── REELS — Supabase dan ─────────────────────────────────
 const supabase = useSupabaseClient()
 
+// ── SUPABASE: TASKLAR ─────────────────────────────────────
+const { data: tasksRaw } = await useAsyncData("tasks-home", async () => {
+	const { data } = await supabase
+		.from("tasks")
+		.select("slug, uz, ru, en, image_url, status")
+		.eq("status", "published")
+		.order("updated_at", { ascending: false })
+	return data ?? []
+})
+
+// Fallback rasmlari (baza rasmsi bo'lmasa)
+const fallbackImages = [
+	"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
+	"https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=800",
+	"https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
+	"https://images.unsplash.com/photo-1573161158365-59b7033d749d?auto=format&fit=crop&q=80&w=800",
+	"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
+	"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
+]
+
+const projectTasks = computed(() => {
+	return (tasksRaw.value ?? []).map((task, i) => {
+		const lang = locale.value
+		const d = task[lang] ?? task.uz ?? {}
+		return {
+			slug: task.slug,
+			title: d.title ?? task.slug,
+			desc: d.desc ?? "",
+			img: task.image_url || fallbackImages[i % fallbackImages.length],
+		}
+	})
+})
+
+// ── REELS — Supabase dan ─────────────────────────────────
 const { data: reelsData } = await useAsyncData("reels", async () => {
 	const { data } = await supabase
 		.from("reels")
@@ -88,6 +53,41 @@ const reels = computed(() => {
 	}))
 })
 
+// ── TEAM ─────────────────────────────────────────────────
+const team = computed(() => [
+	{
+		name: t("team.members[0].name"),
+		role: t("team.members[0].role"),
+		bio: t("team.members[0].bio"),
+		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+	},
+	{
+		name: t("team.members[1].name"),
+		role: t("team.members[1].role"),
+		bio: t("team.members[1].bio"),
+		img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+	},
+	{
+		name: t("team.members[2].name"),
+		role: t("team.members[2].role"),
+		bio: t("team.members[2].bio"),
+		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+	},
+	{
+		name: t("team.members[3].name"),
+		role: t("team.members[3].role"),
+		bio: t("team.members[3].bio"),
+		img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
+	},
+	{
+		name: t("team.members[4].name"),
+		role: t("team.members[4].role"),
+		bio: t("team.members[4].bio"),
+		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+	},
+])
+
+// ── I18N ─────────────────────────────────────────────────
 const navLinks = computed(() => [
 	["#hero", t("nav.project")],
 	["#tasks", t("nav.activity")],
@@ -122,7 +122,7 @@ const counters = ref([
 	{ value: 0, target: 3, suffix: "", labelKey: "impact.stat3" },
 ])
 
-// ── STATE ───────────────────────────────────────────────
+// ── STATE ────────────────────────────────────────────────
 const isScrolled = ref(false)
 const scrollProgress = ref(0)
 const showBackTop = ref(false)
@@ -134,7 +134,7 @@ const modal = ref({ open: false, type: null, data: null })
 const form = ref({ name: "", email: "", message: "" })
 const formSent = ref(false)
 
-// ── SCROLL ──────────────────────────────────────────────
+// ── SCROLL ───────────────────────────────────────────────
 function onScroll() {
 	const scrollY = window.scrollY
 	const maxScroll = document.body.scrollHeight - window.innerHeight
@@ -166,7 +166,7 @@ function onScroll() {
 	}
 }
 
-// ── MODAL ───────────────────────────────────────────────
+// ── MODAL ────────────────────────────────────────────────
 function openModal(type, data = null) {
 	modal.value = { open: true, type, data }
 	document.body.style.overflow = "hidden"
@@ -180,12 +180,12 @@ function submitForm() {
 	formSent.value = true
 	form.value = { name: "", email: "", message: "" }
 }
-// function openModalAndCloseMobile() {
-// 	openModal("contact")
-// 	mobileNavOpen.value = false
-// }
+function openModalCloseNavbar() {
+	openModal("contact")
+	mobileNavOpen.value = false
+}
 
-// ── LIFECYCLE ───────────────────────────────────────────
+// ── LIFECYCLE ────────────────────────────────────────────
 onMounted(() => {
 	window.addEventListener("scroll", onScroll, { passive: true })
 
@@ -221,7 +221,7 @@ onUnmounted(() => {
 			:style="{ width: scrollProgress + '%' }"
 		/>
 
-		<!-- ══════════════════════════════════  HEADER ══════════════════════════════════ -->
+		<!-- ══ HEADER ══ -->
 		<header
 			class="fixed top-0 w-full z-[900] px-6 lg:px-10 py-5 flex justify-between items-center transition-all duration-300"
 			:class="
@@ -240,19 +240,6 @@ onUnmounted(() => {
 						class="object-contain w-full"
 					/>
 				</div>
-				<!-- <div>
-					<h1
-						class="font-black text-lg tracking-tight leading-none transition-colors duration-300"
-						:class="isScrolled ? 'text-slate-900' : 'text-white'"
-					>
-						TARAQQIYOT
-					</h1>
-					<p
-						class="text-[9px] uppercase tracking-[0.25em] font-bold text-blue-400"
-					>
-						{{ $t("nav.orgSubtitle") }}
-					</p>
-				</div> -->
 			</div>
 
 			<!-- Desktop nav -->
@@ -279,7 +266,6 @@ onUnmounted(() => {
 					</a>
 				</div>
 
-				<!-- Lang switcher -->
 				<div
 					class="flex items-center gap-1 border rounded-full px-1 py-1"
 					:class="isScrolled ? 'border-blue-600' : 'border-white/20'"
@@ -300,13 +286,6 @@ onUnmounted(() => {
 						{{ lang.code }}
 					</button>
 				</div>
-
-				<!-- <button
-					class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-200 shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 w-32"
-					@click="openModal('contact')"
-				>
-					{{ t("nav.contact") }}
-				</button> -->
 			</nav>
 
 			<!-- Hamburger -->
@@ -344,10 +323,10 @@ onUnmounted(() => {
 							:href="href"
 							class="block py-4 text-base font-bold uppercase tracking-widest text-slate-800 hover:text-blue-600 transition-colors"
 							@click="mobileNavOpen = false"
-							>{{ label }}</a
 						>
+							{{ label }}
+						</a>
 					</li>
-					<!-- Lang switcher mobile -->
 					<li class="pt-4 pb-2">
 						<div class="flex gap-2">
 							<button
@@ -368,7 +347,7 @@ onUnmounted(() => {
 					<li class="pt-2">
 						<button
 							class="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold uppercase tracking-widest"
-							@click="openModalAndCloseMobil"
+							@click="openModalCloseNavbar"
 						>
 							{{ t("nav.contact") }}
 						</button>
@@ -384,9 +363,7 @@ onUnmounted(() => {
 			/>
 		</Transition>
 
-		<!-- ══════════════════════════════════
-         HERO
-    ══════════════════════════════════ -->
+		<!-- ══ HERO ══ -->
 		<section
 			id="hero"
 			class="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#05080f]"
@@ -403,7 +380,6 @@ onUnmounted(() => {
 			<div
 				class="relative z-10 w-full max-w-6xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
 			>
-				<!-- Chap: matn -->
 				<div>
 					<div
 						class="inline-flex items-center gap-2 bg-blue-600/15 border border-blue-500/30 rounded-full px-4 py-1.5 mb-8"
@@ -429,20 +405,6 @@ onUnmounted(() => {
 					<p class="text-slate-400 text-base leading-relaxed mb-10 max-w-md">
 						{{ t("hero.desc") }}
 					</p>
-
-					<!-- <div class="flex flex-wrap gap-3">
-						<a
-							href="#tasks"
-							class="bg-blue-600 hover:bg-blue-500 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 shadow-xl shadow-blue-600/30 hover:-translate-y-0.5"
-							>{{ t("hero.btnExplore") }}</a
-						>
-						<button
-							class="border border-white/20 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-white/8 transition-all duration-300"
-							@click="openModal('video')"
-						>
-							{{ t("hero.btnVideo") }}
-						</button>
-					</div> -->
 
 					<div class="flex gap-8 mt-12 pt-8 border-t border-white/8">
 						<div v-for="[num, lbl] in heroStats" :key="lbl">
@@ -536,9 +498,7 @@ onUnmounted(() => {
 			</div>
 		</section>
 
-		<!-- ══════════════════════════════════
-         TICKER
-    ══════════════════════════════════ -->
+		<!-- ══ TICKER ══ -->
 		<div class="bg-slate-900 text-white py-3 overflow-hidden">
 			<div class="ticker-track flex gap-16 whitespace-nowrap">
 				<template v-for="_ in 2" :key="_">
@@ -554,34 +514,76 @@ onUnmounted(() => {
 			</div>
 		</div>
 
-		<!-- ══════════════════════════════════
-         TASKS
-    ══════════════════════════════════ -->
+		<!-- ══ TASKS ══ -->
 		<section id="tasks" class="py-28 bg-slate-50 px-6">
 			<div class="max-w-6xl mx-auto">
 				<div class="from-top mb-16">
-					<p
+					<!-- <p
 						class="text-blue-600 text-[11px] font-black uppercase tracking-[0.4em] mb-3"
 					>
 						{{ t("tasks.label") }}
-					</p>
+					</p> -->
 					<h2
 						class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight"
 					>
-						{{ t("tasks.title") }}
+						{{ t("tasks.label") }}
+						<!-- {{ t("tasks.title") }} -->
 					</h2>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+				<!-- Loading skeleton -->
+				<div
+					v-if="!tasksRaw"
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+				>
+					<div
+						v-for="n in 6"
+						:key="n"
+						class="bg-white rounded-3xl overflow-hidden border border-slate-100 animate-pulse"
+					>
+						<div class="h-52 bg-slate-200" />
+						<div class="p-7 space-y-3">
+							<div class="h-5 bg-slate-200 rounded w-3/4" />
+							<div class="h-4 bg-slate-100 rounded w-full" />
+							<div class="h-4 bg-slate-100 rounded w-2/3" />
+						</div>
+					</div>
+				</div>
+
+				<!-- Bo'sh holat -->
+				<div
+					v-else-if="projectTasks.length === 0"
+					class="text-center py-16 text-slate-400"
+				>
+					<svg
+						class="w-12 h-12 mx-auto mb-4 opacity-30"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						viewBox="0 0 24 24"
+					>
+						<path
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+						/>
+					</svg>
+					<p class="font-bold text-sm">Hali nashr qilingan task yo'q</p>
+				</div>
+
+				<!-- Tasklar -->
+				<div
+					v-else
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+				>
 					<div
 						v-for="(task, i) in projectTasks"
-						:key="task.title"
+						:key="task.slug"
 						class="from-bottom group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl border border-slate-100 hover:border-blue-100 transition-all duration-500 hover:-translate-y-2"
 						:style="{
 							transitionDelay: `${i * 80}ms`,
 							animationDelay: `${i * 80}ms`,
 						}"
 					>
-						<div class="h-52 overflow-hidden relative">
+						<div class="h-52 overflow-hidden relative bg-slate-100">
 							<img
 								:src="task.img"
 								:alt="task.title"
@@ -591,20 +593,22 @@ onUnmounted(() => {
 							<div
 								class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
 							/>
+							<!-- Tartib raqami -->
+							<div
+								class="absolute top-4 left-4 w-8 h-8 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center text-white text-xs font-black"
+							>
+								{{ String(i + 1).padStart(2, "0") }}
+							</div>
 						</div>
 						<div class="p-7">
-							<h4 class="text-xl font-black text-slate-900 mb-2">
+							<h4 class="text-xl font-black text-slate-900 mb-2 line-clamp-2">
 								{{ task.title }}
 							</h4>
-							<p class="text-slate-500 text-sm leading-relaxed">
+							<p class="text-slate-500 text-sm leading-relaxed line-clamp-3">
 								{{ task.desc }}
 							</p>
 							<NuxtLink
-								:to="
-									localePath(
-										`/projects/${['xaritalash', 'hamkorlik', 'salohiyat', 'advokatsiya', 'toolkit', 'rivojlanish'][i]}`,
-									)
-								"
+								:to="localePath(`/projects/${task.slug}`)"
 								class="mt-5 inline-flex items-center gap-2 text-blue-600 font-black text-[11px] uppercase tracking-widest group-hover:gap-4 transition-all duration-300"
 							>
 								{{ t("tasks.more") }}
@@ -626,9 +630,7 @@ onUnmounted(() => {
 
 		<ProjectStages />
 
-		<!-- ══════════════════════════════════
-         PROJECT REELS
-    ══════════════════════════════════ -->
+		<!-- ══ REELS ══ -->
 		<section id="reels" class="py-28 bg-white px-6 overflow-hidden">
 			<div class="max-w-6xl mx-auto">
 				<div
@@ -720,9 +722,7 @@ onUnmounted(() => {
 			</div>
 		</section>
 
-		<!-- ══════════════════════════════════
-         IMPACT
-    ══════════════════════════════════ -->
+		<!-- ══ IMPACT ══ -->
 		<section
 			id="impact"
 			class="py-28 bg-slate-900 text-white relative overflow-hidden px-6"
@@ -784,17 +784,14 @@ onUnmounted(() => {
 						</blockquote>
 						<cite
 							class="text-[11px] font-black uppercase tracking-widest text-blue-400 not-italic"
+							>{{ t("impact.cite") }}</cite
 						>
-							{{ t("impact.cite") }}
-						</cite>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- ══════════════════════════════════
-         TEAM
-    ══════════════════════════════════ -->
+		<!-- ══ TEAM ══ -->
 		<section id="team" class="py-28 bg-white px-6">
 			<div class="max-w-6xl mx-auto">
 				<div class="from-top text-center mb-16">
@@ -809,7 +806,9 @@ onUnmounted(() => {
 						{{ t("team.title") }}
 					</h2>
 				</div>
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+				<div
+					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-10"
+				>
 					<div
 						v-for="(member, i) in team"
 						:key="member.name"
@@ -830,9 +829,8 @@ onUnmounted(() => {
 							>
 								<span
 									class="text-white text-[11px] font-black uppercase tracking-widest"
+									>{{ t("team.more") }}</span
 								>
-									{{ t("team.more") }}
-								</span>
 							</div>
 						</div>
 						<h4 class="text-lg font-black text-slate-900 mb-1 tracking-tight">
@@ -841,16 +839,14 @@ onUnmounted(() => {
 						<p
 							class="text-blue-600 font-black uppercase tracking-widest text-[10px]"
 						>
-							{{ member.role }}
+							{{ member.bio }}
 						</p>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- ══════════════════════════════════
-         PARTNERS
-    ══════════════════════════════════ -->
+		<!-- ══ PARTNERS ══ -->
 		<section class="py-12 bg-slate-50 border-y border-slate-100 px-6">
 			<div
 				class="from-top max-w-4xl mx-auto flex flex-wrap justify-center items-center gap-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-80 transition-all duration-500"
@@ -877,9 +873,7 @@ onUnmounted(() => {
 			</div>
 		</section>
 
-		<!-- ══════════════════════════════════
-         FOOTER
-    ══════════════════════════════════ -->
+		<!-- ══ FOOTER ══ -->
 		<footer class="bg-slate-950 text-white py-20 px-6">
 			<div class="max-w-6xl mx-auto">
 				<div class="grid grid-cols-1 lg:grid-cols-3 gap-16 mb-16">
@@ -951,7 +945,7 @@ onUnmounted(() => {
 			<button
 				v-if="showBackTop"
 				class="fixed bottom-8 right-8 w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center z-[500] shadow-xl shadow-blue-600/30 hover:-translate-y-1 transition-all duration-200"
-				@click="() => window.scrollTo({ top: 0, behavior: 'smooth' })"
+				@click="window.scrollTo({ top: 0, behavior: 'smooth' })"
 			>
 				<svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
 					<path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
@@ -959,9 +953,7 @@ onUnmounted(() => {
 			</button>
 		</Transition>
 
-		<!-- ══════════════════════════════════
-         MODAL
-    ══════════════════════════════════ -->
+		<!-- ══ MODAL ══ -->
 		<Transition name="fade">
 			<div
 				v-if="modal.open"
@@ -980,7 +972,6 @@ onUnmounted(() => {
 							✕
 						</button>
 
-						<!-- Contact -->
 						<template v-if="modal.type === 'contact'">
 							<h3 class="text-2xl font-black mb-1">
 								{{ t("modal.contactTitle") }}
@@ -1025,7 +1016,6 @@ onUnmounted(() => {
 							</div>
 						</template>
 
-						<!-- Video -->
 						<template v-else-if="modal.type === 'video'">
 							<h3 class="text-xl font-black mb-4">
 								{{ t("modal.videoTitle") }}
@@ -1042,7 +1032,6 @@ onUnmounted(() => {
 							</div>
 						</template>
 
-						<!-- Team -->
 						<template v-else-if="modal.type === 'team' && modal.data">
 							<img
 								:src="modal.data.img"
@@ -1072,7 +1061,6 @@ body {
 	font-family: "DM Sans", sans-serif;
 }
 
-/* ── HERO ── */
 .hero-mesh {
 	position: absolute;
 	inset: 0;
@@ -1108,7 +1096,6 @@ body {
 	background-clip: text;
 }
 
-/* ── SHAPES ── */
 .shape {
 	position: absolute;
 	border-radius: 50%;
@@ -1147,7 +1134,6 @@ body {
 	background: rgba(139, 92, 246, 0.1);
 	animation: float2 9s ease-in-out infinite;
 }
-
 @keyframes float1 {
 	0%,
 	100% {
@@ -1167,7 +1153,6 @@ body {
 	}
 }
 
-/* ── SCROLL ANIMATSIYALAR ── */
 .from-top {
 	opacity: 0;
 	transform: translateY(-40px);
@@ -1196,7 +1181,6 @@ body {
 		opacity 0.8s ease,
 		transform 0.8s ease;
 }
-
 .from-top.anim-in,
 .from-bottom.anim-in,
 .from-left.anim-in,
@@ -1205,7 +1189,6 @@ body {
 	transform: translate(0, 0);
 }
 
-/* ── TICKER ── */
 .ticker-track {
 	animation: ticker 30s linear infinite;
 }
@@ -1218,7 +1201,6 @@ body {
 	}
 }
 
-/* ── VUE TRANSITIONS ── */
 .fade-enter-active,
 .fade-leave-active {
 	transition: opacity 0.3s;
@@ -1247,20 +1229,16 @@ body {
 	opacity: 0;
 }
 
-/* ── PROJECT REELS ── */
 .reels-gradient {
 	background: linear-gradient(135deg, #e1306c, #f77737);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 }
-
 .reel-card {
 	display: flex;
 	flex-direction: column;
 }
-
-/* Telefon ramkasi */
 .reel-phone {
 	position: relative;
 	background: #1a1d27;
@@ -1275,7 +1253,6 @@ body {
 		transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
 		box-shadow 0.4s;
 }
-
 .reel-card:hover .reel-phone {
 	transform: translateY(-8px) scale(1.02);
 	box-shadow:
@@ -1283,8 +1260,6 @@ body {
 		0 32px 80px rgba(0, 0, 0, 0.35),
 		inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
-
-/* Kamera teshigi */
 .reel-notch {
 	position: absolute;
 	top: 10px;
@@ -1296,8 +1271,6 @@ body {
 	border-radius: 3px;
 	z-index: 10;
 }
-
-/* Video area */
 .reel-video-wrap {
 	position: absolute;
 	inset: 0;
@@ -1309,8 +1282,6 @@ body {
 	height: 100%;
 	border: none;
 }
-
-/* Pastki label */
 .reel-label {
 	position: absolute;
 	bottom: 0;
@@ -1329,5 +1300,18 @@ body {
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
+}
+
+.line-clamp-2 {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.line-clamp-3 {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 </style>

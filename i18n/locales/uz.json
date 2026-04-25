@@ -100,24 +100,29 @@
     "more": "Batafsil →",
     "members": [
       {
-        "name": "Azizkhon Khakimov",
-        "role": "Markaz direktori",
-        "bio": "20 yillik tajribaga ega boshqaruv va rivojlanish mutaxassisi. Markaziy Osiyo mintaqasidagi fuqarolik jamiyati rivojlanishiga ulkan hissa qo'shgan."
+        "name": "Feruza Madaliyeva",
+        "role": "Loyiha experti",
+        "bio": "NNT rahbari"
       },
       {
-        "name": "Gulnora Alimova",
+        "name": "Nargiza Xudaynazarova",
         "role": "Loyiha koordinatori",
-        "bio": "Gender tengligi va ayollar yetakchiligi sohasidagi mutaxassis. BMT va xalqaro tashkilotlar bilan keng hamkorlik tajribasiga ega."
+        "bio": "Ayollar imkoniyatlarini kengaytirish loyihasi menejeri"
       },
       {
-        "name": "Bekzod Umarov",
-        "role": "Bosh mutaxassis",
-        "bio": "Strategik reja va monitoring bo'yicha ekspert. Ilmiy tadqiqot va amaliy loyihalarni muvaffaqiyatli boshqarish tajribasiga ega."
+        "name": "Zafar Saydaliyev",
+        "role": "Loyiha experti",
+        "bio": "Monitoring va baholash"
       },
       {
-        "name": "Dildora Karimova",
-        "role": "Moliyaviy maslahatchi",
-        "bio": "Xalqaro moliya va grantlar menejment sohasida 15 yillik tajribaga ega. Bir nechta xalqaro loyihalarni moliyaviy jihatdan boshqargan."
+        "name": "Saida Gaziyeva",
+        "role": "Loyiha mutahassisi",
+        "bio": "Tarjimon"
+      },
+      {
+        "name": "Alisher Orzibiyev",
+        "role": "Loyiha hisobchisi",
+        "bio": "Loyiha hisobchisi"
       }
     ]
   },
@@ -155,6 +160,7 @@
     "funder": "Moliyalashtiruvchi",
     "code": "Loyiha kodi",
     "prev": "Oldingi yo'nalish",
-    "next": "Keyingi yo'nalish"
+    "next": "Keyingi yo'nalish",
+    "resultsLabel": "Natijalar"
   }
 }
