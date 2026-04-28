@@ -1,5 +1,5 @@
 <script setup>
-definePageMeta({ middleware: "admin-auth" })
+definePageMeta({ middleware: 'admin-auth' })
 
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -11,1034 +11,436 @@ const dbError = ref(null)
 
 // ── COMPUTED ──────────────────────────────────────────────
 const stats = computed(() => ({
-	total: tasks.value.length,
-	published: tasks.value.filter(t => t.status === "published").length,
-	draft: tasks.value.filter(t => t.status === "draft").length,
-	langs: 3,
+  total: tasks.value.length,
+  published: tasks.value.filter(t => t.status === 'published').length,
+  draft: tasks.value.filter(t => t.status === 'draft').length,
+  langs: 3,
 }))
 
 const recentTasks = computed(() => [...tasks.value].slice(0, 4))
 
-// function formatDate(d) {
-// 	return new Date(d).toLocaleDateString("uz-UZ", {
-// 		day: "2-digit",
-// 		month: "short",
-// 		year: "numeric",
-// 	})
-// }
+function formatDate(d) {
+  return new Date(d).toLocaleDateString('uz-UZ', { day: '2-digit', month: 'short', year: 'numeric' })
+}
 
 // ── SUPABASE: YUKLASH ─────────────────────────────────────
 onMounted(async () => {
-	const { data, error } = await supabase
-		.from("tasks")
-		.select("slug, status, uz, updated_at")
-		.order("updated_at", { ascending: false })
+  const [tasksRes, settingsRes] = await Promise.all([
+    supabase
+      .from('tasks')
+      .select('slug, status, uz, updated_at')
+      .order('updated_at', { ascending: false }),
+    supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'active_stage')
+      .single(),
+  ])
 
-	if (error) {
-		dbError.value = error.message
-	} else {
-		tasks.value = (data ?? []).map(t => ({
-			slug: t.slug,
-			uz: t.uz?.title ?? t.slug,
-			status: t.status,
-			updatedAt: t.updated_at,
-		}))
-	}
-	dbLoading.value = false
+  if (tasksRes.error) {
+    dbError.value = tasksRes.error.message
+  } else {
+    tasks.value = (tasksRes.data ?? []).map(t => ({
+      slug: t.slug,
+      uz: t.uz?.title ?? t.slug,
+      status: t.status,
+      updatedAt: t.updated_at,
+    }))
+  }
+
+  if (settingsRes.data?.value) {
+    activeStage.value = Number(settingsRes.data.value)
+  }
+
+  dbLoading.value = false
 })
 
 // ── LOGOUT ────────────────────────────────────────────────
 async function logout() {
-	await supabase.auth.signOut()
-	await navigateTo("/")
+  await supabase.auth.signOut()
+  await navigateTo('/admin/login')
+}
+
+// ── AKTIV BOSQICH ─────────────────────────────────────────
+const stages = [
+  { id: 1, label: 'Natija 1', sub: 'Salohiyatni mustahkamlash', color: '#6c5ce7' },
+  { id: 2, label: 'Natija 2', sub: "Bilim va ko'nikmalarni oshirish", color: '#a29bfe' },
+  { id: 3, label: 'II-Davra suhbati', sub: 'Natijalar taqdimoti', color: '#ff758f' },
+  { id: 4, label: 'Natija 3', sub: 'Barqaror hamkorlik', color: '#fab1a0' },
+]
+
+const activeStage = ref(2)
+const stageLoading = ref(false)
+const stageSaved = ref(false)
+
+async function saveActiveStage(id) {
+  if (activeStage.value === id) return
+  stageLoading.value = true
+  activeStage.value = id
+
+  await supabase
+    .from('settings')
+    .upsert({ key: 'active_stage', value: String(id) }, { onConflict: 'key' })
+
+  stageLoading.value = false
+  stageSaved.value = true
+  setTimeout(() => stageSaved.value = false, 2500)
 }
 </script>
 
 <template>
-	<div class="dash">
-		<!-- TOPBAR -->
-		<header class="topbar">
-			<div class="topbar-left">
-				<div class="topbar-logo">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-						<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-					</svg>
-				</div>
-				<div>
-					<span class="topbar-title">TARAQQIYOT</span>
-					<span class="topbar-badge">Admin</span>
-				</div>
-			</div>
-			<div class="topbar-right">
-				<div class="topbar-user">
-					<div class="user-avatar">
-						{{ user?.email?.[0]?.toUpperCase() ?? "A" }}
-					</div>
-					<span class="user-name">{{ user?.email ?? "Admin" }}</span>
-				</div>
-				<button class="logout-btn" @click="logout">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<path
-							d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
-						/>
-					</svg>
-					Chiqish
-				</button>
-			</div>
-		</header>
+  <div class="min-h-screen bg-slate-50 flex flex-col font-sans">
 
-		<div class="dash-body">
-			<!-- SIDEBAR -->
-			<aside class="sidebar">
-				<nav class="sidebar-nav">
-					<NuxtLink to="/admin" class="nav-item active">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-						>
-							<rect x="3" y="3" width="7" height="7" />
-							<rect x="14" y="3" width="7" height="7" />
-							<rect x="14" y="14" width="7" height="7" />
-							<rect x="3" y="14" width="7" height="7" />
-						</svg>
-						Dashboard
-					</NuxtLink>
-					<NuxtLink to="/admin/tasks" class="nav-item">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-						>
-							<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-							<polyline points="14 2 14 8 20 8" />
-							<line x1="16" y1="13" x2="8" y2="13" />
-							<line x1="16" y1="17" x2="8" y2="17" />
-						</svg>
-						Tasklar
-					</NuxtLink>
-					<NuxtLink to="/admin/reels" class="nav-item">
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-						>
-							<polygon points="23 7 16 12 23 17 23 7" />
-							<rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-						</svg>
-						Reels
-					</NuxtLink>
-				</nav>
-				<div class="sidebar-info">
-					<span class="info-dot" :class="dbError ? 'dot-error' : 'dot-ok'" />
-					<span>{{ dbError ? "Ulanishda xato" : "Supabase ulangan" }}</span>
-				</div>
-			</aside>
+    <!-- TOPBAR -->
+    <header class="h-[60px] bg-[#05080f] border-b border-white/[0.06] flex items-center justify-between px-6 sticky top-0 z-[100]">
+      <div class="flex items-center gap-3">
+        <div class="w-[34px] h-[34px] rounded-[10px] bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-white font-black text-[0.95rem] tracking-[0.03em]">TARAQQIYOT</span>
+          <span class="bg-blue-600/25 text-blue-400 text-[0.6rem] font-black uppercase tracking-[0.15em] px-2.5 py-0.5 rounded-full ml-2 border border-blue-600/30">Admin</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-[30px] h-[30px] rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center text-white text-[0.7rem] font-black">
+            {{ user?.email?.[0]?.toUpperCase() ?? 'A' }}
+          </div>
+          <span class="text-slate-400 text-[0.8rem] font-semibold max-w-[180px] truncate hidden sm:block">
+            {{ user?.email ?? 'Admin' }}
+          </span>
+        </div>
+        <button
+          class="flex items-center gap-1.5 border border-white/10 text-slate-500 hover:text-white hover:border-white/20 px-3.5 py-1.5 rounded-lg text-[0.75rem] font-bold transition-all duration-200"
+          @click="logout"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+          </svg>
+          Chiqish
+        </button>
+      </div>
+    </header>
 
-			<!-- MAIN -->
-			<main class="dash-main">
-				<!-- Loading skeleton -->
-				<template v-if="dbLoading">
-					<div class="skeleton-header" />
-					<div class="stats-row">
-						<div v-for="n in 4" :key="n" class="skeleton-card" />
-					</div>
-					<div class="bottom-grid">
-						<div class="skeleton-widget" />
-						<div class="skeleton-widget" />
-					</div>
-				</template>
+    <div class="flex flex-1 min-h-[calc(100vh-60px)]">
 
-				<!-- DB xato -->
-				<div v-else-if="dbError" class="db-error">
-					<svg
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-					>
-						<circle cx="12" cy="12" r="10" />
-						<line x1="12" y1="8" x2="12" y2="12" />
-						<line x1="12" y1="16" x2="12.01" y2="16" />
-					</svg>
-					<div>
-						<p class="db-error-title">Supabase ga ulanishda xato</p>
-						<p class="db-error-msg">{{ dbError }}</p>
-					</div>
-				</div>
+      <!-- SIDEBAR -->
+      <aside class="w-[220px] bg-[#05080f] border-r border-white/[0.06] flex flex-col justify-between px-4 py-6 sticky top-[60px] h-[calc(100vh-60px)]">
+        <nav class="flex flex-col gap-1">
+          <NuxtLink
+            to="/admin"
+            class="flex items-center gap-3 px-4 py-[0.7rem] rounded-xl text-[0.8rem] font-bold text-blue-400 bg-blue-600/15 border border-blue-600/20 transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Dashboard
+          </NuxtLink>
+          <NuxtLink
+            to="/admin/tasks"
+            class="flex items-center gap-3 px-4 py-[0.7rem] rounded-xl text-[0.8rem] font-bold text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            Tasklar
+          </NuxtLink>
+          <NuxtLink
+            to="/admin/reels"
+            class="flex items-center gap-3 px-4 py-[0.7rem] rounded-xl text-[0.8rem] font-bold text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all duration-200"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+            Reels
+          </NuxtLink>
+        </nav>
+        <div class="flex items-center gap-2 text-[0.65rem] font-bold text-[#1e3a5f]">
+          <span
+            class="w-1.5 h-1.5 rounded-full"
+            :class="dbError ? 'bg-red-500' : 'bg-green-500'"
+          />
+          {{ dbError ? 'Ulanishda xato' : 'Supabase ulangan' }}
+        </div>
+      </aside>
 
-				<!-- Asosiy kontent -->
-				<template v-else>
-					<div class="page-header">
-						<div>
-							<p class="page-eyebrow">Xush kelibsiz 👋</p>
-							<h1 class="page-title">Dashboard</h1>
-						</div>
-						<NuxtLink to="/admin/tasks" class="goto-tasks-btn">
-							<svg
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-							>
-								<path
-									d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
-								/>
-								<polyline points="14 2 14 8 20 8" />
-							</svg>
-							Tasklarni boshqarish
-						</NuxtLink>
-					</div>
+      <!-- MAIN -->
+      <main class="flex-1 p-8 overflow-y-auto">
 
-					<!-- Stats -->
-					<div class="stats-row">
-						<div class="stat-card">
-							<div class="stat-icon blue">
-								<svg
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-								>
-									<path
-										d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
-									/>
-								</svg>
-							</div>
-							<div>
-								<div class="stat-num">{{ stats.total }}</div>
-								<div class="stat-lbl">Jami task</div>
-							</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-icon green">
-								<svg
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-								>
-									<polyline points="20 6 9 17 4 12" />
-								</svg>
-							</div>
-							<div>
-								<div class="stat-num">{{ stats.published }}</div>
-								<div class="stat-lbl">Nashr qilingan</div>
-							</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-icon amber">
-								<svg
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-								>
-									<circle cx="12" cy="12" r="10" />
-									<line x1="12" y1="8" x2="12" y2="12" />
-									<line x1="12" y1="16" x2="12.01" y2="16" />
-								</svg>
-							</div>
-							<div>
-								<div class="stat-num">{{ stats.draft }}</div>
-								<div class="stat-lbl">Qoralama</div>
-							</div>
-						</div>
-						<div class="stat-card">
-							<div class="stat-icon purple">
-								<svg
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-								>
-									<circle cx="12" cy="12" r="10" />
-									<polyline points="12 6 12 12 16 14" />
-								</svg>
-							</div>
-							<div>
-								<div class="stat-num">{{ stats.langs }}</div>
-								<div class="stat-lbl">Faol til</div>
-							</div>
-						</div>
-					</div>
+        <!-- Loading skeleton -->
+        <template v-if="dbLoading">
+          <div class="h-14 bg-slate-200 rounded-xl mb-8 animate-pulse" />
+          <div class="grid grid-cols-4 gap-4 mb-6">
+            <div v-for="n in 4" :key="n" class="h-[90px] bg-slate-200 rounded-[18px] animate-pulse" />
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="h-[280px] bg-slate-200 rounded-3xl animate-pulse" />
+            <div class="h-[280px] bg-slate-200 rounded-3xl animate-pulse" />
+          </div>
+        </template>
 
-					<!-- Two column grid -->
-					<div class="bottom-grid">
-						<!-- Oxirgi tasklar -->
-						<div class="widget-card">
-							<div class="widget-header">
-								<h2 class="widget-title">Oxirgi tasklar</h2>
-								<NuxtLink to="/admin/tasks" class="widget-link">
-									Barchasini ko'rish
-									<svg
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2.5"
-									>
-										<path d="M5 12h14M12 5l7 7-7 7" />
-									</svg>
-								</NuxtLink>
-							</div>
-							<div class="recent-list">
-								<div v-if="recentTasks.length === 0" class="recent-empty">
-									Hali task qo'shilmagan
-								</div>
-								<div
-									v-for="task in recentTasks"
-									:key="task.slug"
-									class="recent-row"
-								>
-									<div class="recent-info">
-										<div class="recent-title">{{ task.uz }}</div>
-										<div class="recent-slug">{{ task.slug }}</div>
-									</div>
-									<div class="recent-right">
-										<span :class="['status-badge', task.status]">
-											{{ task.status === "published" ? "Nashr" : "Qoralama" }}
-										</span>
-										<NuxtLink
-											:to="`/admin/tasks/${task.slug}`"
-											class="recent-edit"
-										>
-											<svg
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<path
-													d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-												/>
-												<path
-													d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
-												/>
-											</svg>
-										</NuxtLink>
-									</div>
-								</div>
-							</div>
-						</div>
+        <!-- DB xato -->
+        <div v-else-if="dbError" class="flex items-start gap-4 bg-red-50 border border-red-200 rounded-2xl p-6">
+          <svg class="w-[22px] h-[22px] text-red-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <div>
+            <p class="text-[0.9rem] font-black text-red-600 mb-1">Supabase ga ulanishda xato</p>
+            <p class="text-[0.78rem] text-red-500 font-mono">{{ dbError }}</p>
+          </div>
+        </div>
 
-						<!-- Tezkor harakatlar -->
-						<div class="widget-card">
-							<div class="widget-header">
-								<h2 class="widget-title">Tezkor harakatlar</h2>
-							</div>
-							<div class="quick-actions">
-								<NuxtLink to="/admin/tasks" class="qa-item">
-									<div class="qa-icon blue">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<line x1="12" y1="5" x2="12" y2="19" />
-											<line x1="5" y1="12" x2="19" y2="12" />
-										</svg>
-									</div>
-									<div>
-										<div class="qa-title">Yangi task qo'shish</div>
-										<div class="qa-sub">3 tilda kontent yaratish</div>
-									</div>
-									<svg
-										class="qa-arrow"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-									>
-										<path d="M5 12h14M12 5l7 7-7 7" />
-									</svg>
-								</NuxtLink>
-								<NuxtLink to="/admin/tasks" class="qa-item">
-									<div class="qa-icon green">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path
-												d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-											/>
-											<path
-												d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<div class="qa-title">Tasklarni tahrirlash</div>
-										<div class="qa-sub">{{ stats.total }} ta task mavjud</div>
-									</div>
-									<svg
-										class="qa-arrow"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-									>
-										<path d="M5 12h14M12 5l7 7-7 7" />
-									</svg>
-								</NuxtLink>
-								<a href="/" target="_blank" class="qa-item">
-									<div class="qa-icon purple">
-										<svg
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-										>
-											<path
-												d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"
-											/>
-										</svg>
-									</div>
-									<div>
-										<div class="qa-title">Saytni ko'rish</div>
-										<div class="qa-sub">Joriy holat</div>
-									</div>
-									<svg
-										class="qa-arrow"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-									>
-										<path d="M5 12h14M12 5l7 7-7 7" />
-									</svg>
-								</a>
-							</div>
+        <!-- Asosiy kontent -->
+        <template v-else>
 
-							<div class="progress-block">
-								<div class="progress-header">
-									<span class="progress-label">Nashr qilinganlar</span>
-									<span class="progress-pct">
-										{{
-											stats.total > 0
-												? Math.round((stats.published / stats.total) * 100)
-												: 0
-										}}%
-									</span>
-								</div>
-								<div class="progress-bar">
-									<div
-										class="progress-fill"
-										:style="{
-											width:
-												stats.total > 0
-													? (stats.published / stats.total) * 100 + '%'
-													: '0%',
-										}"
-									/>
-								</div>
-								<div class="progress-sub">
-									{{ stats.published }} / {{ stats.total }} task nashr qilingan
-								</div>
-							</div>
-						</div>
-					</div>
-				</template>
-			</main>
-		</div>
-	</div>
+          <!-- Page header -->
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <p class="text-[0.72rem] font-bold text-slate-400 uppercase tracking-[0.12em] mb-1">Xush kelibsiz 👋</p>
+              <h1 class="text-[1.75rem] font-black text-slate-900 tracking-tight">Dashboard</h1>
+            </div>
+            <NuxtLink
+              to="/admin/tasks"
+              class="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-5 py-2.5 rounded-xl text-[0.78rem] font-black uppercase tracking-[0.08em] shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 hover:shadow-blue-600/40 transition-all duration-200"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              Tasklarni boshqarish
+            </NuxtLink>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div
+              v-for="(s, i) in [
+                { num: stats.total, lbl: 'Jami task', icon: 'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z', cls: 'bg-blue-50 text-blue-600' },
+                { num: stats.published, lbl: 'Nashr qilingan', icon: 'M20 6L9 17l-5-5', cls: 'bg-green-50 text-green-600' },
+                { num: stats.draft, lbl: 'Qoralama', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10', cls: 'bg-amber-50 text-amber-600' },
+                { num: stats.langs, lbl: 'Faol til', icon: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z', cls: 'bg-violet-50 text-violet-600' },
+              ]"
+              :key="i"
+              class="bg-white border border-slate-100 rounded-[18px] p-5 flex items-center gap-4 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200"
+            >
+              <div :class="['w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0', s.cls]">
+                <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path :d="s.icon"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-2xl font-black text-slate-900 tracking-tight leading-none">{{ s.num }}</div>
+                <div class="text-[0.7rem] font-bold text-slate-400 uppercase tracking-[0.1em] mt-1">{{ s.lbl }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two column grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+            <!-- Oxirgi tasklar -->
+            <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden">
+              <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                <h2 class="text-[0.9rem] font-black text-slate-900">Oxirgi tasklar</h2>
+                <NuxtLink
+                  to="/admin/tasks"
+                  class="flex items-center gap-1.5 text-[0.72rem] font-bold text-blue-600 hover:gap-2.5 transition-all duration-200"
+                >
+                  Barchasini ko'rish
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </NuxtLink>
+              </div>
+              <div>
+                <div v-if="recentTasks.length === 0" class="px-6 py-8 text-center text-[0.82rem] text-slate-400">
+                  Hali task qo'shilmagan
+                </div>
+                <div
+                  v-for="task in recentTasks"
+                  :key="task.slug"
+                  class="flex items-center justify-between px-6 py-4 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors duration-150"
+                >
+                  <div>
+                    <div class="text-[0.85rem] font-bold text-slate-900 mb-0.5">{{ task.uz }}</div>
+                    <div class="text-[0.7rem] text-slate-400 font-mono">{{ task.slug }}</div>
+                  </div>
+                  <div class="flex items-center gap-2.5">
+                    <span
+                      class="px-2.5 py-1 rounded-full text-[0.62rem] font-black uppercase tracking-[0.08em]"
+                      :class="task.status === 'published' ? 'bg-green-50 text-green-600' : 'bg-amber-50 text-amber-600'"
+                    >
+                      {{ task.status === 'published' ? 'Nashr' : 'Qoralama' }}
+                    </span>
+                    <NuxtLink
+                      :to="`/admin/tasks/${task.slug}`"
+                      class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-[#05080f] hover:text-blue-400 transition-all duration-200"
+                    >
+                      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                    </NuxtLink>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tezkor harakatlar -->
+            <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden">
+              <div class="px-6 py-5 border-b border-slate-100">
+                <h2 class="text-[0.9rem] font-black text-slate-900">Tezkor harakatlar</h2>
+              </div>
+
+              <div class="border-b border-slate-100">
+                <NuxtLink
+                  v-for="item in [
+                    { to: '/admin/tasks', icon: 'M12 5v14M5 12h14', title: 'Yangi task qo\'shish', sub: '3 tilda kontent yaratish', cls: 'bg-blue-50 text-blue-600' },
+                    { to: '/admin/tasks', icon: 'M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7 M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z', title: 'Tasklarni tahrirlash', sub: `${stats.total} ta task mavjud`, cls: 'bg-green-50 text-green-600' },
+                    { to: '/', icon: 'M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3', title: 'Saytni ko\'rish', sub: 'Joriy holat', cls: 'bg-violet-50 text-violet-600', blank: true },
+                  ]"
+                  :key="item.title"
+                  :to="item.to"
+                  :target="item.blank ? '_blank' : undefined"
+                  class="flex items-center gap-4 px-6 py-4 border-b border-slate-50 last:border-b-0 hover:bg-slate-50 transition-colors duration-150"
+                >
+                  <div :class="['w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0', item.cls]">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path :d="item.icon"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-[0.85rem] font-bold text-slate-900 mb-0.5">{{ item.title }}</div>
+                    <div class="text-[0.72rem] text-slate-400 font-medium">{{ item.sub }}</div>
+                  </div>
+                  <svg class="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </NuxtLink>
+              </div>
+
+              <!-- Progress -->
+              <div class="px-6 py-5">
+                <div class="flex justify-between mb-2">
+                  <span class="text-[0.72rem] font-bold text-slate-500 uppercase tracking-[0.08em]">Nashr qilinganlar</span>
+                  <span class="text-[0.72rem] font-black text-blue-600">
+                    {{ stats.total > 0 ? Math.round((stats.published / stats.total) * 100) : 0 }}%
+                  </span>
+                </div>
+                <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+                  <div
+                    class="h-full bg-gradient-to-r from-blue-600 to-violet-500 rounded-full transition-all duration-700"
+                    :style="{ width: stats.total > 0 ? (stats.published / stats.total * 100) + '%' : '0%' }"
+                  />
+                </div>
+                <p class="text-[0.7rem] text-slate-400 font-medium">
+                  {{ stats.published }} / {{ stats.total }} task nashr qilingan
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- AKTIV BOSQICH WIDGET -->
+          <div class="bg-white border border-slate-100 rounded-3xl p-6">
+            <div class="flex items-start justify-between mb-5 gap-4">
+              <div>
+                <h2 class="text-[0.9rem] font-black text-slate-900 mb-1">Aktiv bosqich</h2>
+                <p class="text-[0.75rem] text-slate-400 font-medium">
+                  Saytda qaysi bosqich "HOZIRGI BOSQICH" ko'rinishida ajralib turadi
+                </p>
+              </div>
+              <Transition name="saved">
+                <div
+                  v-if="stageSaved"
+                  class="flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-600 text-[0.75rem] font-bold px-3.5 py-1.5 rounded-[10px] flex-shrink-0"
+                >
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  Saqlandi
+                </div>
+              </Transition>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              <button
+                v-for="s in stages"
+                :key="s.id"
+                class="flex items-center gap-3.5 px-4 py-3.5 rounded-2xl border-[1.5px] text-left transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed hover:enabled:-translate-y-0.5 hover:enabled:shadow-md"
+                :class="activeStage === s.id
+                  ? 'shadow-md'
+                  : 'border-slate-100 bg-slate-50 hover:enabled:border-slate-200 hover:enabled:bg-white'"
+                :style="activeStage === s.id ? {
+                  borderColor: s.color,
+                  background: s.color + '12',
+                } : {}"
+                :disabled="stageLoading"
+                @click="saveActiveStage(s.id)"
+              >
+                <!-- Dot -->
+                <div
+                  class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                  :style="{ background: activeStage === s.id ? s.color : '#e2e8f0' }"
+                >
+                  <svg v-if="activeStage === s.id" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+
+                <!-- Text -->
+                <div class="flex-1 min-w-0">
+                  <div
+                    class="text-[0.82rem] font-black truncate transition-colors duration-200"
+                    :style="activeStage === s.id ? { color: s.color } : { color: '#0f172a' }"
+                  >
+                    {{ s.label }}
+                  </div>
+                  <div class="text-[0.7rem] text-slate-400 font-medium truncate mt-0.5">{{ s.sub }}</div>
+                </div>
+
+                <!-- Active badge -->
+                <span
+                  v-if="activeStage === s.id"
+                  class="text-[0.58rem] font-black uppercase tracking-[0.1em] text-white px-2 py-0.5 rounded-full flex-shrink-0"
+                  :style="{ background: s.color }"
+                >
+                  Aktiv
+                </span>
+              </button>
+            </div>
+
+            <p class="flex items-center gap-1.5 text-[0.72rem] text-slate-400 font-medium">
+              <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Bosqichni bosganingizda avtomatik saqlanadi va saytda darhol yangilanadi
+            </p>
+          </div>
+
+        </template>
+      </main>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;900&display=swap");
-* {
-	box-sizing: border-box;
-}
-.dash {
-	font-family: "DM Sans", sans-serif;
-	min-height: 100vh;
-	background: #f8fafc;
-	display: flex;
-	flex-direction: column;
-}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;900&display=swap');
 
-.topbar {
-	height: 60px;
-	background: #05080f;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 1.5rem;
-	position: sticky;
-	top: 0;
-	z-index: 100;
-}
-.topbar-left {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-}
-.topbar-logo {
-	width: 34px;
-	height: 34px;
-	border-radius: 10px;
-	background: linear-gradient(135deg, #1a56db, #7c3aed);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.topbar-title {
-	color: #fff;
-	font-weight: 900;
-	font-size: 0.95rem;
-	letter-spacing: 0.03em;
-}
-.topbar-badge {
-	background: rgba(26, 86, 219, 0.25);
-	color: #60a5fa;
-	font-size: 0.6rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.15em;
-	padding: 0.2rem 0.6rem;
-	border-radius: 20px;
-	margin-left: 0.5rem;
-	border: 1px solid rgba(26, 86, 219, 0.3);
-}
-.topbar-right {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-}
-.topbar-user {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-.user-avatar {
-	width: 30px;
-	height: 30px;
-	border-radius: 50%;
-	background: linear-gradient(135deg, #1a56db, #7c3aed);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #fff;
-	font-size: 0.7rem;
-	font-weight: 900;
-}
-.user-name {
-	color: #94a3b8;
-	font-size: 0.8rem;
-	font-weight: 600;
-	max-width: 180px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-.logout-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	background: none;
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	color: #64748b;
-	padding: 0.4rem 0.9rem;
-	border-radius: 8px;
-	cursor: pointer;
-	font-size: 0.75rem;
-	font-weight: 700;
-	font-family: inherit;
-	transition: all 0.2s;
-}
-.logout-btn svg {
-	width: 14px;
-	height: 14px;
-}
-.logout-btn:hover {
-	color: #fff;
-	border-color: rgba(255, 255, 255, 0.2);
-}
+.font-sans { font-family: 'DM Sans', sans-serif; }
 
-.dash-body {
-	display: flex;
-	flex: 1;
-	min-height: calc(100vh - 60px);
-}
-
-.sidebar {
-	width: 220px;
-	background: #05080f;
-	border-right: 1px solid rgba(255, 255, 255, 0.06);
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	padding: 1.5rem 1rem;
-	position: sticky;
-	top: 60px;
-	height: calc(100vh - 60px);
-}
-.sidebar-nav {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-}
-.nav-item {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	padding: 0.7rem 1rem;
-	border-radius: 12px;
-	color: #475569;
-	font-size: 0.8rem;
-	font-weight: 700;
-	text-decoration: none;
-	transition: all 0.2s;
-}
-.nav-item svg {
-	width: 16px;
-	height: 16px;
-}
-.nav-item:hover {
-	background: rgba(255, 255, 255, 0.05);
-	color: #94a3b8;
-}
-.nav-item.active {
-	background: rgba(26, 86, 219, 0.15);
-	color: #60a5fa;
-	border: 1px solid rgba(26, 86, 219, 0.2);
-}
-.sidebar-info {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	font-size: 0.65rem;
-	color: #1e3a5f;
-	font-weight: 700;
-}
-.info-dot {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-}
-.dot-ok {
-	background: #22c55e;
-}
-.dot-error {
-	background: #ef4444;
-}
-
-.dash-main {
-	flex: 1;
-	padding: 2rem;
-	overflow-y: auto;
-}
-
-/* SKELETON */
-.skeleton-header {
-	height: 56px;
-	background: #e2e8f0;
-	border-radius: 12px;
-	margin-bottom: 2rem;
-	animation: skpulse 1.5s ease-in-out infinite;
-}
-.skeleton-card {
-	height: 90px;
-	background: #e2e8f0;
-	border-radius: 18px;
-	animation: skpulse 1.5s ease-in-out infinite;
-}
-.skeleton-widget {
-	height: 280px;
-	background: #e2e8f0;
-	border-radius: 24px;
-	animation: skpulse 1.5s ease-in-out infinite;
-}
-@keyframes skpulse {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.4;
-	}
-}
-
-/* ERROR */
-.db-error {
-	display: flex;
-	align-items: flex-start;
-	gap: 1rem;
-	background: #fef2f2;
-	border: 1px solid #fecaca;
-	border-radius: 16px;
-	padding: 1.5rem;
-}
-.db-error svg {
-	width: 22px;
-	height: 22px;
-	color: #ef4444;
-	flex-shrink: 0;
-	margin-top: 2px;
-}
-.db-error-title {
-	font-size: 0.9rem;
-	font-weight: 800;
-	color: #dc2626;
-	margin-bottom: 0.25rem;
-}
-.db-error-msg {
-	font-size: 0.78rem;
-	color: #ef4444;
-	font-family: monospace;
-}
-
-.page-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 2rem;
-}
-.page-eyebrow {
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: #94a3b8;
-	text-transform: uppercase;
-	letter-spacing: 0.12em;
-	margin-bottom: 0.3rem;
-}
-.page-title {
-	font-size: 1.75rem;
-	font-weight: 900;
-	color: #0f172a;
-	letter-spacing: -0.03em;
-}
-.goto-tasks-btn {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	background: linear-gradient(135deg, #1a56db, #1e40af);
-	color: #fff;
-	padding: 0.65rem 1.25rem;
-	border-radius: 12px;
-	text-decoration: none;
-	font-size: 0.78rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	box-shadow: 0 4px 16px rgba(26, 86, 219, 0.3);
-	transition: all 0.2s;
-}
-.goto-tasks-btn svg {
-	width: 14px;
-	height: 14px;
-}
-.goto-tasks-btn:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 24px rgba(26, 86, 219, 0.4);
-}
-
-.stats-row {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 1rem;
-	margin-bottom: 1.5rem;
-}
-.stat-card {
-	background: #fff;
-	border: 1px solid #f1f5f9;
-	border-radius: 18px;
-	padding: 1.25rem;
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	transition:
-		transform 0.2s,
-		box-shadow 0.2s;
-}
-.stat-card:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-.stat-icon {
-	width: 44px;
-	height: 44px;
-	border-radius: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-}
-.stat-icon svg {
-	width: 18px;
-	height: 18px;
-}
-.stat-icon.blue {
-	background: #eff6ff;
-	color: #1a56db;
-}
-.stat-icon.green {
-	background: #f0fdf4;
-	color: #16a34a;
-}
-.stat-icon.amber {
-	background: #fffbeb;
-	color: #d97706;
-}
-.stat-icon.purple {
-	background: #faf5ff;
-	color: #7c3aed;
-}
-.stat-num {
-	font-size: 1.5rem;
-	font-weight: 900;
-	color: #0f172a;
-	letter-spacing: -0.03em;
-	line-height: 1;
-}
-.stat-lbl {
-	font-size: 0.7rem;
-	font-weight: 700;
-	color: #94a3b8;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
-	margin-top: 0.25rem;
-}
-
-.bottom-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 1.5rem;
-}
-.widget-card {
-	background: #fff;
-	border: 1px solid #f1f5f9;
-	border-radius: 24px;
-	overflow: hidden;
-}
-.widget-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1.25rem 1.5rem;
-	border-bottom: 1px solid #f1f5f9;
-}
-.widget-title {
-	font-size: 0.9rem;
-	font-weight: 900;
-	color: #0f172a;
-}
-.widget-link {
-	display: flex;
-	align-items: center;
-	gap: 0.35rem;
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: #1a56db;
-	text-decoration: none;
-	transition: gap 0.2s;
-}
-.widget-link svg {
-	width: 12px;
-	height: 12px;
-}
-.widget-link:hover {
-	gap: 0.55rem;
-}
-
-.recent-empty {
-	padding: 2rem 1.5rem;
-	text-align: center;
-	font-size: 0.82rem;
-	color: #94a3b8;
-}
-.recent-row {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 1rem 1.5rem;
-	border-bottom: 1px solid #f8fafc;
-	transition: background 0.15s;
-}
-.recent-row:last-child {
-	border-bottom: none;
-}
-.recent-row:hover {
-	background: #f8fafc;
-}
-.recent-title {
-	font-size: 0.85rem;
-	font-weight: 700;
-	color: #0f172a;
-	margin-bottom: 0.2rem;
-}
-.recent-slug {
-	font-size: 0.7rem;
-	color: #94a3b8;
-	font-family: monospace;
-}
-.recent-right {
-	display: flex;
-	align-items: center;
-	gap: 0.6rem;
-}
-.status-badge {
-	padding: 0.25rem 0.65rem;
-	border-radius: 20px;
-	font-size: 0.62rem;
-	font-weight: 800;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	white-space: nowrap;
-}
-.status-badge.published {
-	background: #f0fdf4;
-	color: #16a34a;
-}
-.status-badge.draft {
-	background: #fffbeb;
-	color: #d97706;
-}
-.recent-edit {
-	width: 28px;
-	height: 28px;
-	border-radius: 8px;
-	background: #f8fafc;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: #94a3b8;
-	text-decoration: none;
-	transition: all 0.2s;
-	flex-shrink: 0;
-}
-.recent-edit svg {
-	width: 13px;
-	height: 13px;
-}
-.recent-edit:hover {
-	background: #05080f;
-	color: #60a5fa;
-}
-
-.quick-actions {
-	border-bottom: 1px solid #f1f5f9;
-}
-.qa-item {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	padding: 1rem 1.5rem;
-	text-decoration: none;
-	transition: background 0.15s;
-	border-bottom: 1px solid #f8fafc;
-}
-.qa-item:last-child {
-	border-bottom: none;
-}
-.qa-item:hover {
-	background: #f8fafc;
-}
-.qa-icon {
-	width: 36px;
-	height: 36px;
-	border-radius: 10px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-}
-.qa-icon svg {
-	width: 16px;
-	height: 16px;
-}
-.qa-icon.blue {
-	background: #eff6ff;
-	color: #1a56db;
-}
-.qa-icon.green {
-	background: #f0fdf4;
-	color: #16a34a;
-}
-.qa-icon.purple {
-	background: #faf5ff;
-	color: #7c3aed;
-}
-.qa-title {
-	font-size: 0.85rem;
-	font-weight: 700;
-	color: #0f172a;
-	margin-bottom: 0.15rem;
-}
-.qa-sub {
-	font-size: 0.72rem;
-	color: #94a3b8;
-	font-weight: 500;
-}
-.qa-arrow {
-	width: 14px;
-	height: 14px;
-	color: #cbd5e1;
-	margin-left: auto;
-	flex-shrink: 0;
-	transition: transform 0.2s;
-}
-.qa-item:hover .qa-arrow {
-	transform: translateX(3px);
-	color: #1a56db;
-}
-
-.progress-block {
-	padding: 1.25rem 1.5rem;
-}
-.progress-header {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 0.6rem;
-}
-.progress-label {
-	font-size: 0.72rem;
-	font-weight: 700;
-	color: #64748b;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-}
-.progress-pct {
-	font-size: 0.72rem;
-	font-weight: 800;
-	color: #1a56db;
-}
-.progress-bar {
-	height: 6px;
-	background: #f1f5f9;
-	border-radius: 4px;
-	overflow: hidden;
-	margin-bottom: 0.5rem;
-}
-.progress-fill {
-	height: 100%;
-	background: linear-gradient(90deg, #1a56db, #7c3aed);
-	border-radius: 4px;
-	transition: width 0.8s ease;
-}
-.progress-sub {
-	font-size: 0.7rem;
-	color: #94a3b8;
-	font-weight: 500;
-}
-
-@media (max-width: 1024px) {
-	.stats-row {
-		grid-template-columns: repeat(2, 1fr);
-	}
-	.bottom-grid {
-		grid-template-columns: 1fr;
-	}
-}
+.saved-enter-active, .saved-leave-active { transition: all 0.3s ease; }
+.saved-enter-from, .saved-leave-to { opacity: 0; transform: translateY(-6px); }
 </style>

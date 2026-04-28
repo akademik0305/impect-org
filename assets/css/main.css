@@ -1,8 +1,7 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-
-/* fonts */
+/* 1. FONTS */
 @font-face {
   font-family: 'Prosto One';
   src: url('~/assets/fonts/ProstoOne-Regular.woff2') format('woff2'),
@@ -12,7 +11,6 @@
   font-display: swap;
 }
 
-/* inter */
 @font-face {
   font-family: 'Inter';
   src: url('Inter-Italic.woff2') format('woff2'),
@@ -31,59 +29,76 @@
   font-display: swap;
 }
 
-/* nuxt ui */
+/* 2. CSS VARIABLES (:ROOT) */
 :root {
   --ui-radius: var(--radius-lg);
+  
+  /* Brand Colors - Mijoz bergan palitra */
+  --brand-red: #E24C4B;       /* Empower Red */
+  --brand-orange: #F57C00;    /* Energy Orange */
+  --brand-yellow: #FFC107;    /* Sunshine Yellow */
+  --brand-beige: #F7F3EF;     /* Soft Beige */
+  --brand-neutral: #EFEAE5;   /* Light Neutral */
+  --brand-charcoal: #212121;  /* Charcoal */
+
+  /* Map existing logic to new variables */
+  --color-primary: var(--brand-red);
+  --color-secondary: var(--brand-charcoal);
+  --color-background: var(--brand-beige);
+  --color-text: var(--brand-charcoal);
+  --color-bg: var(--brand-beige);
 }
 
-/* Fon ranglari o'zgaruvchilari (global CSS da ham bo'lishi kerak) */
-.hotel-theme {}
-
-/* custom themes */
+/* 3. TAILWIND @THEME */
 @theme {
-  --color-primary: #155dfc;
-  --color-secondary: #1a1a1a;
-  --color-background: #fdfcf9;
-  --ui-primary: var(--color-main);
+  /* Brand colors mapping */
+  --color-brand-red: var(--brand-red);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-brand-beige: var(--brand-beige);
+  --color-brand-neutral: var(--brand-neutral);
+  --color-brand-charcoal: var(--brand-charcoal);
 
+  /* Legacy & UI mapping */
+  --color-primary: var(--brand-red);
+  --color-secondary: var(--brand-charcoal);
+  --color-background: var(--brand-beige);
+  --ui-primary: var(--brand-red);
 
-  /* fonts */
+  /* Fonts */
   --font-inter: 'Inter', sans-serif;
-  --font-prosto: 'Prosto One'
+  --font-prosto: 'Prosto One', sans-serif;
 
-    /* font sizes */
-    --text-tiny: 10px;
+  /* Font sizes */
+  --text-tiny: 10px;
 
-  /* margins */
+  /* Margins & Spacings */
   --spacing-4.5: 18px;
   --spacing-7.5: 30px;
   --spacing-15: 60px;
   --spacing-45: 180px;
 
-  /* shadow */
+  /* Shadow */
   --shadow-modal: 0px -4px 18px 0px #0000000F;
 
-  /* sizes */
-  --xs: 450px;
-  --sm: 640px;
-  --md: 768px;
-  --lg: 1024px;
-  --xl: 1280px;
-  --xxl: 1536px;
-  /* breakpoint */
-  --breakpoint-xs: 450px
+  /* Breakpoints */
+  --breakpoint-xs: 450px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-xxl: 1536px;
 }
 
-
+/* 4. BASE STYLES */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-
+  font-family: var(--font-inter);
+  color: var(--brand-charcoal);
+  background-color: var(--brand-beige);
 }
 
 button {
@@ -94,108 +109,63 @@ input {
   outline: none;
 }
 
-/* transition */
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s linear;
-  opacity: 1;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  top: -100px;
-  opacity: 0;
-}
-
-/* container */
+/* 5. COMPONENTS & LAYOUT */
 .container {
   width: 100%;
-  max-width: var(--xl);
+  max-width: 1280px; /* var(--xl) */
   margin: 0 auto;
   padding: 0 20px;
-
 }
 
-@media (max-width: 1440px) {
-  .container {
-    max-width: var(--xl);
-  }
-}
+@media (max-width: 1280px) { .container { max-width: 1024px; } }
+@media (max-width: 1024px) { .container { max-width: 768px; } }
+@media (max-width: 768px) { .container { max-width: 640px; } }
+@media (max-width: 600px) { .container { padding: 0 16px; max-width: 450px; } }
+@media (max-width: 450px) { .container { max-width: 100%; } }
 
-@media (max-width: 1280px) {
-  .container {
-    max-width: var(--lg);
-  }
-}
-
-@media (max-width: 1024px) {
-  .container {
-    max-width: var(--md);
-  }
-}
-
-@media (max-width: 768px) {
-  .container {
-    max-width: var(--sm);
-  }
-}
-
-@media (max-width: 600px) {
-  .container {
-    padding: 0 16px;
-    max-width: var(--xs);
-  }
-}
-
-@media (max-width: 450px) {
-  .container {
-    max-width: 100%
-  }
-}
-
-
-/* custom scrolbar */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
-  background-color: var(--color-secondary);
+  background-color: var(--brand-charcoal);
 }
 
 ::-webkit-scrollbar-track {
-  background-color: var(--color-gray-200);
+  background-color: var(--brand-neutral);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 2px;
-  background-color: var(--color-primary);
+  background-color: var(--brand-red);
 }
 
-
-/* swiper custom styles */
+/* Swiper custom styles */
 swiper-container::part(wrapper) {
   padding: 10px 0;
 }
 
-/* swiper-container::part(pagination) {
-} */
-
 swiper-container::part(bullet) {
   width: 16px;
   height: 10px;
-  background-color: var(--color-text);
+  background-color: var(--brand-charcoal);
   border-radius: 10px;
 }
 
 swiper-container::part(bullet-active) {
   width: 20px;
   height: 10px;
-  background-color: var(--color-main);
+  background-color: var(--brand-red);
   border-radius: 10px;
 }
 
+/* Transitions */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s linear;
+}
 
-swiper-slide {
-  display: flex;
-  flex-direction: column;
-  height: auto;
+.modal-enter-from,
+.modal-leave-to {
+  top: -100px;
+  opacity: 0;
 }
