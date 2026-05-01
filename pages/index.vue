@@ -1025,6 +1025,8 @@ onUnmounted(() => {
 			</div>
 		</section>
 
+		<ProjectTeam />
+
 		<!-- ══ PARTNERS ══ -->
 		<section
 			class="py-12 px-6"

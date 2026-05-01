@@ -212,5 +212,34 @@
         ]
       }
     ]
+  },
+  "project_team": {
+    "badge": "Our Team",
+    "title_part1": "STRONG",
+    "title_connector": "AND",
+    "title_part2": "UNITED",
+    "description": "Behind our success stands a strong and united team. Every member is an expert in their field and a creator of innovative ideas.",
+    "member_quote": "\"Every woman can be at the center of change in her society.\" An integral part of our team and a proactive leader.",
+    "cta_portfolio": "View Portfolio",
+    "footer_text": "WeEmpower © {year} — Stronger Together",
+    "names": [
+      "Alijon Valiyev",
+      "Zuhra Rahmonova",
+      "Sobir Islomov",
+      "Madina Karimova",
+      "Javohir Toshpulotov",
+      "Nozima Saidova",
+      "Rustam Obidov",
+      "Malika Ahmedova",
+      "Umidbek Mirzayev",
+      "Shaxlo Ergasheva"
+    ],
+    "roles": [
+      "Strategic Director",
+      "Project Coordinator",
+      "Women's Mentorship Program",
+      "Advocacy Specialist",
+      "Community Outreach"
+    ]
   }
 }

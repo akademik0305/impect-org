@@ -1,76 +1,71 @@
 <script setup>
+const { t } = useI18n()
 const supabase = useSupabaseClient()
 
-// ── STAGES (statik matn) ──────────────────────────────────
-const stages = [
+// ── STAGES ────────────────────────────────────────────────
+const stages = computed(() => [
   {
     id: 1,
     number: '01',
     status: 'done',
-    label: 'Tugallandi',
-    title: 'Natija 1: Ehtiyojlar va Tarmoq',
-    heading: 'Salohiyatni mustahkamlash',
+    title: t('stages.items[0].title'),
+    heading: t('stages.items[0].heading'),
     accentColor: '#6c5ce7',
     activities: [
-      "Ehtiyojlarni xaritalash va diagnostik tahlil o'tkazish.",
-      "Toshkent va Farg'onada 40 ta NNTdan iborat tarmoq yaratish.",
-      "Salohiyatni oshirish bo'yicha strategik reja ishlab chiqish.",
-      "Tarmoq davra suhbati orqali advokatsiya yo'nalishlarini belgilash.",
+      t('stages.items[0].activities[0]'),
+      t('stages.items[0].activities[1]'),
+      t('stages.items[0].activities[2]'),
+      t('stages.items[0].activities[3]'),
     ],
-    date: '2025 — 2026 I bosqich',
+    date: t('stages.items[0].date'),
   },
   {
     id: 2,
     number: '02',
     status: 'active',
-    label: 'Aktiv',
-    title: 'Natija 2: Bilim va Mentorlik',
-    heading: "Bilim va ko'nikmalarni oshirish",
+    title: t('stages.items[1].title'),
+    heading: t('stages.items[1].heading'),
     accentColor: '#a29bfe',
     activities: [
-      "Liderlik, Fundraising va Loyiha yozish bo'yicha treninglar.",
-      'Individual va guruhli mentorlik sessiyalari.',
-      "NNT va tashabbuskor guruhlar uchun maxsus o'quv dasturlari.",
-      "Tashkilotlararo qo'shma hamkorlik loyihalarini yaratish.",
+      t('stages.items[1].activities[0]'),
+      t('stages.items[1].activities[1]'),
+      t('stages.items[1].activities[2]'),
+      t('stages.items[1].activities[3]'),
     ],
-    date: '2026 — II bosqich (hozir)',
+    date: t('stages.items[1].date'),
   },
   {
     id: 3,
     number: '★',
     status: 'event',
-    label: 'Tadbir',
-    title: 'II-Davra suhbati (May 2026)',
-    heading: 'Natijalar taqdimoti',
+    title: t('stages.items[2].title'),
+    heading: t('stages.items[2].heading'),
     accentColor: '#ff758f',
     activities: [
-      'Loyiha natijalari va erishilgan yutuqlar taqdimoti.',
-      'Tarmoq faoliyati tahlili va muammolar muhokamasi.',
-      "Kelgusi barqarorlik va rivojlanish yo'llarini belgilash.",
+      t('stages.items[2].activities[0]'),
+      t('stages.items[2].activities[1]'),
+      t('stages.items[2].activities[2]'),
     ],
-    date: 'May 2026',
+    date: t('stages.items[2].date'),
   },
   {
     id: 4,
     number: '03',
     status: 'pending',
-    label: 'Kutilmoqda',
-    title: 'Natija 3: Barqarorlik va Faollik',
-    heading: 'Barqaror hamkorlik va advokatsiya',
+    title: t('stages.items[3].title'),
+    heading: t('stages.items[3].heading'),
     accentColor: '#fab1a0',
     activities: [
-      'Mahalliy darajada kichik pilot tashabbuslarni amalga oshirish.',
-      "Hududiy va tarmoq doirasida qo'shma advokatsiya tadbirlari.",
-      'Muntazam uchrashuvlar orqali tarmoqni kengaytirish.',
-      'Yakuniy natijalar taqdimoti va istiqbolli rejalar.',
+      t('stages.items[3].activities[0]'),
+      t('stages.items[3].activities[1]'),
+      t('stages.items[3].activities[2]'),
+      t('stages.items[3].activities[3]'),
     ],
-    date: '2026 — III bosqich',
+    date: t('stages.items[3].date'),
   },
-]
+])
 
-// ── SUPABASE: aktiv bosqichni yuklash ─────────────────────
-// settings jadvalidagi active_stage qiymatiga qarab
-// qaysi karta "HOZIRGI BOSQICH" badge ko'rsatishi aniqlanadi
+// ── SUPABASE: aktiv bosqich ───────────────────────────────
 const { data: stageData } = await useAsyncData('active-stage', async () => {
   const { data } = await supabase
     .from('settings')
@@ -88,48 +83,45 @@ function isCurrent(stage) {
 </script>
 
 <template>
-  <section class="bg-slate-50 py-20 px-5 overflow-hidden font-sans">
+  <section class="bg-slate-50 py-20 px-5 overflow-hidden">
     <div class="max-w-[1100px] mx-auto">
 
       <!-- HEADER -->
       <div class="text-center mb-16">
         <span class="inline-block bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest mb-4">
-          Loyiha yo'l xaritasi
+          {{ t('stages.eyebrow') }}
         </span>
         <h2 class="text-4xl font-black text-slate-900 tracking-tight">
-          Amalga oshirish bosqichlari
+          {{ t('stages.title') }}
         </h2>
       </div>
 
       <!-- TIMELINE -->
       <div class="relative flex flex-col gap-10">
 
-        <!-- Markaziy vertikal chiziq (desktop) -->
-        <div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px border-l-2 border-dashed border-slate-200 z-0 md:block hidden" />
-        <!-- Chiziq (mobile) -->
+        <!-- Vertikal chiziq desktop -->
+        <div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px border-l-2 border-dashed border-slate-200 z-0 hidden md:block" />
+        <!-- Vertikal chiziq mobile -->
         <div class="absolute left-5 top-0 bottom-0 w-px border-l-2 border-dashed border-slate-200 z-0 md:hidden" />
 
         <div
           v-for="(step, index) in stages"
           :key="step.id"
-          class="relative z-10 flex items-center w-full"
-          :class="[
-            index % 2 !== 0 ? 'md:flex-row-reverse' : 'md:flex-row',
-            'flex-col items-start pl-14 md:pl-0'
-          ]"
+          class="relative z-10 flex items-center w-full pl-14 md:pl-0"
+          :class="index % 2 !== 0 ? 'md:flex-row-reverse' : 'md:flex-row'"
         >
-          <!-- Markaziy dot (desktop) -->
+          <!-- Dot desktop -->
           <div
             class="hidden md:flex absolute left-1/2 -translate-x-1/2 w-[50px] h-[50px] rounded-full items-center justify-center font-black text-sm z-10 border-[3px] bg-white transition-all duration-300"
-            :class="isCurrent(step) ? 'border-white shadow-[0_0_24px_rgba(0,0,0,0.2)]' : ''"
+            :class="isCurrent(step) ? 'shadow-[0_0_24px_rgba(0,0,0,0.2)]' : ''"
             :style="isCurrent(step)
-              ? { background: step.accentColor, borderColor: step.accentColor }
+              ? { background: step.accentColor, borderColor: step.accentColor, color: '#fff' }
               : { borderColor: step.accentColor, color: step.accentColor }"
           >
-            <span :class="isCurrent(step) ? 'text-white' : ''">{{ step.number }}</span>
+            {{ step.number }}
           </div>
 
-          <!-- Dot (mobile) -->
+          <!-- Dot mobile -->
           <div
             class="md:hidden absolute left-2 top-7 w-[34px] h-[34px] rounded-full flex items-center justify-center font-black text-xs z-10 border-[2.5px] bg-white"
             :style="isCurrent(step)
@@ -146,21 +138,18 @@ function isCurrent(stage) {
               :class="isCurrent(step) ? 'bg-[#fff5f7]' : 'bg-white/80'"
               :style="{ borderTopColor: step.accentColor }"
             >
-              <!-- Hozirgi bosqich badge -->
+              <!-- HOZIRGI BOSQICH badge -->
               <div
                 v-if="isCurrent(step)"
                 class="absolute -top-3.5 right-5 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-lg"
                 :style="{ background: step.accentColor }"
               >
-                HOZIRGI BOSQICH
+                {{ t('stages.currentBadge') }}
               </div>
 
               <span class="text-xs text-slate-400 font-semibold">{{ step.date }}</span>
 
-              <h3
-                class="text-xl font-black mt-2 mb-1"
-                :style="{ color: step.accentColor }"
-              >
+              <h3 class="text-xl font-black mt-2 mb-1" :style="{ color: step.accentColor }">
                 {{ step.title }}
               </h3>
 
@@ -181,7 +170,7 @@ function isCurrent(stage) {
             </div>
           </div>
 
-          <!-- Bo'sh joy (desktop zig-zag uchun) -->
+          <!-- Bo'sh joy (zig-zag uchun) -->
           <div class="hidden md:block md:w-[45%]" />
         </div>
 
@@ -189,8 +178,3 @@ function isCurrent(stage) {
     </div>
   </section>
 </template>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;900&display=swap');
-.font-sans { font-family: 'DM Sans', sans-serif; }
-</style>

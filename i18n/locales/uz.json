@@ -212,5 +212,34 @@
         ]
       }
     ]
+  },
+  "project_team": {
+    "badge": "Bizning Jamoa",
+    "title_part1": "KUCHLI",
+    "title_connector": "VA",
+    "title_part2": "BIRDAM",
+    "description": "Bizning muvaffaqiyatimiz ortida kuchli va birdam jamoa turibdi. Har bir ko'ngilli o'z sohasining ustasi va g'oyalarining ijodkori.",
+    "member_quote": "\"Har bir ayol o'z jamiyatining o'zgarish markazida bo'lishi mumkin.\" Jamoamizning ajralmas qismi va tashabbuskor yetakchisi.",
+    "cta_portfolio": "Portfolio bilan tanishish",
+    "footer_text": "WeEmpower © {year} — Barchamiz birga kuchlimiz",
+    "names": [
+      "Alijon Valiyev",
+      "Zuhra Rahmonova",
+      "Sobir Islomov",
+      "Madina Karimova",
+      "Javohir Toshpulotov",
+      "Nozima Saidova",
+      "Rustam Obidov",
+      "Malika Ahmedova",
+      "Umidbek Mirzayev",
+      "Shaxlo Ergasheva"
+    ],
+    "roles": [
+      "Strategik Direktor",
+      "Loyiha Koordinatori",
+      "Ayollar Mentorlik Dasturi",
+      "Advokatsiya Bo'yicha Mutaxassis",
+      "Jamiyat Bilan Ishlash"
+    ]
   }
 }
