@@ -8,7 +8,6 @@ const task = ref(null)
 const allSlugs = ref([])
 const dbLoading = ref(true)
 
-// ── Barcha published sluglar ──────────────────────────────
 const { data: slugsData } = await useAsyncData("task-slugs", async () => {
 	const { data } = await supabase
 		.from("tasks")
@@ -25,7 +24,6 @@ if (index === -1) {
 	throw createError({ statusCode: 404, statusMessage: "Sahifa topilmadi" })
 }
 
-// ── Joriy task (image_url ham) ────────────────────────────
 const { data: taskData } = await useAsyncData(`task-${slug}`, async () => {
 	const { data, error } = await supabase
 		.from("tasks")
@@ -33,7 +31,6 @@ const { data: taskData } = await useAsyncData(`task-${slug}`, async () => {
 		.eq("slug", slug)
 		.eq("status", "published")
 		.single()
-
 	if (error || !data) return null
 	return data
 })
@@ -45,13 +42,11 @@ if (!taskData.value) {
 task.value = taskData.value
 dbLoading.value = false
 
-// ── Til bo'yicha ma'lumot ─────────────────────────────────
 const currentLangData = computed(() => {
 	const lang = locale.value
 	return task.value?.[lang] ?? task.value?.uz ?? null
 })
 
-// ── Prev / Next ───────────────────────────────────────────
 const prevSlug = computed(() => (index > 0 ? allSlugs.value[index - 1] : null))
 const nextSlug = computed(() => (index < allSlugs.value.length - 1 ? allSlugs.value[index + 1] : null))
 
@@ -74,7 +69,6 @@ function getNeighborTitle(neighborSlug) {
 	return item[locale.value]?.title ?? item.uz?.title ?? neighborSlug
 }
 
-// ── Hero rasm: avval bazadan, bo'lmasa fallback ───────────
 const fallbackImages = [
 	"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1600",
 	"https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=1600",
@@ -84,10 +78,9 @@ const fallbackImages = [
 	"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600",
 ]
 const heroImage = computed(
-	() => task.value?.image_url || fallbackImages[index % fallbackImages.length]
+	() => task.value?.image_url || fallbackImages[index % fallbackImages.length],
 )
 
-// ── Scroll ────────────────────────────────────────────────
 const isScrolled = ref(false)
 const scrollProgress = ref(0)
 
@@ -100,7 +93,6 @@ function onScroll() {
 
 onMounted(() => {
 	window.addEventListener("scroll", onScroll, { passive: true })
-
 	const observer = new IntersectionObserver(
 		entries => {
 			entries.forEach(entry => {
@@ -117,43 +109,44 @@ onMounted(() => {
 		.forEach(el => observer.observe(el))
 })
 
-onUnmounted(() => {
-	window.removeEventListener("scroll", onScroll)
-})
+onUnmounted(() => window.removeEventListener("scroll", onScroll))
 
-// ── SEO ───────────────────────────────────────────────────
 useSeoMeta({
 	title: () =>
-		currentLangData.value ? `${currentLangData.value.title} — TARAQQIYOT` : "TARAQQIYOT",
+		currentLangData.value ? `${currentLangData.value.title} — WeEmpower` : "WeEmpower",
 	description: () => currentLangData.value?.desc ?? "",
 	ogImage: () => task.value?.image_url ?? fallbackImages[index % fallbackImages.length],
 })
 </script>
 
 <template>
-	<main class="min-h-screen bg-white font-sans overflow-x-hidden">
+	<main class="min-h-screen font-sans overflow-x-hidden" style="background:#F7F3EF; color:#212121">
 
 		<!-- SCROLL PROGRESS -->
 		<div
-			class="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-blue-600 to-violet-500 z-[1001] transition-all duration-100"
+			class="fixed top-0 left-0 h-[3px] z-[1001] transition-all duration-100"
+			style="background:linear-gradient(to right, #E24C4B, #F57C00, #FFC107)"
 			:style="{ width: scrollProgress + '%' }"
 		/>
 
 		<!-- ══ HEADER ══ -->
 		<header
 			class="fixed top-0 w-full z-[900] px-6 lg:px-10 py-5 flex justify-between items-center transition-all duration-300"
-			:class="isScrolled ? 'bg-white/90 backdrop-blur-xl border-b border-black/[0.08] shadow-sm' : 'bg-transparent'"
+			:class="isScrolled ? 'shadow-sm border-b' : 'bg-transparent'"
+			:style="isScrolled ? 'background:rgba(247,243,239,0.95); backdrop-filter:blur(20px); border-color:#EFEAE5' : ''"
 		>
 			<NuxtLink to="/" class="flex items-center gap-3 group">
 				<div class="w-32 h-auto max-h-12 rounded-xl flex items-center justify-center p-1.5">
-					<img src="~/assets/images/logo/logo.png" alt="TARAQQIYOT" class="object-contain w-full" />
+					<img src="~/assets/images/logo/logo.png" alt="WeEmpower" class="object-contain w-full" />
 				</div>
 			</NuxtLink>
 
 			<NuxtLink
 				to="/"
-				class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors duration-200"
-				:class="isScrolled ? 'text-slate-500 hover:text-slate-900' : 'text-white/80 hover:text-white'"
+				class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-all duration-200"
+				:style="isScrolled ? 'color:#212121' : 'color:rgba(255,255,255,0.85)'"
+				@mouseover="isScrolled && ($event.currentTarget.style.color='#E24C4B')"
+				@mouseout="isScrolled && ($event.currentTarget.style.color='#212121')"
 			>
 				<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 					<path d="M19 12H5M12 5l-7 7 7 7" />
@@ -163,47 +156,52 @@ useSeoMeta({
 		</header>
 
 		<!-- ══ HERO ══ -->
-		<section class="relative min-h-[75vh] flex items-end overflow-hidden bg-[#05080f]">
-
-			<!-- Fon rasmi -->
+		<section class="relative min-h-[75vh] flex items-end overflow-hidden" style="background:#212121">
 			<div class="absolute inset-0 z-0">
+				<!-- Rasm -->
 				<img
 					:src="heroImage"
 					:alt="currentLangData?.title ?? slug"
 					class="w-full h-full object-cover transition-opacity duration-700"
-					:class="task?.image_url ? 'opacity-60' : 'opacity-40'"
+					:class="task?.image_url ? 'opacity-55' : 'opacity-35'"
 				/>
-				<!-- Mesh overlay -->
+
+				<!-- Warm mesh overlay — brand ranglarda -->
 				<div
 					class="absolute inset-0"
 					:style="{
 						background: `
-							radial-gradient(ellipse 80% 60% at 20% 40%, rgba(26,86,219,0.3) 0%, transparent 60%),
-							radial-gradient(ellipse 60% 80% at 80% 60%, rgba(99,102,241,0.15) 0%, transparent 60%)
+							radial-gradient(ellipse 80% 60% at 20% 40%, rgba(226,76,75,0.35) 0%, transparent 60%),
+							radial-gradient(ellipse 60% 80% at 80% 60%, rgba(245,124,0,0.2) 0%, transparent 60%)
 						`
 					}"
 				/>
-				<!-- Grid -->
+
+				<!-- Subtle grid -->
 				<div
-					class="absolute inset-0 opacity-30"
+					class="absolute inset-0 opacity-20"
 					:style="{
-						backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
-						backgroundSize: '60px 60px'
+						backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+						backgroundSize: '60px 60px',
 					}"
 				/>
-				<!-- Gradient overlay pastdan -->
-				<div class="absolute inset-0 bg-gradient-to-t from-[#05080f] via-[#05080f]/50 to-transparent" />
-				<!-- Gradient overlay tepadan (header uchun) -->
-				<div class="absolute inset-0 bg-gradient-to-b from-[#05080f]/40 via-transparent to-transparent" />
+
+				<!-- Gradient pastdan -->
+				<div class="absolute inset-0" style="background:linear-gradient(to top, #212121 0%, rgba(33,33,33,0.6) 40%, transparent 100%)" />
+				<!-- Gradient tepadan (header uchun) -->
+				<div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(33,33,33,0.45) 0%, transparent 35%)" />
 			</div>
 
 			<!-- Kontent -->
 			<div class="relative z-10 w-full max-w-6xl mx-auto px-6 pb-24 pt-40">
 
 				<!-- Badge -->
-				<div class="inline-flex items-center gap-2 bg-blue-600/15 border border-blue-500/30 rounded-full px-4 py-1.5 mb-6 from-top">
-					<span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-					<span class="text-blue-300 text-[10px] font-black uppercase tracking-[0.3em]">
+				<div
+					class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 from-top"
+					style="background:rgba(226,76,75,0.15); border:1px solid rgba(226,76,75,0.35)"
+				>
+					<span class="w-2 h-2 rounded-full animate-pulse" style="background:#FFC107" />
+					<span class="text-[10px] font-black uppercase tracking-[0.3em]" style="color:#FFC107">
 						{{ t("detail.taskLabel") }} {{ index + 1 }} / {{ allSlugs.length }}
 					</span>
 				</div>
@@ -211,13 +209,16 @@ useSeoMeta({
 				<h1 class="text-white font-black text-5xl xl:text-7xl leading-[1.02] tracking-tight mb-6 from-top max-w-4xl">
 					{{ currentLangData?.title ?? slug }}
 				</h1>
-				<p class="text-slate-300 text-lg leading-relaxed max-w-2xl from-top">
+				<p class="text-lg leading-relaxed max-w-2xl from-top" style="color:rgba(255,255,255,0.65)">
 					{{ currentLangData?.desc }}
 				</p>
 
-				<!-- Rasm manbai badge (agar o'z rasm bo'lsa) -->
+				<!-- Rasm badge -->
 				<div v-if="task?.image_url" class="mt-6 from-top">
-					<span class="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold text-white/70 uppercase tracking-wider">
+					<span
+						class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+						style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.65)"
+					>
 						<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
 							<rect x="3" y="3" width="18" height="18" rx="2" />
 							<circle cx="8.5" cy="8.5" r="1.5" />
@@ -230,12 +231,12 @@ useSeoMeta({
 
 			<!-- Scroll indicator -->
 			<div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 animate-bounce">
-				<div class="w-5 h-5 border-r-2 border-b-2 border-white/30 rotate-45" />
+				<div class="w-5 h-5 border-r-2 border-b-2 rotate-45" style="border-color:rgba(255,255,255,0.35)" />
 			</div>
 		</section>
 
 		<!-- ══ CONTENT ══ -->
-		<section class="py-24 px-6 bg-white">
+		<section class="py-24 px-6" style="background:#F7F3EF">
 			<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16">
 
 				<!-- Chap: bo'limlar -->
@@ -247,13 +248,14 @@ useSeoMeta({
 						:style="{ animationDelay: `${i * 80}ms` }"
 					>
 						<div class="flex items-start gap-4 mb-5">
-							<div class="w-1 h-8 bg-blue-600 rounded-full flex-shrink-0 mt-1" />
-							<h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+							<!-- Brand red accent line -->
+							<div class="w-1 h-8 rounded-full flex-shrink-0 mt-1" style="background:#E24C4B" />
+							<h2 class="text-2xl md:text-3xl font-black tracking-tight leading-tight" style="color:#212121">
 								{{ section.heading }}
 							</h2>
 						</div>
 
-						<p v-if="section.text" class="text-slate-500 leading-relaxed text-base mb-5 ml-5">
+						<p v-if="section.text" class="leading-relaxed text-base mb-5 ml-5" style="color:#666">
 							{{ section.text }}
 						</p>
 
@@ -261,15 +263,16 @@ useSeoMeta({
 							<li
 								v-for="item in section.list"
 								:key="item"
-								class="flex items-start gap-3 text-slate-600 text-sm leading-relaxed"
+								class="flex items-start gap-3 text-sm leading-relaxed"
+								style="color:#555"
 							>
-								<span class="w-1.5 h-1.5 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
+								<span class="w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0" style="background:#E24C4B" />
 								{{ item }}
 							</li>
 						</ul>
 					</div>
 
-					<div v-if="!currentLangData?.sections?.length" class="text-slate-300 text-sm italic">
+					<div v-if="!currentLangData?.sections?.length" class="text-sm italic" style="color:#BBB">
 						Kontent hali qo'shilmagan.
 					</div>
 				</div>
@@ -277,8 +280,8 @@ useSeoMeta({
 				<!-- O'ng: sidebar -->
 				<aside class="from-right space-y-6">
 
-					<!-- Rasm kartasi (agar mavjud bo'lsa) -->
-					<div v-if="task?.image_url" class="rounded-3xl overflow-hidden shadow-xl">
+					<!-- Rasm kartasi -->
+					<div v-if="task?.image_url" class="rounded-3xl overflow-hidden" style="box-shadow:0 8px 32px rgba(33,33,33,0.12)">
 						<img
 							:src="task.image_url"
 							:alt="currentLangData?.title"
@@ -289,18 +292,23 @@ useSeoMeta({
 					<!-- Natijalar -->
 					<div
 						v-if="currentLangData?.results?.length"
-						class="bg-slate-900 text-white rounded-3xl p-7 sticky top-28"
+						class="text-white rounded-3xl p-7 sticky top-28"
+						style="background:#212121"
 					>
-						<p class="text-blue-400 text-[10px] font-black uppercase tracking-[0.4em] mb-4">
+						<p class="text-[10px] font-black uppercase tracking-[0.4em] mb-4" style="color:#F57C00">
 							{{ t("detail.resultsLabel") ?? "Natijalar" }}
 						</p>
 						<ul class="space-y-4">
 							<li
 								v-for="(result, i) in currentLangData.results"
 								:key="i"
-								class="flex items-start gap-3 text-sm text-slate-300 leading-relaxed border-b border-white/[0.08] pb-4 last:border-0 last:pb-0"
+								class="flex items-start gap-3 text-sm leading-relaxed pb-4 last:pb-0"
+								style="color:rgba(255,255,255,0.75); border-bottom:1px solid rgba(255,255,255,0.06)"
 							>
-								<span class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
+								<span
+									class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5 text-white"
+									style="background:#E24C4B"
+								>
 									{{ i + 1 }}
 								</span>
 								{{ result }}
@@ -309,11 +317,11 @@ useSeoMeta({
 					</div>
 
 					<!-- Tartib raqami -->
-					<div class="border border-slate-100 rounded-3xl p-6 text-center">
-						<div class="text-6xl font-black text-slate-100 tracking-tight leading-none mb-1">
+					<div class="rounded-3xl p-6 text-center" style="border:1px solid #EFEAE5; background:#fff">
+						<div class="text-6xl font-black tracking-tight leading-none mb-1" style="color:#EFEAE5">
 							{{ String(index + 1).padStart(2, "0") }}
 						</div>
-						<p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+						<p class="text-[10px] font-black uppercase tracking-[0.3em]" style="color:#BBB">
 							{{ t("detail.taskLabel") }}
 						</p>
 					</div>
@@ -322,24 +330,32 @@ useSeoMeta({
 		</section>
 
 		<!-- ══ PREV / NEXT ══ -->
-		<section class="py-16 bg-slate-50 border-t border-slate-100 px-6">
+		<section class="py-16 px-6" style="background:#EFEAE5; border-top:1px solid #E8E3DD">
 			<div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between gap-4">
 
 				<NuxtLink
 					v-if="prevSlug"
 					:to="`/projects/${prevSlug}`"
-					class="group flex items-center gap-4 bg-white border border-slate-100 hover:border-blue-200 rounded-2xl px-7 py-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex-1"
+					class="group flex items-center gap-4 rounded-2xl px-7 py-5 transition-all duration-300 hover:-translate-y-0.5 flex-1"
+					style="background:#fff; border:1px solid #E8E3DD; box-shadow:0 2px 8px rgba(33,33,33,0.04)"
+					@mouseover="$event.currentTarget.style.borderColor='#E24C4B'; $event.currentTarget.style.boxShadow='0 8px 24px rgba(226,76,75,0.12)'"
+					@mouseout="$event.currentTarget.style.borderColor='#E8E3DD'; $event.currentTarget.style.boxShadow='0 2px 8px rgba(33,33,33,0.04)'"
 				>
-					<div class="w-10 h-10 rounded-full border border-slate-200 group-hover:border-blue-500 group-hover:bg-blue-600 flex items-center justify-center transition-all duration-300 flex-shrink-0">
-						<svg class="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+					<div
+						class="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 flex-shrink-0 group-hover:text-white"
+						style="border-color:#E8E3DD; color:#BBB"
+						@mouseover="$event.currentTarget.style.background='#E24C4B'; $event.currentTarget.style.borderColor='#E24C4B'"
+						@mouseout="$event.currentTarget.style.background='transparent'; $event.currentTarget.style.borderColor='#E8E3DD'"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 							<path d="M19 12H5M12 5l-7 7 7 7" />
 						</svg>
 					</div>
 					<div>
-						<p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+						<p class="text-[10px] font-black uppercase tracking-widest mb-0.5" style="color:#BBB">
 							{{ t("detail.prev") ?? "Oldingi" }}
 						</p>
-						<p class="text-sm font-black text-slate-900">{{ getNeighborTitle(prevSlug) }}</p>
+						<p class="text-sm font-black" style="color:#212121">{{ getNeighborTitle(prevSlug) }}</p>
 					</div>
 				</NuxtLink>
 
@@ -348,16 +364,24 @@ useSeoMeta({
 				<NuxtLink
 					v-if="nextSlug"
 					:to="`/projects/${nextSlug}`"
-					class="group flex items-center justify-end gap-4 bg-white border border-slate-100 hover:border-blue-200 rounded-2xl px-7 py-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 flex-1 text-right"
+					class="group flex items-center justify-end gap-4 rounded-2xl px-7 py-5 transition-all duration-300 hover:-translate-y-0.5 flex-1 text-right"
+					style="background:#fff; border:1px solid #E8E3DD; box-shadow:0 2px 8px rgba(33,33,33,0.04)"
+					@mouseover="$event.currentTarget.style.borderColor='#E24C4B'; $event.currentTarget.style.boxShadow='0 8px 24px rgba(226,76,75,0.12)'"
+					@mouseout="$event.currentTarget.style.borderColor='#E8E3DD'; $event.currentTarget.style.boxShadow='0 2px 8px rgba(33,33,33,0.04)'"
 				>
 					<div>
-						<p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">
+						<p class="text-[10px] font-black uppercase tracking-widest mb-0.5" style="color:#BBB">
 							{{ t("detail.next") ?? "Keyingi" }}
 						</p>
-						<p class="text-sm font-black text-slate-900">{{ getNeighborTitle(nextSlug) }}</p>
+						<p class="text-sm font-black" style="color:#212121">{{ getNeighborTitle(nextSlug) }}</p>
 					</div>
-					<div class="w-10 h-10 rounded-full border border-slate-200 group-hover:border-blue-500 group-hover:bg-blue-600 flex items-center justify-center transition-all duration-300 flex-shrink-0">
-						<svg class="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+					<div
+						class="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300 flex-shrink-0"
+						style="border-color:#E8E3DD; color:#BBB"
+						@mouseover="$event.currentTarget.style.background='#E24C4B'; $event.currentTarget.style.borderColor='#E24C4B'; $event.currentTarget.style.color='white'"
+						@mouseout="$event.currentTarget.style.background='transparent'; $event.currentTarget.style.borderColor='#E8E3DD'; $event.currentTarget.style.color='#BBB'"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 							<path d="M5 12h14M12 5l7 7-7 7" />
 						</svg>
 					</div>
@@ -366,10 +390,10 @@ useSeoMeta({
 		</section>
 
 		<!-- ══ FOOTER ══ -->
-		<footer class="bg-slate-950 text-white py-10 px-6">
+		<footer class="py-10 px-6" style="background:#212121">
 			<div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-				<h2 class="font-black text-2xl tracking-tight text-blue-500">TARAQQIYOT.</h2>
-				<p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">
+				<h2 class="font-black text-2xl tracking-tight" style="color:#E24C4B">WeEmpower.</h2>
+				<p class="text-[10px] font-black uppercase tracking-[0.3em]" style="color:rgba(255,255,255,0.2)">
 					{{ t("footer.copy") }}
 				</p>
 			</div>
@@ -380,7 +404,6 @@ useSeoMeta({
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap");
 
-/* IntersectionObserver .anim-in qo'shadi — JS bilan ishlaydi */
 .from-top {
 	opacity: 0;
 	transform: translateY(-40px);

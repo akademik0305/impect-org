@@ -1,73 +1,73 @@
 {
   "nav": {
-    "orgSubtitle": "Central Asia Development Center",
+    "orgSubtitle": "Central Asian Development Center",
     "project": "Project",
-    "activity": "Activities",
+    "activity": "Activity",
     "impact": "Impact",
     "team": "Team",
     "contact": "Contact"
   },
   "hero": {
-    "title1": "In Uzbekistan",
+    "title1": "Advancing",
     "title2": "Women's",
     "title3": "Initiatives",
-    "title4": "Are Growing",
-    "desc": "Strengthening civil society with 40+ NGOs across Fergana and Tashkent regions — 2025–2027.",
-    "btnExplore": "Explore the Project",
-    "btnVideo": "▶ Watch Video",
+    "title4": "in Uzbekistan",
+    "desc": "Strengthening civil society in partnership with 40+ NGOs in Fergana and Tashkent regions — 2025–2027.",
+    "btnExplore": "Explore Project",
+    "btnVideo": "▶ Video",
     "stat": {
       "ngo": "Partner NGOs",
       "region": "Regions",
       "years": "Duration",
-      "yearsVal": "3 years"
+      "yearsVal": "3 Years"
     },
     "card": {
-      "milestone": "Milestone 3 in Progress",
+      "milestone": "Phase 3 Finalizing",
       "milestoneSub": "Milestone 3 · 2026",
-      "process": "Progress"
+      "process": "Process"
     },
     "badge": {
       "ngo": "40+ NGOs",
-      "ngoSub": "Partner organizations",
+      "ngoSub": "Partner Organizations",
       "label": "UNDEF · UDF-23-987-UZB"
     }
   },
   "ticker": [
     "40+ Partner NGOs",
-    "Fergana & Tashkent",
-    "Project Period 2025–2027",
+    "Fergana and Tashkent",
+    "2025–2027 Project Period",
     "Funded by UNDEF",
-    "Milestone 3 Underway",
+    "Phase 3 Implementation",
     "May 2026: Round Table"
   ],
   "tasks": {
-    "label": "What are we doing?",
-    "title": "Key project directions",
-    "more": "Learn more",
+    "label": "What we do?",
+    "title": "Core Project Areas",
+    "more": "Read More",
     "items": [
       {
-        "title": "Mapping & Analysis",
-        "desc": "In-depth research and analysis of the needs of 40 women-led NGOs."
+        "title": "Mapping and Analysis",
+        "desc": "In-depth study and analysis of the needs of 40 women's NGOs."
       },
       {
         "title": "Partnership Network",
-        "desc": "Building a powerful platform for experience sharing and collaboration."
+        "desc": "Creating a powerful platform for experience sharing and collaboration."
       },
       {
         "title": "Capacity Building",
-        "desc": "Practical trainings on leadership and strategic planning."
+        "desc": "Practical training on leadership and strategic planning."
       },
       {
         "title": "Advocacy",
-        "desc": "Advancing gender equality and social initiatives at the national level."
+        "desc": "Promoting gender equality and social initiatives at the national level."
       },
       {
         "title": "Practical Toolkit",
-        "desc": "Developing and distributing strategic guides and reference materials."
+        "desc": "Preparation and distribution of strategic guides and reference materials."
       },
       {
         "title": "Sustainable Development",
-        "desc": "Scaling local initiatives to the national level and reinforcing them."
+        "desc": "Elevating and strengthening local initiatives to the national level."
       }
     ]
   },
@@ -77,90 +77,140 @@
     "label": "YouTube Shorts",
     "cta": "View All Reels",
     "items": [
-      "About NGO activities",
-      "Women's initiative",
-      "Fergana region",
-      "Project results"
+      "NGO Activities",
+      "Women's Initiatives",
+      "Fergana Region",
+      "Project Results"
     ]
   },
   "impact": {
-    "label": "Impact indicators",
-    "title1": "Women's leadership —",
-    "title2": "society's foundation",
-    "desc": "The project is completing Milestone 3. We have united 40 organizations that are already driving social change in their regions.",
+    "label": "Impact Metrics",
+    "title1": "Women's Leadership —",
+    "title2": "The Pillar of Society",
+    "desc": "The project is reaching the end of Phase 3 (Milestone 3). We have united 40 organizations that are now driving social change in their regions.",
     "stat1": "Partner NGOs",
-    "stat2": "Key directions",
-    "stat3": "Years of work",
-    "quote": "This project not only allows us to acquire the necessary knowledge and skills, but also serves to build a strong community through mutual support.",
-    "cite": "Head of the NGO \"Nodirabegim\", Nodirakhon Khudoyberdiyeva"
+    "stat2": "Main Direction",
+    "stat3": "Throughout the Year",
+    "quote": "This project not only provides us with the necessary knowledge and skills but also helps build a strong community through mutual support.",
+    "cite": "Nodirakhon Khudoyberdieva, Head of NGO 'Nodirabegim'"
   },
   "team": {
     "label": "Our Team",
-    "title": "Experts leading the project",
-    "more": "View profile →",
+    "title": "Experts Managing the Project",
+    "more": "Learn More →",
     "members": [
       {
         "name": "Feruza Madaliyeva",
-        "role": "Project expert",
-        "bio": "NGO leader"
+        "role": "Project Expert",
+        "bio": "NGO Leader"
       },
       {
-        "name": "Nargiza Xudaynazarova",
-        "role": "Project coordinator",
-        "bio": "Women's empowerment project manager"
+        "name": "Nargiza Khudaynazarova",
+        "role": "Project Coordinator",
+        "bio": "Women's Empowerment Project Manager"
       },
       {
         "name": "Zafar Saydaliyev",
-        "role": "Project expert",
-        "bio": "Monitoring and evaluation"
+        "role": "Project Expert",
+        "bio": "Monitoring and Evaluation"
       },
       {
         "name": "Saida Gaziyeva",
-        "role": "Project specialist",
+        "role": "Project Specialist",
         "bio": "Translator"
       },
       {
         "name": "Alisher Orzibiyev",
-        "role": "Project accountant",
-        "bio": "Project accountant"
+        "role": "Project Accountant",
+        "bio": "Project Accountant"
       }
     ]
   },
   "footer": {
-    "org": "Supported by the UN Democracy Fund (UNDEF)\nDeveloping civil society in Uzbekistan.",
-    "contactTitle": "Contact information",
+    "org": "Developing civil society in Uzbekistan with the support of the UN Democracy Fund (UNDEF).",
+    "contactTitle": "Contact Information",
     "phone": "+998 (73) 244-11-22",
     "email": "info taraqqiyotngo.uz",
-    "address": "Fergana city, Ok Yul street, 49G",
-    "ctaTitle": "Want to become a partner?",
+    "address": "49G Oq Yol St, Fergana City",
+    "ctaTitle": "Want to be a Partner?",
     "ctaDesc": "Join our project and be part of the change.",
-    "ctaBtn": "Apply now",
-    "copy": "© 2026 TARAQQIYOT CENTER. All rights reserved.",
-    "undef": "UNDEF property"
+    "ctaBtn": "Submit Application",
+    "copy": "© 2026 TARAQQIYOT CENTER. All Rights Reserved.",
+    "undef": "UNDEF Property"
   },
   "modal": {
     "contactTitle": "Contact Us",
     "contactSubtitle": "Send us a message",
-    "name": "Your name",
-    "email": "Your email",
-    "message": "Your message...",
+    "name": "Your Name",
+    "email": "Your Email",
+    "message": "Your Message...",
     "send": "Send",
-    "sentTitle": "Message sent!",
+    "sentTitle": "Message Sent!",
     "sentDesc": "We will get back to you shortly.",
-    "videoTitle": "Project video"
+    "videoTitle": "Project Video"
   },
   "detail": {
-    "back": "Go back",
+    "back": "Go Back",
     "taskLabel": "Direction",
-    "resultsTitle": "Expected results",
-    "projectInfo": "Project information",
-    "period": "Project period",
+    "resultsTitle": "Expected Results",
+    "projectInfo": "Project Information",
+    "period": "Project Period",
     "regions": "Regions",
-    "regionsVal": "Fergana & Tashkent",
-    "funder": "Funded by",
-    "code": "Project code",
-    "prev": "Previous direction",
-    "next": "Next direction",
+    "regionsVal": "Fergana and Tashkent",
+    "funder": "Funder",
+    "code": "Project Code",
+    "prev": "Previous Direction",
+    "next": "Next Direction",
     "resultsLabel": "Results"
+  },
+  "stages": {
+    "eyebrow": "Project Roadmap",
+    "title": "Implementation Phases",
+    "currentBadge": "CURRENT PHASE",
+    "items": [
+      {
+        "title": "Outcome 1: Needs and Network",
+        "heading": "Strengthening Capacity",
+        "date": "2025 — 2026 Phase I",
+        "activities": [
+          "Needs mapping and diagnostic analysis.",
+          "Creating a network of 40 NGOs in Tashkent and Fergana.",
+          "Developing a strategic plan for capacity building.",
+          "Identifying advocacy directions through a network round table."
+        ]
+      },
+      {
+        "title": "Outcome 2: Knowledge and Mentorship",
+        "heading": "Enhancing Knowledge and Skills",
+        "date": "2026 — Phase II (Current)",
+        "activities": [
+          "Training on Leadership, Fundraising, and Project Writing.",
+          "Individual and group mentoring sessions.",
+          "Specialized training programs for NGOs and initiative groups.",
+          "Developing joint partnership projects between organizations."
+        ]
+      },
+      {
+        "title": "II Round Table (May 2026)",
+        "heading": "Presentation of Results",
+        "date": "May 2026",
+        "activities": [
+          "Presentation of project results and achievements.",
+          "Analysis of network activities and discussion of challenges.",
+          "Defining paths for future sustainability and development."
+        ]
+      },
+      {
+        "title": "Outcome 3: Sustainability and Engagement",
+        "heading": "Sustainable Partnership and Advocacy",
+        "date": "2026 — Phase III",
+        "activities": [
+          "Implementing small pilot initiatives at the local level.",
+          "Joint advocacy events at regional and network levels.",
+          "Expanding the network through regular meetings.",
+          "Presentation of final results and future plans."
+        ]
+      }
+    ]
   }
 }

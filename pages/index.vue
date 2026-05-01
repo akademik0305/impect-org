@@ -243,7 +243,7 @@ onUnmounted(() => {
 		>
 			<div class="flex items-center gap-4">
 				<div
-					class="w-32 max-h-12 rounded-xl flex items-center justify-center p-1.5"
+					class="w-32 md:w-44 max-h-16 rounded-xl flex items-center justify-center p-1.5"
 				>
 					<img
 						src="~/assets/images/logo/logo.png"
@@ -403,7 +403,7 @@ onUnmounted(() => {
 			>
 				<div>
 					<div
-						class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+						class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6"
 						style="
 							background: rgba(226, 76, 75, 0.15);
 							border: 1px solid rgba(226, 76, 75, 0.35);
@@ -433,14 +433,47 @@ onUnmounted(() => {
 					</h2>
 
 					<p
-						class="text-base leading-relaxed mb-10 max-w-md"
+						class="text-base leading-relaxed mb-8 max-w-md"
 						style="color: rgba(255, 255, 255, 0.6)"
 					>
 						{{ t("hero.desc") }}
 					</p>
 
+					<!-- ── UNDEF MOLIYALASHTIRUVCHI BADGE ── -->
 					<div
-						class="flex gap-8 mt-12 pt-8"
+						class="inline-flex items-center flex-col gap-3 rounded-2xl px-4 py-3 mb-6"
+						style="
+							background: rgba(74, 144, 196, 0.15);
+							border: 1px solid rgba(74, 144, 196, 0.3);
+						"
+					>
+						<!-- UNDEF logo SVG (UN emblem simplified) -->
+						<div
+							class="w-auto h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+							style="background: #4a90c4"
+						>
+							<img
+								src="~/assets/images/png/undef.png"
+								alt="undef"
+								class="w-full h-full object-cover rounded-lg"
+							/>
+						</div>
+
+						<div>
+							<div
+								class="text-[11px] font-semibold leading-tight"
+								style="color: rgba(255, 255, 255, 0.75)"
+							>
+								Loyiha BMT Demokratiya Jamg'armasi<br />
+								<span style="color: rgba(255, 255, 255, 0.45)"
+									>tomonidan moliyalashtiriladi</span
+								>
+							</div>
+						</div>
+					</div>
+
+					<div
+						class="flex gap-8 pt-8"
 						style="border-top: 1px solid rgba(255, 255, 255, 0.1)"
 					>
 						<div v-for="[num, lbl] in heroStats" :key="lbl">
@@ -460,7 +493,7 @@ onUnmounted(() => {
 					</div>
 				</div>
 
-				<!-- Hero card -->
+				<!-- Hero card (o'zgarishsiz) -->
 				<div class="relative hidden lg:block">
 					<div
 						class="absolute -top-4 -right-4 w-full h-full rounded-3xl"
@@ -529,6 +562,7 @@ onUnmounted(() => {
 						</div>
 					</div>
 
+					<!-- Float badge -->
 					<div
 						class="absolute -bottom-5 -left-5 rounded-2xl px-4 py-3 shadow-2xl flex items-center gap-3"
 						style="background: #fff"
@@ -1053,13 +1087,13 @@ onUnmounted(() => {
 									color: rgba(255, 255, 255, 0.6);
 								"
 								@mouseover="
-									$event.currentTarget.style.background = '#E24C4B',
-									$event.currentTarget.style.borderColor = '#E24C4B'
+									(($event.currentTarget.style.background = '#E24C4B'),
+									($event.currentTarget.style.borderColor = '#E24C4B'))
 								"
 								@mouseout="
-									$event.currentTarget.style.background = 'transparent',
-									$event.currentTarget.style.borderColor =
-										'rgba(255,255,255,0.15)'
+									(($event.currentTarget.style.background = 'transparent'),
+									($event.currentTarget.style.borderColor =
+										'rgba(255,255,255,0.15)'))
 								"
 								>{{ lbl }}</a
 							>

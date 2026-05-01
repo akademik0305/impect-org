@@ -162,5 +162,55 @@
     "prev": "Oldingi yo'nalish",
     "next": "Keyingi yo'nalish",
     "resultsLabel": "Natijalar"
+  },
+  "stages": {
+    "eyebrow": "Loyiha yo'l xaritasi",
+    "title": "Amalga oshirish bosqichlari",
+    "currentBadge": "HOZIRGI BOSQICH",
+    "items": [
+      {
+        "title": "Natija 1: Ehtiyojlar va Tarmoq",
+        "heading": "Salohiyatni mustahkamlash",
+        "date": "2025 — 2026 I bosqich",
+        "activities": [
+          "Ehtiyojlarni xaritalash va diagnostik tahlil o'tkazish.",
+          "Toshkent va Farg'onada 40 ta NNTdan iborat tarmoq yaratish.",
+          "Salohiyatni oshirish bo'yicha strategik reja ishlab chiqish.",
+          "Tarmoq davra suhbati orqali advokatsiya yo'nalishlarini belgilash."
+        ]
+      },
+      {
+        "title": "Natija 2: Bilim va Mentorlik",
+        "heading": "Bilim va ko'nikmalarni oshirish",
+        "date": "2026 — II bosqich (hozir)",
+        "activities": [
+          "Liderlik, Fundraising va Loyiha yozish bo'yicha treninglar.",
+          "Individual va guruhli mentorlik sessiyalari.",
+          "NNT va tashabbuskor guruhlar uchun maxsus o'quv dasturlari.",
+          "Tashkilotlararo qo'shma hamkorlik loyihalarini yaratish."
+        ]
+      },
+      {
+        "title": "II-Davra suhbati (May 2026)",
+        "heading": "Natijalar taqdimoti",
+        "date": "May 2026",
+        "activities": [
+          "Loyiha natijalari va erishilgan yutuqlar taqdimoti.",
+          "Tarmoq faoliyati tahlili va muammolar muhokamasi.",
+          "Kelgusi barqarorlik va rivojlanish yo'llarini belgilash."
+        ]
+      },
+      {
+        "title": "Natija 3: Barqarorlik va Faollik",
+        "heading": "Barqaror hamkorlik va advokatsiya",
+        "date": "2026 — III bosqich",
+        "activities": [
+          "Mahalliy darajada kichik pilot tashabbuslarni amalga oshirish.",
+          "Hududiy va tarmoq doirasida qo'shma advokatsiya tadbirlari.",
+          "Muntazam uchrashuvlar orqali tarmoqni kengaytirish.",
+          "Yakuniy natijalar taqdimoti va istiqbolli rejalar."
+        ]
+      }
+    ]
   }
 }
