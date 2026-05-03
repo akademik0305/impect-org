@@ -198,35 +198,58 @@ async function logout() {
 
 // ── SECTION HELPERS ───────────────────────────────────────
 function addSection(lang) {
-	formData.value[lang].sections.push({ heading: "", text: "", list: [] })
+  const data = formData.value[lang]
+  if (!data) return  // ❌ lang yo'q — chiqib ket
+
+  if (!Array.isArray(data.sections)) {
+    data.sections = []  // sections yo'q bo'lsa — yaratib ol
+  }
+
+  data.sections.push({ heading: '', text: '', list: [] })
 }
 function removeSection(lang, i) {
 	formData.value[lang].sections.splice(i, 1)
 }
 function addListItem(lang, si) {
-	formData.value[lang].sections[si].list.push("")
+  const section = formData.value[lang]?.sections?.[si]
+  if (!section) return
+
+  section.list ??= []
+  section.list.push('')
 }
 function removeListItem(lang, si, li) {
 	formData.value[lang].sections[si].list.splice(li, 1)
 }
 function addResult(lang) {
-	formData.value[lang].results.push("")
+  const data = formData.value[lang]
+  if (!data) return
+
+  data.results ??= []
+  data.results.push('')
 }
 function removeResult(lang, i) {
 	formData.value[lang].results.splice(i, 1)
 }
 
 function langCompletion(lang) {
-	const d = formData.value[lang]
-	if (!d) return 0
-	const filled = [
-		d.title,
-		d.desc,
-		...d.results,
-		...d.sections.map(s => s.heading),
-	].filter(Boolean).length
-	const total = 2 + d.results.length + d.sections.length
-	return total === 0 ? 0 : Math.round((filled / total) * 100)
+  const d = formData.value[lang]
+  if (!d) return 0
+
+  const results  = Array.isArray(d.results)  ? d.results  : []
+  const sections = Array.isArray(d.sections) ? d.sections : []
+
+  const notEmpty = (v) => typeof v === 'string' ? v.trim().length > 0 : Boolean(v)
+
+  const filled = [
+    d.title,
+    d.desc,
+    ...results,
+    ...sections.map(s => s.heading),
+  ].filter(notEmpty).length
+
+  const total = 2 + results.length + sections.length
+
+  return total <= 2 && filled === 0 ? 0 : Math.round((filled / total) * 100)
 }
 </script>
 
@@ -648,7 +671,7 @@ function langCompletion(lang) {
 										</div>
 									</div>
 									<div
-										v-if="!formData[activeLang].sections.length"
+										v-if="!formData[activeLang].sections?.length"
 										class="empty-sections"
 									>
 										<p>Bo'lim yo'q. "Bo'lim qo'shish" tugmasini bosing.</p>
@@ -712,7 +735,7 @@ function langCompletion(lang) {
 										</button>
 									</div>
 									<div
-										v-if="!formData[activeLang].results.length"
+										v-if="!formData[activeLang].results?.length"
 										class="empty-sections"
 									>
 										<p>Natija yo'q.</p>

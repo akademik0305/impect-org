@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="min-h-screen bg-[#F7F3EF] text-[#212121] font-sans selection:bg-[#E24C4B]/20"
+		class="bg-[#F7F3EF] text-[#212121] font-sans selection:bg-[#E24C4B]/20"
 	>
 		<header
 			class="relative py-12 px-4 text-center max-w-4xl mx-auto overflow-hidden"
@@ -16,12 +16,12 @@
 				/>
 			</div>
 
-			<div
+			<!-- <div
 				class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/50 backdrop-blur-xl shadow-sm border border-[#EFEAE5] text-[#E24C4B] text-xs font-bold mb-8 uppercase tracking-[0.3em]"
 			>
 				<span class="w-2 h-2 rounded-full bg-[#E24C4B] animate-pulse" />
 				<span>{{ t("project_team.badge") }}</span>
-			</div>
+			</div> -->
 
 			<h1
 				class="text-6xl md:text-8xl font-black tracking-tighter text-[#212121] mb-8 leading-[0.85]"
@@ -38,14 +38,14 @@
 				</span>
 			</h1>
 
-			<p
+			<!-- <p
 				class="text-lg md:text-xl text-[#212121]/70 max-w-2xl mx-auto leading-relaxed"
 			>
 				{{ t("project_team.description") }}
-			</p>
+			</p> -->
 		</header>
 
-		<main class="pb-48">
+		<main class="pb-24">
 			<div
 				class="flex flex-wrap justify-center max-w-[900px] mx-auto px-4 pl-[15px]"
 			>
@@ -132,12 +132,6 @@
 				</div>
 			</div>
 		</Transition>
-
-		<footer
-			class="py-12 border-t border-[#EFEAE5] text-center text-[#212121]/40 text-[10px] font-bold tracking-[0.4em] uppercase"
-		>
-			<p>{{ t("project_team.footer_text", { year: 2026 }) }}</p>
-		</footer>
 	</div>
 </template>
 

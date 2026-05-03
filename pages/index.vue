@@ -64,7 +64,7 @@ const team = computed(() => [
 		name: t("team.members[1].name"),
 		role: t("team.members[1].role"),
 		bio: t("team.members[1].bio"),
-		img: "nargiza.png",
+		img: "nargiza.jpg",
 	},
 	{
 		name: t("team.members[2].name"),
@@ -77,13 +77,7 @@ const team = computed(() => [
 		role: t("team.members[3].role"),
 		bio: t("team.members[3].bio"),
 		img: "saida.jpg",
-	},
-	{
-		name: t("team.members[4].name"),
-		role: t("team.members[4].role"),
-		bio: t("team.members[4].bio"),
-		img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
-	},
+	}
 ])
 
 // ── I18N ─────────────────────────────────────────────────
@@ -974,7 +968,7 @@ onUnmounted(() => {
 					</h2>
 				</div>
 				<div
-					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-10"
+					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10"
 				>
 					<div
 						v-for="(member, i) in team"
@@ -1026,40 +1020,7 @@ onUnmounted(() => {
 		</section>
 
 		<ProjectTeam />
-
-		<!-- ══ PARTNERS ══ -->
-		<section
-			class="py-12 px-6"
-			style="
-				background: #efeae5;
-				border-top: 1px solid #e8e3dd;
-				border-bottom: 1px solid #e8e3dd;
-			"
-		>
-			<div
-				class="from-top max-w-4xl mx-auto flex flex-wrap justify-center items-center gap-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-80 transition-all duration-500"
-			>
-				<!-- <img
-					src="https://upload.wikimedia.org/wikipedia/commons/e/ee/UN_Democracy_Fund_Logo.png"
-					class="h-14 object-contain"
-					alt="UNDEF"
-				/> -->
-				<img
-					src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg"
-					class="h-8 object-contain"
-					alt="EU"
-				/>
-				<span class="font-serif italic font-black text-2xl" style="color: #888"
-					>USAID</span
-				>
-				<span class="font-serif italic font-black text-2xl" style="color: #888"
-					>JICA</span
-				>
-				<span class="font-serif italic font-black text-2xl" style="color: #888"
-					>EBRD</span
-				>
-			</div>
-		</section>
+		<!-- <HoneyComp /> -->
 
 		<!-- ══ FOOTER ══ -->
 		<footer class="text-white py-20 px-6" style="background: #212121">
