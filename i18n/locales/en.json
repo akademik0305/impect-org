@@ -214,32 +214,402 @@
     ]
   },
   "project_team": {
-    "badge": "Our Team",
-    "title_part1": "STRONG",
-    "title_connector": "AND",
-    "title_part2": "UNITED",
-    "description": "Behind our success stands a strong and united team. Every member is an expert in their field and a creator of innovative ideas.",
-    "member_quote": "\"Every woman can be at the center of change in her society.\" An integral part of our team and a proactive leader.",
-    "cta_portfolio": "View Portfolio",
-    "footer_text": "WeEmpower © {year} — Stronger Together",
-    "names": [
-      "Alijon Valiyev",
-      "Zuhra Rahmonova",
-      "Sobir Islomov",
-      "Madina Karimova",
-      "Javohir Toshpulotov",
-      "Nozima Saidova",
-      "Rustam Obidov",
-      "Malika Ahmedova",
-      "Umidbek Mirzayev",
-      "Shaxlo Ergasheva"
-    ],
-    "roles": [
-      "Strategic Director",
-      "Project Coordinator",
-      "Women's Mentorship Program",
-      "Advocacy Specialist",
-      "Community Outreach"
+    "title_part1": "NGOs",
+    "title_connector": "and ",
+    "title_part2": "initiative groups",
+    "member_quote": "We actively cooperate for the development of society and social stability.",
+    "cta_portfolio": "More information",
+    "partners": [
+      {
+        "id": 1,
+        "nnt": "«QALB NURI» CENTER FOR SOCIAL AND LEGAL SUPPORT OF WOMEN AND FAMILIES",
+        "name": "TO’XTASINOVA DAMIRA ISMAILOVNA",
+        "phones": [
+          "+998905820477"
+        ],
+        "address": "Fergana region, Fergana city, Quruvchilar street, 4",
+        "mission": "Providing socio-legal services in the fields of achieving gender equality, preventing gender violence, strengthening the family institution, raising the future generation as harmoniously developed individuals, and increasing the socio-political activity of women."
+      },
+      {
+        "id": 2,
+        "nnt": "ZIYONUR FERGANA REGIONAL CENTER",
+        "name": "DAVRONOVA O’G’ILOY ABDUVAHOBOVNA",
+        "phones": [
+          "+998911219594"
+        ],
+        "address": "Fergana city, B. Marginoniy street, 105",
+        "mission": "Providing socio-legal support for women and teenagers, assisting them in social, economic, legal, cultural-educational, ecological, and spiritual spheres, as well as promoting a healthy lifestyle."
+      },
+      {
+        "id": 3,
+        "nnt": "BUSINESS CENTER OF WOMEN ENTREPRENEURS",
+        "name": "O’RINBOYEVA HILOLA AVAZOVNA",
+        "phones": [
+          "+998911219594"
+        ],
+        "address": "Kokand city, A. Jomiy street, 47/1",
+        "mission": "Uniting forces to protect and support the interests of entrepreneurs, women, and youth in line with the reforms implemented in Uzbekistan, ensuring their active participation, and facilitating the development of their economic and spiritual-educational skills."
+      },
+      {
+        "id": 4,
+        "nnt": "«EZGU NIYAT» NGO",
+        "name": "KARIMOVA XALIMA O’LMASOVNA",
+        "phones": [
+          "+998905086123"
+        ],
+        "address": "Kokand city, Kokand Sadosi street, 24",
+        "mission": "Facilitating the adaptation and integration of children with disabilities into a healthy society; supporting the legal, social, and economic interests of young women raising children with disabilities."
+      },
+      {
+        "id": 5,
+        "nnt": "«SALOMATLIK PLYUS EKOLOGIYA» NGO",
+        "name": "NAZAROVA XADICHA ABDULLAYEVNA",
+        "phones": [
+          "+998905564876"
+        ],
+        "address": "Kokand city, Toshxovuz street, 4/2",
+        "mission": "Promoting a healthy lifestyle among mothers, children, women, and teenagers in the Fergana region, changing individual attitudes toward personal health, and forming a new ecological worldview to help stabilize the environmental situation."
+      },
+      {
+        "id": 6,
+        "nnt": "«NODIRABEGIM» CENTER",
+        "name": "TURG’UNOVA NODIRA ALISHEROVNA",
+        "phones": [
+          "+998991071429"
+        ],
+        "address": "Fergana city, Farobiy street, 9",
+        "mission": "Supporting and developing women in various fields, ensuring equal opportunities and access to education, healthcare, economic resources, and active participation in social life."
+      },
+      {
+        "id": 7,
+        "nnt": "«EKOSAN» FERGANA BRANCH",
+        "name": "ISAKOVA NILUFAR AHMADQULOVNA",
+        "phones": [
+          "+998906320977"
+        ],
+        "address": "Fergana city, Al-Farg’oniy street, 64",
+        "mission": "Supporting sustainable ecological development in Uzbekistan and Central Asia by reducing negative environmental impacts, developing ecological consciousness, promoting healthy lifestyles, and implementing nature conservation initiatives."
+      },
+      {
+        "id": 8,
+        "nnt": "ASSOCIATION OF WOMEN IN THE AGRARIAN SECTOR",
+        "name": "TESHABOYEVA MUHTARAMA ARIFJONOVNA",
+        "phones": [
+          "+998949105515"
+        ],
+        "address": "Fergana city, B. Marg’inoniy street, 105",
+        "mission": "Empowering rural women through the development of climate-resilient agriculture, providing them with economic advantages, and enabling them to fully realize their potential."
+      },
+      {
+        "id": 9,
+        "nnt": "«AZIM-TAFAKKUR»",
+        "name": "NOSIROVA MAHFUZA ALISHEROVNA",
+        "phones": [
+          "+998911450145"
+        ],
+        "address": "Kokand city, Kokand Sadosi street, 59",
+        "mission": "Increasing the legal, cultural, economic, and social knowledge of the youth in the Fergana region, and actively supporting them in building a democratic civil society and participating in the new reforms of the Republic of Uzbekistan."
+      },
+      {
+        "id": 10,
+        "nnt": "CENTER FOR SUPPORT OF CIVIL INITIATIVES",
+        "name": "HAMIDOVA GULSHAN MAHAMADRASHID QIZI",
+        "phones": [
+          "+998939766776"
+        ],
+        "address": "Fergana city, B. Margiloniy street, 105",
+        "mission": "Promoting social justice and gender equality by implementing sustainable solutions at the education and policy levels, based on adapting international experience to the real needs of the population."
+      },
+      {
+        "id": 11,
+        "nnt": "DEBATERON",
+        "name": "SHIKINA ANASTASIYA ALEKSANDROVNA",
+        "phones": [
+          "+998913978304"
+        ],
+        "address": "Fergana State University",
+        "mission": "Our mission is to create and coordinate educational and cultural initiatives that unite youth across the Central Asian region. We strive to form a space for friendship and cooperation through international conferences, tolerance, and peace projects, helping build bridges instead of walls. Our goal is to inspire youth to act together for a more open, peaceful, and sustainable future."
+      },
+      {
+        "id": 12,
+        "nnt": "PSYCHOLOGICAL HELP",
+        "name": "UZOQOVA MUHARRAM ABDUBANOBOVNA",
+        "phones": [
+          "+998911281813"
+        ],
+        "address": "Kushtepa district",
+        "mission": "Our mission is to provide psychological assistance to women and their children who have been victims of violence."
+      },
+      {
+        "id": 13,
+        "nnt": "CRAFT HOUSE",
+        "name": "YULDASHEVA NARGIZA ERKINOVNA",
+        "phones": [
+          "+998939751050"
+        ],
+        "address": "Fergana city, Murabbiylar street, 26",
+        "mission": "'Craft House' sees its task as preserving national craftsmanship, adapting it to modern requirements, passing it on to future generations, and promoting it on an international scale."
+      },
+      {
+        "id": 14,
+        "nnt": "GREEN PATROLS",
+        "name": "ABDUVAHABOVA FOTIMA UKTAMOVNA",
+        "phones": [
+          "+998905803123"
+        ],
+        "address": "Fergana city, Oq yol street, 49",
+        "mission": "Our mission is to preserve nature, reduce negative environmental impacts, and improve the quality of life. We focus on strengthening the role of civil society, developing environmental enlightenment, worldview, and education. Developing and implementing nature protection programs, projects, and events. Teaching children and youth to treat nature with care."
+      },
+      {
+        "id": 15,
+        "nnt": "ECO-ECONOMY",
+        "name": "ISAKOVA ZEBO MURODOVNA",
+        "phones": [
+          "+998903086996"
+        ],
+        "address": "Fergana region",
+        "mission": "Our mission is to create a healthy and stable environment for future generations by developing a green economy, ecological education, and sustainable entrepreneurship. It works on expanding economic opportunities for women and youth, strengthening ecological sustainability, and increasing civic engagement in society."
+      },
+      {
+        "id": 16,
+        "nnt": "OBOD TA'LIM",
+        "name": "MUHAMMADJONOV ISLOMJON MURODJON O’GLI",
+        "phones": [
+          "+998911232122"
+        ],
+        "address": "Fergana district",
+        "mission": "Our mission is to provide free education to low-income and socially vulnerable youth and women, increasing their literacy in modern professions and foreign languages."
+      },
+      {
+        "id": 17,
+        "nnt": "SCHOOL OF GRANDMOTHERS",
+        "name": "MIRZAHMEDOVA SHOHIDAXON AKBAROVNA",
+        "phones": [
+          "+998950410753"
+        ],
+        "address": "Furqat district",
+        "mission": "Our mission is to ensure family stability in Uzbekistan, reduce conflicts, increase prosperity and stability in families, prepare youth for family life, provide career guidance, and assist in developing entrepreneurial ideas."
+      },
+      {
+        "id": 18,
+        "nnt": "INNOVATION",
+        "name": "ABDURAHIMOVA FERUZA BOHADIROVNA",
+        "phones": [
+          "+998904051757"
+        ],
+        "address": "Fergana city",
+        "mission": "Our mission is to develop leadership skills, activity, and love for science in youth through educational and cultural initiatives. We inspire book reading, form attention and care for the environment, and support those in need by creating an atmosphere of personal growth and social responsibility."
+      },
+      {
+        "id": 19,
+        "nnt": "EL YURT ISHONCHI",
+        "name": "HAMIDOVA GULNOZA AKRAMJON QIZI",
+        "phones": [
+          "+998913265545"
+        ],
+        "address": "Fergana city",
+        "mission": "Our mission is to prepare young specialists for admission to the world's top 100 universities, support them in undergraduate, graduate, and doctoral programs, and provide practical help in writing scientific articles and obtaining state grants to enhance their scientific potential."
+      },
+      {
+        "id": 20,
+        "nnt": "MUNIBRO",
+        "name": "TOSHTEMIROVA NILUFAR NAZIMOVNA",
+        "phones": [
+          "+998913265545"
+        ],
+        "address": "Fergana city",
+        "mission": "Our mission is to teach women craftsmanship, develop entrepreneurial skills, and assist in increasing their economic and social potential. We strive to strengthen women's financial independence through our own income, revive national cultural heritage, and contribute to the social stability of society."
+      },
+      {
+        "id": 21,
+        "nnt": "VOICE OF GIRLS (QIZLAR OVOZI)",
+        "name": "UBAYDULLAYEVA ZARNIGOR HASANBOY QIZI",
+        "phones": [
+          "+998904089403"
+        ],
+        "address": "Fergana city",
+        "mission": "Our mission is to increase the social activity of young women, create a creative platform for their professional and scientific development, and establish cooperation through volunteer groups."
+      },
+      {
+        "id": 22,
+        "nnt": "NIHOL",
+        "name": "SHIRIN RASHIDOVA",
+        "phones": [
+          "+998909256146"
+        ],
+        "address": "Tashkent city",
+        "mission": "Developing and supporting initiatives of citizens, especially youth, women, and people with disabilities, including rural populations, in building civil society and promoting democratization through education and training."
+      },
+      {
+        "id": 23,
+        "nnt": "INCLUSIVE SOCIETY",
+        "name": "TILLAYEVA NODIRA DONIYOROVNA",
+        "phones": [
+          "+998977002054"
+        ],
+        "address": "Tashkent city",
+        "mission": "Assisting in protecting the rights of persons with disabilities and their family members, and creating an inclusive society with equal opportunities for all citizens to ensure their comprehensive development."
+      },
+      {
+        "id": 24,
+        "nnt": "SUSTAINABLE LIFE (BARQAROR HAYOT)",
+        "name": "ILMURODOVA OLIYA VLADIMIROVNA",
+        "phones": [
+          "+998909180820"
+        ],
+        "address": "Tashkent city",
+        "mission": "Educating citizens in the spirit of loyalty to the Motherland, helping the younger generation gain deep knowledge, and increasing spiritual, cultural, and legal literacy through social and educational programs."
+      },
+      {
+        "id": 25,
+        "nnt": "LIGHT OF KNOWLEDGE (ILM NURI)",
+        "name": "ALIMJANOVA DILBAR MAG’RIBJANOVNA",
+        "phones": [
+          "+998935858585"
+        ],
+        "address": "Tashkent city",
+        "mission": "Promoting social welfare and empowering women, youth, and the elderly through education, media, legal enlightenment, and cooperation between the state and civil society."
+      },
+      {
+        "id": 26,
+        "nnt": "WHITE SAIL (OQ YELKAN)",
+        "name": "YOQUBJANOVA SHAHZODA RUSTAMOVNA",
+        "phones": [
+          "+998903124224"
+        ],
+        "address": "Tashkent city",
+        "mission": "Increasing the cultural and legal literacy of the population through social and educational programs. We strive to unite state and civil society efforts for the country's comprehensive development."
+      },
+      {
+        "id": 27,
+        "nnt": "HARMONY (GARMONIYA)",
+        "name": "TESHEBAYEVA AYGUL IRKINBAYEVNA",
+        "phones": [
+          "+998990002590"
+        ],
+        "address": "Tashkent region",
+        "mission": "Improving the quality of life for women and children, protecting their rights, and providing psychological and legal support to foster a healthy social environment and sustainable development."
+      },
+      {
+        "id": 28,
+        "nnt": "VOLUNTEERS ASSOCIATION OF UZBEKISTAN",
+        "name": "ABIDOVA SHIRIN RAHIMJANOVNA",
+        "phones": [
+          "+998909080811"
+        ],
+        "address": "Tashkent city",
+        "mission": "Encouraging and supporting initiatives in organizing volunteer activities and protecting the rights and interests of volunteers."
+      },
+      {
+        "id": 29,
+        "nnt": "OPPORTUNITY (IMKONIYAT)",
+        "name": "MAHMUDOVA HILOLA ULUGBEKOVNA",
+        "phones": [
+          "+998911334083"
+        ],
+        "address": "Tashkent city",
+        "mission": "We strive to create an inclusive society free from stigma and discrimination, where every individual has access to treatment, care, and a dignified life."
+      },
+      {
+        "id": 30,
+        "nnt": "IXLOS",
+        "name": "ASILABONU G’ULOMOVA",
+        "phones": [
+          "+998938861104"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our goal is to build an inclusive society where everyone has the opportunity for treatment and care, ensuring a life of dignity for all without discrimination."
+      },
+      {
+        "id": 31,
+        "nnt": "SILVER GENERATION (KUMUSH AVLOD)",
+        "name": "ASHIROVA VIKTORIYA EDUARDOVNA",
+        "phones": [
+          "+998903572698"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to increase the quality of life of the elderly by involving them in social activities, supporting a healthy lifestyle, mental health, and meaningful leisure time."
+      },
+      {
+        "id": 32,
+        "nnt": "GOLDEN WING (OLTIN QANOT)",
+        "name": "QODIROVA DILNOZA",
+        "phones": [
+          "+998994835323"
+        ],
+        "address": "Tashkent city",
+        "mission": "The goal of the 'Oltin Qanot' volunteer team is to support, develop, and assist in implementing volunteer activities in Uzbekistan. It aims to improve volunteer work in social, environmental, educational, and cultural fields."
+      },
+      {
+        "id": 33,
+        "nnt": "SPACE OF LIFE (HAYOT MAKONI)",
+        "name": "ABDULLAEVA KAMILA ULUG'BEKOVNA",
+        "phones": [
+          "+998903910059"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to create a healthy, sustainable, and harmonious society that encourages personal development and ecological responsibility. We strive to inspire people toward an active lifestyle through educational programs and eco-initiatives."
+      },
+      {
+        "id": 34,
+        "nnt": "TUMARIS",
+        "name": "CHERNOSKULOVA YELENA ALEKSEYEVNA",
+        "phones": [
+          "+998909016986"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to unite women and support them in unlocking their leadership and professional potential. We develop women's entrepreneurship and education for the benefit of society, creating a community that inspires new achievements."
+      },
+      {
+        "id": 35,
+        "nnt": "REAL CHIRCHIK RESIDENTS (HAQIQIY CHIRCHIQLIKLAR)",
+        "name": "TSAY SVETLANA ALEKSANDROVNA",
+        "phones": [
+          "+998971572729"
+        ],
+        "address": "Chirchiq city",
+        "mission": "Our mission is to inspire love and pride for our home city through practical actions. Our goal is to unite citizens in a patriotic movement for the cleanliness, beauty, and safety of the city."
+      },
+      {
+        "id": 36,
+        "nnt": "WOMEN, PEACE, SECURITY",
+        "name": "ABBOS MANSUROV",
+        "phones": [
+          "+998917842201"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to promote the principles of UN Security Council Resolution 1325 by establishing sustainable peace, developing a culture of dialogue, and encouraging the equal participation of women and youth in decision-making processes."
+      },
+      {
+        "id": 37,
+        "nnt": "SCANDI.UZ",
+        "name": "TURSUNOVA DONA MAVLYANOVNA",
+        "phones": [
+          "+998977319403"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to promote a healthy and active lifestyle, unite Nordic walking enthusiasts, exchange knowledge and experience, and teach effective walking techniques for health improvement."
+      },
+      {
+        "id": 38,
+        "nnt": "EDUCATION AND CRAFT (TA’LIM VA HUNAR)",
+        "name": "MUHITDINOVA MARG’UBA HOJIAKBAROVNA",
+        "phones": [
+          "+998909267990"
+        ],
+        "address": "Tashkent city",
+        "mission": "Our mission is to help girls find their path in life through the promotion of healthy lifestyles, personal development, and open dialogue with mothers and families within local communities (mahallas)."
+      },
+      {
+        "id": 39,
+        "nnt": "ACADEMY OF VOLUNTEERS",
+        "name": "SA'ATBEK MUZAFFAROV",
+        "phones": [
+          "+998949240115"
+        ],
+        "address": "Tashkent city, Olmazor district",
+        "mission": "The mission of the Academy of Volunteers is to serve as a non-governmental educational institution focused on training volunteers in Uzbekistan and organizing free lessons through volunteer initiatives."
+      }
     ]
   }
 }
