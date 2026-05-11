@@ -1,5 +1,5 @@
 <script setup>
-const { t, locale, locales, setLocale } = useI18n()
+const { t, tm, locale, locales, setLocale } = useI18n()
 const localePath = useLocalePath()
 const supabase = useSupabaseClient()
 
@@ -53,33 +53,20 @@ const reels = computed(() => {
 })
 
 // ── TEAM ─────────────────────────────────────────────────
-const team = computed(() => [
-	{
-		name: t("team.members[0].name"),
-		role: t("team.members[0].role"),
-		bio: t("team.members[0].bio"),
-		img: "./feruza.jpg",
-	},
-	{
-		name: t("team.members[1].name"),
-		role: t("team.members[1].role"),
-		bio: t("team.members[1].bio"),
-		img: "nargiza.jpg",
-	},
-	{
-		name: t("team.members[2].name"),
-		role: t("team.members[2].role"),
-		bio: t("team.members[2].bio"),
-		img: "zafar.jpg",
-	},
-	{
-		name: t("team.members[3].name"),
-		role: t("team.members[3].role"),
-		bio: t("team.members[3].bio"),
-		img: "saida.jpg",
-	}
-])
+const team = computed(() => {
+  const rawTeam = tm('team.members')
+  if (!rawTeam || !Array.isArray(rawTeam)) return []
 
+  return rawTeam.map((_, index) => ({
+    name: t(`team.members[${index}].name`),
+    role: t(`team.members[${index}].role`),
+    bio: t(`team.members[${index}].bio`),
+    // Agar rasmlar 1.jpg, 2.jpg bo'lsa:
+    img: `/employess/${index + 1}.jpg`, 
+    // Yoki rasm nomi i18n ichida bo'lsa:
+    // img: `/employess/${t(`team.members[${index}].img_name`)}`
+  }))
+})
 // ── I18N ─────────────────────────────────────────────────
 const navLinks = computed(() => [
 	["#hero", t("nav.project")],
@@ -396,6 +383,7 @@ onUnmounted(() => {
 				class="relative z-10 w-full max-w-6xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
 			>
 				<div>
+					<!-- Badge -->
 					<div
 						class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6"
 						style="
@@ -415,6 +403,7 @@ onUnmounted(() => {
 						</span>
 					</div>
 
+					<!-- Sarlavha -->
 					<h2
 						class="font-black text-5xl xl:text-6xl leading-[1.05] tracking-tight mb-6"
 						style="color: #fff"
@@ -433,39 +422,70 @@ onUnmounted(() => {
 						{{ t("hero.desc") }}
 					</p>
 
-					<!-- ── UNDEF MOLIYALASHTIRUVCHI BADGE ── -->
+					<!-- ── HAMKORLAR BADGE (UNDEF + Taraqqiyot NGO) ── -->
 					<div
-						class="inline-flex items-center flex-col gap-3 rounded-2xl px-4 py-3 mb-6"
+						class="inline-flex items-center gap-4 rounded-2xl px-5 py-4 mb-8"
 						style="
-							background: rgba(74, 144, 196, 0.15);
-							border: 1px solid rgba(74, 144, 196, 0.3);
+							background: rgba(255, 255, 255, 0.06);
+							border: 1px solid rgba(255, 255, 255, 0.12);
 						"
 					>
-						<!-- UNDEF logo SVG (UN emblem simplified) -->
-						<div
-							class="w-auto h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-							style="background: #4a90c4"
-						>
+						<!-- UNDEF logo -->
+						<div class="flex flex-col items-center gap-1.5">
 							<img
 								src="~/assets/images/png/undef.png"
-								alt="undef"
-								class="w-full h-full object-cover rounded-lg"
+								alt="UNDEF"
+								class="h-9 w-auto object-contain rounded-xl"
 							/>
+							<span
+								class="text-[9px] font-black uppercase tracking-[0.15em]"
+								style="color: rgba(255, 255, 255, 0.35)"
+							>
+								UNDEF
+							</span>
 						</div>
 
-						<div>
-							<div
-								class="text-[11px] font-semibold leading-tight"
-								style="color: rgba(255, 255, 255, 0.75)"
+						<!-- Ajratuvchi chiziq -->
+						<div
+							class="h-10 w-px"
+							style="background: rgba(255, 255, 255, 0.12)"
+						/>
+
+						<!-- Taraqqiyot NGO logo -->
+						<div class="flex flex-col items-center gap-1.5">
+							<img
+								src="~/assets/images/png/taraqqiyot.png"
+								alt="Taraqqiyot NGO"
+								class="h-12 w-40 object-cover"
+								style=""
+							/>
+							<span
+								class="text-[9px] font-black uppercase tracking-[0.15em]"
+								style="color: rgba(255, 255, 255, 0.35)"
 							>
-								Loyiha BMT Demokratiya Jamg'armasi<br />
-								<span style="color: rgba(255, 255, 255, 0.45)"
-									>tomonidan moliyalashtiriladi</span
-								>
-							</div>
+								Taraqqiyot NGO
+							</span>
 						</div>
+
+						<!-- Ajratuvchi chiziq -->
+						<div
+							class="h-10 w-px"
+							style="background: rgba(255, 255, 255, 0.12)"
+						/>
+
+						<!-- Matn -->
+						<p
+							class="text-[11px] leading-relaxed"
+							style="color: rgba(255, 255, 255, 0.55); max-width: 160px"
+						>
+							Loyiha BMT Demokratiya Jamg'armasi
+							<span style="color: rgba(255, 255, 255, 0.3)"
+								>tomonidan moliyalashtiriladi</span
+							>
+						</p>
 					</div>
 
+					<!-- Statistika -->
 					<div
 						class="flex gap-8 pt-8"
 						style="border-top: 1px solid rgba(255, 255, 255, 0.1)"
@@ -487,7 +507,7 @@ onUnmounted(() => {
 					</div>
 				</div>
 
-				<!-- Hero card (o'zgarishsiz) -->
+				<!-- Hero card -->
 				<div class="relative hidden lg:block">
 					<div
 						class="absolute -top-4 -right-4 w-full h-full rounded-3xl"
@@ -967,9 +987,7 @@ onUnmounted(() => {
 						{{ t("team.title") }}
 					</h2>
 				</div>
-				<div
-					class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10"
-				>
+				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
 					<div
 						v-for="(member, i) in team"
 						:key="member.name"
