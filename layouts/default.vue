@@ -14,11 +14,11 @@
 // })
 </script>
 <template>
-	<div class="wrapper flex flex-col min-h-screen">
-		<!-- <UiNavbar /> -->
+	<div class="wrapper site-surface flex min-h-screen flex-col">
+		<BaseHeader />
 		<div class="flex-1">
 			<NuxtPage />
 		</div>
-		<!-- <UiFooter /> -->
+		<BaseFooter />
 	</div>
 </template>

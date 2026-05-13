@@ -1,1578 +1,571 @@
 <script setup>
-const { t, tm, locale, locales, setLocale } = useI18n()
-const localePath = useLocalePath()
-const supabase = useSupabaseClient()
+import { publications, events, fakeImg } from '~/data/siteContent'
 
-// ── SUPABASE: TASKLAR ─────────────────────────────────────
-const { data: tasksRaw } = await useAsyncData("tasks-home", async () => {
-	const { data } = await supabase
-		.from("tasks")
-		.select("slug, uz, ru, en, image_url, status")
-		.eq("status", "published")
-		.order("updated_at", { ascending: false })
-	return data ?? []
-})
+const { t } = useI18n()
 
-const fallbackImages = [
-	"https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800",
-	"https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&q=80&w=800",
-	"https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800",
-	"https://images.unsplash.com/photo-1573161158365-59b7033d749d?auto=format&fit=crop&q=80&w=800",
-	"https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=800",
-	"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
-]
+const featuredProjects = computed(() =>
+  publications.slice(0, 6).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    desc: p.abstract,
+    img: p.image,
+    date: p.date,
+    category: p.category,
+    pubType: p.pubType,
+  })),
+)
 
-const projectTasks = computed(() => {
-	return (tasksRaw.value ?? []).map((task, i) => {
-		const lang = locale.value
-		const d = task[lang] ?? task.uz ?? {}
-		return {
-			slug: task.slug,
-			title: d.title ?? task.slug,
-			desc: d.desc ?? "",
-			img: task.image_url || fallbackImages[i % fallbackImages.length],
-		}
-	})
-})
-
-// ── REELS ─────────────────────────────────────────────────
-const { data: reelsData } = await useAsyncData("reels", async () => {
-	const { data } = await supabase
-		.from("reels")
-		.select("id, video_id, title_uz, title_ru, title_en")
-		.eq("active", true)
-		.order("order_index", { ascending: true })
-	return data ?? []
-})
-
-const reels = computed(() => {
-	return (reelsData.value ?? []).map(r => ({
-		id: r.video_id,
-		title: r[`title_${locale.value}`] || r.title_uz || r.video_id,
-	}))
-})
-
-// ── TEAM ─────────────────────────────────────────────────
-const team = computed(() => {
-  const rawTeam = tm('team.members')
-  if (!rawTeam || !Array.isArray(rawTeam)) return []
-
-  return rawTeam.map((_, index) => ({
-    name: t(`team.members[${index}].name`),
-    role: t(`team.members[${index}].role`),
-    bio: t(`team.members[${index}].bio`),
-    // Agar rasmlar 1.jpg, 2.jpg bo'lsa:
-    img: `/employess/${index + 1}.jpg`, 
-    // Yoki rasm nomi i18n ichida bo'lsa:
-    // img: `/employess/${t(`team.members[${index}].img_name`)}`
+const upcomingFromSite = computed(() => {
+  const u = events
+    .filter((e) => new Date(e.date) >= new Date())
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+  return u.slice(0, 3).map((e) => ({
+    slug: e.slug,
+    title: e.title,
+    date: e.date,
+    time: e.time,
+    location: e.location,
+    type: e.type,
+    speakers: e.speakers,
+    image: e.image,
   }))
 })
-// ── I18N ─────────────────────────────────────────────────
-const navLinks = computed(() => [
-	["#hero", t("nav.project")],
-	["#tasks", t("nav.activity")],
-	["#impact", t("nav.impact")],
-	["#team", t("nav.team")],
+
+const featuredEvent = computed(() => upcomingFromSite.value[0])
+const moreEvents = computed(() => upcomingFromSite.value.slice(1))
+
+const stats = computed(() => [
+  { number: '150+', label: t('home.stats.publications') },
+  { number: '50+', label: t('home.stats.projects') },
+  { number: '25+', label: t('home.stats.partners') },
+  { number: '10+', label: t('home.stats.years') },
 ])
 
-const tickerItems = computed(() => [
-	t("ticker[0]"),
-	t("ticker[1]"),
-	t("ticker[2]"),
-	t("ticker[3]"),
-	t("ticker[4]"),
-	t("ticker[5]"),
-])
+const expertBriefs = [
+  {
+    date: '2026-05-13',
+    title: "Mintaqaviy hamkorlik: yangi siyosat dasturi",
+    excerpt: "Qisqa tahlil — savdolashuv va investitsiya muhitini yaxshilash bo'yicha amaliy choralalar.",
+    views: 428,
+  },
+  {
+    date: '2026-05-10',
+    title: 'Raqamli xizmatlar va ishonchlilik',
+    excerpt: "Fuqarolar uchun xizmat sifatini oshirishda ma'lumot standartlari va shaffoflik.",
+    views: 912,
+  },
+  {
+    date: '2026-05-07',
+    title: "Barqaror energiya va iqtisodiy o'sish",
+    excerpt: "Energiya samaradorligi choralari va ularning iqtisodiyotga ta'siri haqida qisqa sharh.",
+    views: 653,
+  },
+]
 
-const heroStats = computed(() => [
-	["40+", t("hero.stat.ngo")],
-	["2", t("hero.stat.region")],
-	[t("hero.stat.yearsVal"), t("hero.stat.years")],
-])
+const videoSpotlights = [
+  {
+    title: 'Iqtisodiy forumdan lavha: panel muhokama',
+    duration: '42:18',
+    thumb: fakeImg('vid-panel', 640, 360),
+    href: 'https://www.youtube.com/results?search_query=think+tank+panel',
+  },
+  {
+    title: "Siyosat tahlili: barqaror rivojlanish",
+    duration: '28:05',
+    thumb: fakeImg('vid-policy', 640, 360),
+    href: 'https://www.youtube.com/results?search_query=policy+research+sustainability',
+  },
+  {
+    title: "Tadqiqot natijalarini targ'ib qilish",
+    duration: '19:44',
+    thumb: fakeImg('vid-research', 640, 360),
+    href: 'https://www.youtube.com/results?search_query=research+communication',
+  },
+]
 
-const footerContacts = computed(() => [
-	["📞", "+998558141040"],
-	["✉️", "weempoweruzbekistan@gmail.com"],
-	["📍", t("footer.address")],
-])
+const teamMembers = [
+  {
+    name: 'Dr. Aziz Karimov',
+    role: 'Bosh tadqiqotchi',
+    bio: "Iqtisodiy siyosat va rivojlanish iqtisodiyoti bo'yicha 15 yillik tajriba",
+    img: fakeImg('team-aziz', 400, 400),
+  },
+  {
+    name: 'Dilnoza Rahimova',
+    role: 'Loyihalar menejeri',
+    bio: "Xalqaro loyihalarni boshqarish va monitoring bo'yicha mutaxassis",
+    img: fakeImg('team-dilnoza', 400, 400),
+  },
+  {
+    name: 'Bobur Alimov',
+    role: 'Data tahlilchisi',
+    bio: "Katta ma'lumotlar tahlili va statistik modellashtirish bo'yicha ekspert",
+    img: fakeImg('team-bobur', 400, 400),
+  },
+  {
+    name: 'Malika Tashmatova',
+    role: 'Kommunikatsiya menejeri',
+    bio: "Ommaviy aloqolar va media strategiyasi bo'yicha 10 yillik tajriba",
+    img: fakeImg('team-malika', 400, 400),
+  },
+]
 
-const counters = ref([
-	{ value: 0, target: 40, suffix: "+", labelKey: "impact.stat1" },
-	{ value: 0, target: 6, suffix: " ta", labelKey: "impact.stat2" },
-	{ value: 0, target: 3, suffix: "", labelKey: "impact.stat3" },
-])
-
-// ── STATE ────────────────────────────────────────────────
-const isScrolled = ref(false)
-const scrollProgress = ref(0)
-const showBackTop = ref(false)
-const mobileNavOpen = ref(false)
-const activeSection = ref("hero")
-const counted = ref(false)
-
-const modal = ref({ open: false, type: null, data: null })
-const form = ref({ name: "", email: "", message: "" })
-const formSent = ref(false)
-
-// ── SCROLL ───────────────────────────────────────────────
-function onScroll() {
-	const scrollY = window.scrollY
-	const maxScroll = document.body.scrollHeight - window.innerHeight
-	isScrolled.value = scrollY > 60
-	scrollProgress.value = (scrollY / maxScroll) * 100
-	showBackTop.value = scrollY > 400
-
-	for (const id of ["hero", "tasks", "reels", "impact", "team"]) {
-		const el = document.getElementById(id)
-		if (el && el.offsetTop <= scrollY + 120) activeSection.value = id
-	}
-
-	if (!counted.value) {
-		const el = document.getElementById("impact")
-		if (el && el.getBoundingClientRect().top < window.innerHeight - 100) {
-			counted.value = true
-			counters.value.forEach((c, i) => {
-				const step = c.target / 40
-				const timer = setInterval(() => {
-					counters.value[i].value = Math.min(
-						counters.value[i].value + step,
-						c.target,
-					)
-					if (counters.value[i].value >= c.target) clearInterval(timer)
-				}, 30)
-			})
-		}
-	}
-}
-
-// ── MODAL ────────────────────────────────────────────────
-function openModal(type, data = null) {
-	modal.value = { open: true, type, data }
-	document.body.style.overflow = "hidden"
-}
-function closeModal() {
-	modal.value = { open: false, type: null, data: null }
-	document.body.style.overflow = ""
-	formSent.value = false
-}
-function submitForm() {
-	formSent.value = true
-	form.value = { name: "", email: "", message: "" }
-}
-function openModalCloseNavbar() {
-	openModal("contact")
-	mobileNavOpen.value = false
-}
-
-// ── LIFECYCLE ────────────────────────────────────────────
-onMounted(() => {
-	window.addEventListener("scroll", onScroll, { passive: true })
-
-	const observer = new IntersectionObserver(
-		entries => {
-			entries.forEach(entry => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add("anim-in")
-					observer.unobserve(entry.target)
-				}
-			})
-		},
-		{ threshold: 0.1 },
-	)
-
-	document
-		.querySelectorAll(".from-top, .from-bottom, .from-left, .from-right")
-		.forEach(el => observer.observe(el))
-
-	onScroll()
-})
-
-onUnmounted(() => {
-	window.removeEventListener("scroll", onScroll)
-})
+const heroSide = fakeImg('hero-side', 900, 600)
+const aboutGridA = fakeImg('about-grid-a', 500, 500)
+const aboutGridB = fakeImg('about-grid-b', 500, 500)
 </script>
 
 <template>
-	<!-- Brand palette:
-		Empower Red   #E24C4B  — primary, CTAs, headings
-		Energy Orange #F57C00  — secondary accent
-		Sunshine Yel  #FFC107  — support accent
-		Soft Beige    #F7F3EF  — page background
-		Light Neutral #EFEAE5  — card/section bg
-		Charcoal      #212121  — text
-	-->
-	<main
-		class="min-h-screen font-sans overflow-x-hidden"
-		style="background: #f7f3ef; color: #212121"
-	>
-		<!-- SCROLL PROGRESS -->
-		<div
-			class="fixed top-0 left-0 h-[3px] z-[1001] transition-all duration-100"
-			style="background: linear-gradient(to right, #e24c4b, #f57c00, #ffc107)"
-			:style="{ width: scrollProgress + '%' }"
-		/>
+  <div class="min-h-screen bg-white">
+    <!-- Hero — minimalist -->
+    <section class="border-b border-neutral-200/90 bg-white">
+      <div class="relative container py-14 sm:py-20 lg:py-24">
+        <p class="section-eyebrow mb-3 text-neutral-500">
+          {{ $t('home.hero_kicker') }}
+        </p>
+        <div class="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+          <div class="space-y-6 lg:col-span-7 sm:space-y-8">
+            <div class="space-y-4">
+              <h1 class="text-balance text-3xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl">
+                {{ $t('hero.title') }}
+              </h1>
+              <p class="max-w-xl text-pretty text-base leading-relaxed text-neutral-600 sm:text-lg">
+                {{ $t('hero.subtitle') }}
+              </p>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <NuxtLink
+                to="/research"
+                class="inline-flex min-h-11 items-center justify-center bg-neutral-900 px-6 py-2.5 text-center text-sm font-medium text-white transition hover:bg-neutral-800"
+              >
+                {{ $t('hero.explore_research') }}
+              </NuxtLink>
+              <NuxtLink
+                to="/about"
+                class="inline-flex min-h-11 items-center justify-center border border-neutral-300 bg-transparent px-6 py-2.5 text-center text-sm font-medium text-neutral-900 transition hover:border-neutral-900"
+              >
+                {{ $t('hero.learn_more') }}
+              </NuxtLink>
+            </div>
+          </div>
+          <div class="lg:col-span-5">
+            <div class="overflow-hidden border border-neutral-200/90 bg-neutral-50">
+              <img
+                :src="heroSide"
+                alt=""
+                class="aspect-[4/3] w-full object-cover sm:aspect-video"
+                width="900"
+                height="600"
+              >
+              <div class="flex items-center justify-between border-t border-neutral-200 px-4 py-3 text-xs text-neutral-500">
+                <span>{{ $t('hero.impact_year') }}</span>
+                <span class="font-medium text-neutral-900">2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-		<!-- ══ HEADER ══ -->
-		<header
-			class="fixed top-0 w-full z-[900] px-6 lg:px-10 py-5 flex justify-between items-center transition-all duration-300"
-			:class="isScrolled ? 'shadow-sm border-b' : 'bg-transparent'"
-			:style="
-				isScrolled
-					? 'background:rgba(247,243,239,0.95); backdrop-filter:blur(20px); border-color:#EFEAE5'
-					: ''
-			"
-		>
-			<div class="flex items-center gap-4">
-				<div
-					class="w-32 md:w-44 max-h-16 rounded-xl flex items-center justify-center p-1.5"
-				>
-					<img
-						src="~/assets/images/logo/logo.png"
-						alt="WeEmpower"
-						class="object-contain w-full"
-					/>
-				</div>
-			</div>
+    <!-- Stats — horizontal metrics strip -->
+    <section class="border-b border-gray-200 bg-white py-10 sm:py-12">
+      <div class="container">
+        <div class="grid grid-cols-2 gap-px bg-gray-200 sm:grid-cols-4">
+          <div
+            v-for="stat in stats"
+            :key="stat.label"
+            class="flex flex-col items-center justify-center bg-white px-3 py-8 text-center sm:px-4"
+          >
+            <div class="text-2xl font-bold text-neutral-900 sm:text-3xl lg:text-4xl">
+              {{ stat.number }}
+            </div>
+            <div class="mt-1 max-w-[12rem] text-xs text-neutral-600 sm:text-sm">
+              {{ stat.label }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-			<!-- Desktop nav -->
-			<nav class="hidden lg:flex items-center gap-4">
-				<div v-for="[href, label] in navLinks" :key="href">
-					<a
-						:href="href"
-						class="text-[11px] font-bold uppercase tracking-widest relative pb-0.5 transition-colors duration-200 group"
-						:class="
-							isScrolled
-								? 'hover:text-[#E24C4B]'
-								: 'text-white/90 hover:text-white'
-						"
-						:style="isScrolled ? 'color:#212121' : ''"
-					>
-						{{ label }}
-						<span
-							class="absolute bottom-0 left-0 h-[2px] transition-all duration-300"
-							style="background: #e24c4b"
-							:class="
-								activeSection === href.replace('#', '')
-									? 'w-full'
-									: 'w-0 group-hover:w-full'
-							"
-						/>
-					</a>
-				</div>
+    <!-- Featured research + expert briefs -->
+    <section class="py-14 sm:py-16 lg:py-20">
+      <div class="container space-y-12 lg:space-y-16">
+        <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <aside class="lg:col-span-4 lg:border-r lg:border-gray-200 lg:pr-10">
+            <p class="section-eyebrow mb-2">
+              {{ $t('home.research_eyebrow') }}
+            </p>
+            <h2 class="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl lg:text-4xl">
+              {{ $t('research.title') }}
+            </h2>
+            <p class="mt-2 text-sm font-semibold text-neutral-900">
+              {{ $t('home.research_stat') }}
+            </p>
+            <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
+              {{ $t('research.subtitle') }}
+            </p>
+            <NuxtLink
+              to="/research"
+              class="mt-6 inline-flex min-h-11 items-center justify-center bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800"
+            >
+              {{ $t('research.view_all') }}
+            </NuxtLink>
+          </aside>
+          <div class="lg:col-span-8">
+            <div class="grid gap-6 sm:grid-cols-2">
+              <article
+                v-for="project in featuredProjects"
+                :key="project.slug"
+                class="group flex h-full flex-col border border-gray-200 bg-white transition hover:border-neutral-900/30 hover:shadow-md"
+              >
+                <div class="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    :src="project.img"
+                    :alt="project.title"
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                    width="600"
+                    height="375"
+                  >
+                </div>
+                <div class="flex flex-1 flex-col p-4 sm:p-5">
+                  <div class="mb-2 flex flex-wrap items-center gap-2 text-xs text-neutral-600">
+                    <span class="section-eyebrow text-[0.625rem] text-neutral-500">{{ $t(`pub_types.${project.pubType}`) }}</span>
+                    <span class="hidden sm:inline" aria-hidden="true">·</span>
+                    <span>{{ project.date }}</span>
+                  </div>
+                  <h3 class="text-lg font-semibold leading-snug text-neutral-900 sm:text-xl">
+                    {{ project.title }}
+                  </h3>
+                  <p class="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-neutral-600">
+                    {{ project.desc }}
+                  </p>
+                  <NuxtLink
+                    :to="`/research/${project.slug}`"
+                    class="mt-4 inline-flex items-center text-sm font-semibold text-neutral-900 hover:text-neutral-600"
+                  >
+                    {{ $t('common.read_more') }}
+                    <svg class="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </NuxtLink>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
 
-				<!-- Lang switcher -->
-				<div
-					class="flex items-center gap-1 border rounded-full px-1 py-1"
-					:style="
-						isScrolled
-							? 'border-color:#E24C4B'
-							: 'border-color:rgba(255,255,255,0.3)'
-					"
-				>
-					<button
-						v-for="lang in locales"
-						:key="lang"
-						class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all duration-200"
-						:style="
-							locale === lang.code
-								? 'background:#E24C4B; color:#fff'
-								: isScrolled
-									? 'color:#212121'
-									: 'color:rgba(255,255,255,0.8)'
-						"
-						@click="setLocale(lang.code)"
-					>
-						{{ lang.code }}
-					</button>
-				</div>
-			</nav>
+        <div class="border-t border-gray-200 pt-12 lg:pt-14">
+          <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="section-eyebrow mb-1">
+                {{ $t('home.expert_eyebrow') }}
+              </p>
+              <h3 class="text-xl font-bold text-neutral-900 sm:text-2xl">
+                {{ $t('home.expert_title') }}
+              </h3>
+            </div>
+            <NuxtLink to="/research" class="text-sm font-semibold text-neutral-900 hover:text-neutral-600">
+              {{ $t('home.expert_more') }} →
+            </NuxtLink>
+          </div>
+          <div class="grid gap-4 md:grid-cols-3">
+            <article
+              v-for="(brief, idx) in expertBriefs"
+              :key="idx"
+              class="flex flex-col border border-gray-200 p-4 sm:p-5 transition hover:border-neutral-900/25"
+            >
+              <time class="text-xs font-medium text-neutral-600">{{ brief.date }}</time>
+              <h4 class="mt-2 text-base font-semibold leading-snug text-neutral-900 sm:text-lg">
+                {{ brief.title }}
+              </h4>
+              <p class="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-neutral-600">
+                {{ brief.excerpt }}
+              </p>
+              <p class="mt-3 text-xs text-neutral-600">
+                {{ $t('home.views', { n: brief.views }) }}
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
 
-			<!-- Hamburger -->
-			<button
-				class="lg:hidden flex flex-col gap-[5px] p-1"
-				@click="mobileNavOpen = !mobileNavOpen"
-			>
-				<span
-					v-for="n in 3"
-					:key="n"
-					class="block w-6 h-0.5 rounded transition-all duration-300"
-					:style="isScrolled ? 'background:#212121' : 'background:white'"
-					:class="[
-						mobileNavOpen && n === 1 ? 'translate-y-[7px] rotate-45' : '',
-						mobileNavOpen && n === 2 ? 'opacity-0' : '',
-						mobileNavOpen && n === 3 ? '-translate-y-[7px] -rotate-45' : '',
-					]"
-				/>
-			</button>
-		</header>
+    <!-- Events + videos -->
+    <section class="border-t border-gray-200 bg-neutral-50 py-14 sm:py-16 lg:py-20">
+      <div class="container space-y-12">
+        <div class="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-none lg:text-left">
+          <p class="section-eyebrow mb-2">
+            {{ $t('home.events_eyebrow') }}
+          </p>
+          <h2 class="text-2xl font-bold text-neutral-900 sm:text-3xl lg:text-4xl">
+            {{ $t('home.events_title') }}
+          </h2>
+          <p class="mt-3 text-sm leading-relaxed text-neutral-600 sm:text-base">
+            {{ $t('home.events_subtitle') }}
+          </p>
+        </div>
 
-		<!-- MOBILE NAV -->
-		<Transition name="slide-right">
-			<div
-				v-if="mobileNavOpen"
-				class="fixed inset-y-0 right-0 w-72 z-[800] shadow-2xl pt-24 px-8"
-				style="background: #f7f3ef"
-			>
-				<ul class="space-y-1">
-					<li
-						v-for="[href, label] in navLinks"
-						:key="href"
-						style="border-bottom: 1px solid #efeae5"
-					>
-						<a
-							:href="href"
-							class="block py-4 text-base font-bold uppercase tracking-widest transition-colors"
-							style="color: #212121"
-							@click="mobileNavOpen = false"
-							>{{ label }}</a
-						>
-					</li>
-					<li class="pt-4 pb-2">
-						<div class="flex gap-2">
-							<button
-								v-for="lang in locales"
-								:key="lang"
-								class="flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all border"
-								:style="
-									locale === lang.code
-										? 'background:#E24C4B;color:#fff;border-color:#E24C4B'
-										: 'color:#212121;border-color:#EFEAE5'
-								"
-								@click="setLocale(lang.code)"
-							>
-								{{ lang.code }}
-							</button>
-						</div>
-					</li>
-					<li class="pt-2">
-						<button
-							class="w-full text-white py-3 rounded-xl text-sm font-bold uppercase tracking-widest"
-							style="background: #e24c4b"
-							@click="openModalCloseNavbar"
-						>
-							{{ t("nav.contact") }}
-						</button>
-					</li>
-				</ul>
-			</div>
-		</Transition>
-		<Transition name="fade">
-			<div
-				v-if="mobileNavOpen"
-				class="fixed inset-0 bg-black/40 z-[700]"
-				@click="mobileNavOpen = false"
-			/>
-		</Transition>
+        <div v-if="featuredEvent" class="grid gap-8 lg:grid-cols-12 lg:gap-10">
+          <article class="border border-neutral-200/90 bg-white lg:col-span-7">
+            <div class="aspect-[21/9] max-h-48 w-full overflow-hidden sm:max-h-none sm:aspect-[2/1] lg:aspect-[16/9]">
+              <img
+                :src="featuredEvent.image"
+                alt=""
+                class="h-full w-full object-cover"
+                width="1200"
+                height="675"
+              >
+            </div>
+            <div class="space-y-4 p-5 sm:p-6 lg:p-8">
+              <span class="inline-block bg-neutral-50 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-neutral-700">
+                {{ featuredEvent.type }}
+              </span>
+              <h3 class="text-xl font-semibold leading-snug text-neutral-900 sm:text-2xl">
+                {{ featuredEvent.title }}
+              </h3>
+              <dl class="grid gap-3 text-sm sm:grid-cols-2">
+                <div>
+                  <dt class="font-semibold text-neutral-900">
+                    {{ $t('home.when') }}
+                  </dt>
+                  <dd class="mt-0.5 text-neutral-600">
+                    {{ featuredEvent.date }} · {{ featuredEvent.time }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-neutral-900">
+                    {{ $t('home.where') }}
+                  </dt>
+                  <dd class="mt-0.5 text-neutral-600">
+                    {{ featuredEvent.location }}
+                  </dd>
+                </div>
+              </dl>
+              <div v-if="featuredEvent.speakers?.length">
+                <p class="text-sm font-semibold text-neutral-900">
+                  {{ $t('home.speakers') }}
+                </p>
+                <ul class="mt-2 list-inside list-disc text-sm text-neutral-600">
+                  <li v-for="s in featuredEvent.speakers" :key="s">
+                    {{ s }}
+                  </li>
+                </ul>
+              </div>
+              <NuxtLink
+                :to="`/events/${featuredEvent.slug}`"
+                class="inline-flex w-full min-h-11 items-center justify-center border border-neutral-900 bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 sm:w-auto"
+              >
+                {{ $t('home.register') }}
+              </NuxtLink>
+            </div>
+          </article>
 
-		<!-- ══ HERO ══ -->
-		<section
-			id="hero"
-			class="relative min-h-screen flex items-center justify-center overflow-hidden"
-			style="background: #212121"
-		>
-			<div class="absolute inset-0 z-0 pointer-events-none">
-				<div class="hero-mesh" />
-				<div class="hero-grid" />
-				<div class="shape shape-1" />
-				<div class="shape shape-2" />
-				<div class="shape shape-3" />
-				<div class="shape shape-4" />
-			</div>
+          <div class="flex flex-col gap-4 lg:col-span-5">
+            <article
+              v-for="event in moreEvents"
+              :key="event.slug"
+              class="flex flex-1 flex-col border border-neutral-200/90 bg-white p-4 sm:p-5"
+            >
+              <div class="flex items-start justify-between gap-3">
+                <h4 class="text-base font-semibold leading-snug text-neutral-900 sm:text-lg">
+                  {{ event.title }}
+                </h4>
+                <span class="shrink-0 text-xs font-semibold uppercase tracking-wide text-neutral-500">{{ event.type }}</span>
+              </div>
+              <p class="mt-2 text-sm text-neutral-600">
+                {{ event.date }} · {{ event.time }}
+              </p>
+              <p class="mt-1 text-sm text-neutral-600">
+                {{ event.location }}
+              </p>
+              <NuxtLink
+                :to="`/events/${event.slug}`"
+                class="mt-4 inline-flex min-h-10 w-full items-center justify-center border border-neutral-900 px-3 py-2 text-sm font-medium text-neutral-900 transition hover:bg-neutral-900 hover:text-white sm:mt-auto sm:w-auto"
+              >
+                {{ $t('home.register') }}
+              </NuxtLink>
+            </article>
+          </div>
+        </div>
 
-			<div
-				class="relative z-10 w-full max-w-6xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
-			>
-				<div>
-					<!-- Badge -->
-					<div
-						class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6"
-						style="
-							background: rgba(226, 76, 75, 0.15);
-							border: 1px solid rgba(226, 76, 75, 0.35);
-						"
-					>
-						<span
-							class="w-2 h-2 rounded-full animate-pulse"
-							style="background: #ffc107"
-						/>
-						<span
-							class="text-[10px] font-black uppercase tracking-[0.3em]"
-							style="color: #ffc107"
-						>
-							{{ t("hero.badge.label") }}
-						</span>
-					</div>
+        <div>
+          <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p class="section-eyebrow mb-1">
+                {{ $t('home.videos_eyebrow') }}
+              </p>
+              <h3 class="text-xl font-bold text-neutral-900 sm:text-2xl">
+                {{ $t('home.videos_title') }}
+              </h3>
+              <p class="mt-1 text-sm text-neutral-600">
+                {{ $t('home.videos_subtitle') }}
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-4 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+            <a
+              v-for="(vid, i) in videoSpotlights"
+              :key="i"
+              :href="vid.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group w-[min(100%,280px)] shrink-0 border border-gray-200 bg-white transition hover:border-neutral-900/30 sm:w-auto"
+            >
+              <div class="relative aspect-video overflow-hidden">
+                <img
+                  :src="vid.thumb"
+                  alt=""
+                  class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  width="640"
+                  height="360"
+                >
+                <span class="absolute bottom-2 right-2 bg-black/70 px-2 py-0.5 text-xs font-medium text-white">{{ vid.duration }}</span>
+              </div>
+              <div class="p-3 sm:p-4">
+                <p class="text-sm font-semibold leading-snug text-neutral-900 group-hover:text-neutral-900">
+                  {{ vid.title }}
+                </p>
+                <span class="mt-2 inline-block text-xs font-semibold text-neutral-900">{{ $t('home.watch') }} →</span>
+              </div>
+            </a>
+          </div>
+        </div>
 
-					<!-- Sarlavha -->
-					<h2
-						class="font-black text-5xl xl:text-6xl leading-[1.05] tracking-tight mb-6"
-						style="color: #fff"
-					>
-						{{ t("hero.title1") }}<br />
-						<span class="hero-gradient-text">{{ t("hero.title2") }}</span
-						><br />
-						{{ t("hero.title3") }}<br />
-						{{ t("hero.title4") }}
-					</h2>
+        <div class="text-center lg:text-left">
+          <NuxtLink
+            to="/events"
+            class="inline-flex min-h-11 items-center justify-center bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800"
+          >
+            {{ $t('home.events_view_all') }}
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
 
-					<p
-						class="text-base leading-relaxed mb-8 max-w-md"
-						style="color: rgba(255, 255, 255, 0.6)"
-					>
-						{{ t("hero.desc") }}
-					</p>
+    <!-- Team -->
+    <section class="py-14 sm:py-16 lg:py-20">
+      <div class="container">
+        <div class="mx-auto mb-10 max-w-2xl text-center lg:mx-0 lg:max-w-none lg:text-left">
+          <p class="section-eyebrow mb-2">
+            {{ $t('home.team_eyebrow') }}
+          </p>
+          <h2 class="text-2xl font-bold text-neutral-900 sm:text-3xl lg:text-4xl">
+            {{ $t('home.team_title') }}
+          </h2>
+          <p class="mt-3 text-sm text-neutral-600 sm:text-base">
+            {{ $t('home.team_subtitle') }}
+          </p>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div
+            v-for="member in teamMembers"
+            :key="member.name"
+            class="border border-gray-200 bg-white p-5 text-center transition hover:border-neutral-900/25"
+          >
+            <img
+              :src="member.img"
+              :alt="member.name"
+              class="mx-auto h-28 w-28 object-cover sm:h-32 sm:w-32"
+              width="128"
+              height="128"
+            >
+            <h3 class="mt-4 text-base font-semibold text-neutral-900 sm:text-lg">
+              {{ member.name }}
+            </h3>
+            <p class="mt-1 text-center text-[0.625rem] font-semibold uppercase tracking-widest text-neutral-900">
+              {{ member.role }}
+            </p>
+            <p class="mt-3 text-sm leading-relaxed text-neutral-600">
+              {{ member.bio }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-					<!-- ── HAMKORLAR BADGE (UNDEF + Taraqqiyot NGO) ── -->
-					<div
-						class="inline-flex items-center gap-4 rounded-2xl px-5 py-4 mb-8"
-						style="
-							background: rgba(255, 255, 255, 0.06);
-							border: 1px solid rgba(255, 255, 255, 0.12);
-						"
-					>
-						<!-- UNDEF logo -->
-						<div class="flex flex-col items-center gap-1.5">
-							<img
-								src="~/assets/images/png/undef.png"
-								alt="UNDEF"
-								class="h-9 w-auto object-contain rounded-xl"
-							/>
-							<span
-								class="text-[9px] font-black uppercase tracking-[0.15em]"
-								style="color: rgba(255, 255, 255, 0.35)"
-							>
-								UNDEF
-							</span>
-						</div>
+    <!-- About -->
+    <section class="border-t border-gray-200 bg-neutral-50 py-14 sm:py-16 lg:py-20">
+      <div class="container">
+        <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+          <div class="space-y-5">
+            <p class="section-eyebrow">
+              {{ $t('navigation.about') }}
+            </p>
+            <h2 class="text-2xl font-bold text-neutral-900 sm:text-3xl lg:text-4xl">
+              {{ $t('about.title') }}
+            </h2>
+            <div class="space-y-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
+              <p>{{ $t('about.paragraph1') }}</p>
+              <p>{{ $t('about.paragraph2') }}</p>
+            </div>
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <NuxtLink
+                to="/about"
+                class="inline-flex min-h-11 items-center justify-center bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800"
+              >
+                {{ $t('about.learn_more') }}
+              </NuxtLink>
+              <NuxtLink
+                to="/about"
+                class="inline-flex min-h-11 items-center justify-center border border-neutral-900 px-6 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
+              >
+                {{ $t('about.contact') }}
+              </NuxtLink>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 sm:gap-4">
+            <img
+              :src="aboutGridA"
+              alt=""
+              class="aspect-square w-full object-cover sm:aspect-[4/5]"
+              width="500"
+              height="500"
+            >
+            <img
+              :src="aboutGridB"
+              alt=""
+              class="aspect-square w-full translate-y-4 object-cover sm:aspect-[4/5] sm:translate-y-8"
+              width="500"
+              height="500"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
 
-						<!-- Ajratuvchi chiziq -->
-						<div
-							class="h-10 w-px"
-							style="background: rgba(255, 255, 255, 0.12)"
-						/>
-
-						<!-- Taraqqiyot NGO logo -->
-						<div class="flex flex-col items-center gap-1.5">
-							<img
-								src="~/assets/images/png/taraqqiyot.png"
-								alt="Taraqqiyot NGO"
-								class="h-12 w-40 object-cover"
-								style=""
-							/>
-							<span
-								class="text-[9px] font-black uppercase tracking-[0.15em]"
-								style="color: rgba(255, 255, 255, 0.35)"
-							>
-								Taraqqiyot NGO
-							</span>
-						</div>
-
-						<!-- Ajratuvchi chiziq -->
-						<div
-							class="h-10 w-px"
-							style="background: rgba(255, 255, 255, 0.12)"
-						/>
-
-						<!-- Matn -->
-						<p
-							class="text-[11px] leading-relaxed"
-							style="color: rgba(255, 255, 255, 0.55); max-width: 160px"
-						>
-							Loyiha BMT Demokratiya Jamg'armasi
-							<span style="color: rgba(255, 255, 255, 0.3)"
-								>tomonidan moliyalashtiriladi</span
-							>
-						</p>
-					</div>
-
-					<!-- Statistika -->
-					<div
-						class="flex gap-8 pt-8"
-						style="border-top: 1px solid rgba(255, 255, 255, 0.1)"
-					>
-						<div v-for="[num, lbl] in heroStats" :key="lbl">
-							<div
-								class="font-black text-2xl tracking-tight"
-								style="color: #fff"
-							>
-								{{ num }}
-							</div>
-							<div
-								class="text-[10px] font-bold uppercase tracking-widest mt-0.5"
-								style="color: rgba(255, 255, 255, 0.4)"
-							>
-								{{ lbl }}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- Hero card -->
-				<div class="relative hidden lg:block">
-					<div
-						class="absolute -top-4 -right-4 w-full h-full rounded-3xl"
-						style="
-							border: 1px solid rgba(226, 76, 75, 0.25);
-							background: rgba(226, 76, 75, 0.06);
-						"
-					/>
-					<div
-						class="relative rounded-3xl overflow-hidden"
-						style="
-							background: rgba(255, 255, 255, 0.06);
-							border: 1px solid rgba(255, 255, 255, 0.1);
-						"
-					>
-						<img
-							src="~/assets/images/jpg/team.jpg"
-							alt="Women Empowerment"
-							class="w-full aspect-[4/3] object-cover opacity-85"
-						/>
-						<div class="p-6">
-							<div class="flex items-center gap-3 mb-3">
-								<div
-									class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-									style="background: #e24c4b"
-								>
-									<svg class="w-4 h-4 fill-white" viewBox="0 0 24 24">
-										<path
-											d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-										/>
-									</svg>
-								</div>
-								<div>
-									<div class="text-white text-sm font-bold">
-										{{ t("hero.card.milestone") }}
-									</div>
-									<div
-										class="text-[11px]"
-										style="color: rgba(255, 255, 255, 0.5)"
-									>
-										{{ t("hero.card.milestoneSub") }}
-									</div>
-								</div>
-							</div>
-							<div
-								class="h-1.5 rounded-full overflow-hidden"
-								style="background: rgba(255, 255, 255, 0.1)"
-							>
-								<div
-									class="h-full w-[78%] rounded-full"
-									style="
-										background: linear-gradient(to right, #e24c4b, #f57c00);
-									"
-								/>
-							</div>
-							<div class="flex justify-between mt-1.5">
-								<span
-									class="text-[10px] font-bold"
-									style="color: rgba(255, 255, 255, 0.4)"
-									>{{ t("hero.card.process") }}</span
-								>
-								<span class="text-[10px] font-black" style="color: #f57c00"
-									>78%</span
-								>
-							</div>
-						</div>
-					</div>
-
-					<!-- Float badge -->
-					<div
-						class="absolute -bottom-5 -left-5 rounded-2xl px-4 py-3 shadow-2xl flex items-center gap-3"
-						style="background: #fff"
-					>
-						<div
-							class="w-9 h-9 rounded-xl flex items-center justify-center"
-							style="background: #fff3e0"
-						>
-							<svg class="w-5 h-5" style="fill: #f57c00" viewBox="0 0 24 24">
-								<path
-									d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"
-								/>
-							</svg>
-						</div>
-						<div>
-							<div class="text-sm font-black" style="color: #212121">
-								{{ t("hero.badge.ngo") }}
-							</div>
-							<div class="text-[10px] font-bold" style="color: #888">
-								{{ t("hero.badge.ngoSub") }}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div
-				class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 animate-bounce"
-			>
-				<div
-					class="w-5 h-5 border-r-2 border-b-2 rotate-45"
-					style="border-color: rgba(255, 255, 255, 0.3)"
-				/>
-			</div>
-		</section>
-
-		<!-- ══ TICKER ══ -->
-		<div class="py-3 overflow-hidden" style="background: #212121">
-			<div class="ticker-track flex gap-16 whitespace-nowrap">
-				<template v-for="_ in 2" :key="_">
-					<span
-						v-for="item in tickerItems"
-						:key="item + _"
-						class="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest"
-						style="color: rgba(255, 255, 255, 0.8)"
-					>
-						<span
-							class="w-1.5 h-1.5 rounded-full flex-shrink-0"
-							style="background: #e24c4b"
-						/>
-						{{ item }}
-					</span>
-				</template>
-			</div>
-		</div>
-
-		<!-- ══ TASKS ══ -->
-		<section id="tasks" class="py-28 px-6" style="background: #f7f3ef">
-			<div class="max-w-6xl mx-auto">
-				<div class="from-top mb-16">
-					<span
-						class="inline-block text-[11px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-4"
-						style="background: rgba(226, 76, 75, 0.1); color: #e24c4b"
-					>
-						{{ t("tasks.label") }}
-					</span>
-					<h2
-						class="text-4xl md:text-5xl font-black tracking-tight"
-						style="color: #212121"
-					>
-						{{ t("tasks.title") }}
-					</h2>
-				</div>
-
-				<!-- Loading skeleton -->
-				<div
-					v-if="!tasksRaw"
-					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-				>
-					<div
-						v-for="n in 6"
-						:key="n"
-						class="rounded-3xl overflow-hidden border animate-pulse"
-						style="background: #efeae5; border-color: #e8e3dd"
-					>
-						<div class="h-52" style="background: #e0dad3" />
-						<div class="p-7 space-y-3">
-							<div class="h-5 rounded w-3/4" style="background: #d8d2cb" />
-							<div class="h-4 rounded w-full" style="background: #e0dad3" />
-						</div>
-					</div>
-				</div>
-
-				<!-- Bo'sh holat -->
-				<div
-					v-else-if="projectTasks.length === 0"
-					class="text-center py-16"
-					style="color: #888"
-				>
-					<svg
-						class="w-12 h-12 mx-auto mb-4 opacity-30"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						viewBox="0 0 24 24"
-					>
-						<path
-							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-						/>
-					</svg>
-					<p class="font-bold text-sm">Hali nashr qilingan task yo'q</p>
-				</div>
-
-				<!-- Tasklar -->
-				<div
-					v-else
-					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-				>
-					<div
-						v-for="(task, i) in projectTasks"
-						:key="task.slug"
-						class="from-bottom group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2"
-						:style="{
-							transitionDelay: `${i * 80}ms`,
-							animationDelay: `${i * 80}ms`,
-							background: '#fff',
-							border: '1px solid #EFEAE5',
-							boxShadow: '0 4px 24px rgba(33,33,33,0.07)',
-						}"
-						style="box-shadow: 0 4px 24px rgba(33, 33, 33, 0.07)"
-						@mouseover="
-							$event.currentTarget.style.boxShadow =
-								'0 16px 48px rgba(226,76,75,0.15)'
-						"
-						@mouseout="
-							$event.currentTarget.style.boxShadow =
-								'0 4px 24px rgba(33,33,33,0.07)'
-						"
-					>
-						<div
-							class="h-52 overflow-hidden relative"
-							style="background: #efeae5"
-						>
-							<img
-								:src="task.img"
-								:alt="task.title"
-								class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-								loading="lazy"
-							/>
-							<div
-								class="absolute inset-0"
-								style="
-									background: linear-gradient(
-										to top,
-										rgba(33, 33, 33, 0.65) 0%,
-										transparent 60%
-									);
-								"
-							/>
-							<div
-								class="absolute top-4 left-4 w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-black"
-								style="background: #e24c4b"
-							>
-								{{ String(i + 1).padStart(2, "00") }}
-							</div>
-						</div>
-						<div class="p-7">
-							<h4
-								class="text-xl font-black mb-2 line-clamp-2"
-								style="color: #212121"
-							>
-								{{ task.title }}
-							</h4>
-							<p
-								class="text-sm leading-relaxed line-clamp-3"
-								style="color: #666"
-							>
-								{{ task.desc }}
-							</p>
-							<NuxtLink
-								:to="localePath(`/projects/${task.slug}`)"
-								class="mt-5 inline-flex items-center gap-2 font-black text-[11px] uppercase tracking-widest group-hover:gap-4 transition-all duration-300"
-								style="color: #e24c4b"
-							>
-								{{ t("tasks.more") }}
-								<svg
-									class="w-4 h-4 group-hover:translate-x-1 transition-transform"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2.5"
-									viewBox="0 0 24 24"
-								>
-									<path d="M5 12h14M12 5l7 7-7 7" />
-								</svg>
-							</NuxtLink>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<ProjectStages />
-
-		<!-- ══ REELS ══ -->
-		<section
-			id="reels"
-			class="py-28 px-6 overflow-hidden"
-			style="background: #efeae5"
-		>
-			<div class="max-w-6xl mx-auto">
-				<div
-					class="from-top flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14"
-				>
-					<div>
-						<h2
-							class="text-4xl md:text-5xl font-black tracking-tight"
-							style="color: #212121"
-						>
-							{{ t("reels.title") }} <span class="reels-gradient">Reels</span>
-						</h2>
-						<p class="text-sm font-medium mt-2" style="color: #888">
-							{{ t("reels.subtitle") }}
-						</p>
-					</div>
-					<a
-						href="https://www.instagram.com/weempower_uz"
-						target="_blank"
-						class="inline-flex items-center gap-2 text-sm font-bold transition-colors"
-						style="color: #e24c4b"
-					>
-						<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-							<path
-								d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"
-							/>
-						</svg>
-						@weempower_uz
-					</a>
-				</div>
-
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-					<div
-						v-for="(reel, i) in reels"
-						:key="reel.id"
-						class="reel-card from-bottom group"
-						:style="{ animationDelay: `${i * 100}ms` }"
-					>
-						<div class="reel-phone">
-							<div class="reel-notch" />
-							<div class="reel-video-wrap">
-								<iframe
-									:src="`https://www.youtube.com/embed/${reel.id}?rel=0&modestbranding=1&controls=1&playsinline=1`"
-									:title="reel.title"
-									frameborder="0"
-									allow="
-										accelerometer;
-										autoplay;
-										clipboard-write;
-										encrypted-media;
-										gyroscope;
-										picture-in-picture;
-									"
-									allowfullscreen
-									class="w-full h-full"
-									loading="lazy"
-								/>
-							</div>
-							<div class="reel-label">
-								<svg
-									class="w-3.5 h-3.5 fill-white opacity-70"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
-									/>
-								</svg>
-								<span>{{ t("reels.label") }}</span>
-							</div>
-						</div>
-						<p
-							class="text-center text-xs font-bold mt-3 px-1 truncate"
-							style="color: #666"
-						>
-							{{ reel.title }}
-						</p>
-					</div>
-				</div>
-
-				<div class="from-bottom text-center mt-14">
-					<a
-						href="https://www.youtube.com/@taraqqiyotngo/shorts"
-						target="_blank"
-						class="inline-flex items-center gap-2 text-white px-7 py-3.5 rounded-full font-black text-xs uppercase tracking-widest transition-all duration-300 hover:-translate-y-0.5"
-						style="
-							background: #212121;
-							box-shadow: 0 8px 24px rgba(33, 33, 33, 0.2);
-						"
-					>
-						<svg class="w-4 h-4" style="fill: #e24c4b" viewBox="0 0 24 24">
-							<path
-								d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
-							/>
-						</svg>
-						{{ t("reels.cta") }}
-					</a>
-				</div>
-			</div>
-		</section>
-
-		<!-- ══ IMPACT ══ -->
-		<section
-			id="impact"
-			class="py-28 text-white relative overflow-hidden px-6"
-			style="background: #212121"
-		>
-			<img
-				src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2000"
-				class="absolute inset-0 w-full h-full object-cover opacity-10 pointer-events-none"
-				alt=""
-			/>
-			<div class="max-w-6xl mx-auto relative z-10">
-				<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-					<div class="from-left">
-						<p
-							class="text-[11px] font-black uppercase tracking-[0.4em] mb-4"
-							style="color: #f57c00"
-						>
-							{{ t("impact.label") }}
-						</p>
-						<h2
-							class="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-8"
-						>
-							{{ t("impact.title1") }}<br />
-							<em class="not-italic" style="color: #e24c4b">{{
-								t("impact.title2")
-							}}</em>
-						</h2>
-						<p
-							class="text-lg leading-relaxed mb-10"
-							style="color: rgba(255, 255, 255, 0.7)"
-						>
-							{{ t("impact.desc") }}
-						</p>
-						<div class="flex gap-10 flex-wrap">
-							<div
-								v-for="c in counters"
-								:key="c.labelKey"
-								class="border-l-4 pl-5"
-								style="border-color: #e24c4b"
-							>
-								<div class="text-5xl font-black tracking-tight">
-									{{ Math.floor(c.value) }}{{ c.suffix }}
-								</div>
-								<div
-									class="text-[10px] uppercase font-bold tracking-[0.2em] mt-1"
-									style="color: rgba(255, 255, 255, 0.4)"
-								>
-									{{ t(c.labelKey) }}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div
-						class="from-right rounded-[2.5rem] p-8 transition-all duration-500"
-						style="
-							background: rgba(255, 255, 255, 0.06);
-							border: 1px solid rgba(255, 255, 255, 0.1);
-						"
-					>
-						<div class="aspect-video rounded-2xl overflow-hidden mb-6">
-							<img
-								src="~/public/banner.jpg"
-								class="w-full h-full object-cover"
-								alt="Jamoa"
-							/>
-						</div>
-						<blockquote
-							class="text-lg italic leading-relaxed mb-4"
-							style="color: rgba(255, 255, 255, 0.85)"
-						>
-							{{ t("impact.quote") }}
-						</blockquote>
-						<cite
-							class="text-[11px] font-black uppercase tracking-widest not-italic"
-							style="color: #f57c00"
-						>
-							{{ t("impact.cite") }}
-						</cite>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- ══ TEAM ══ -->
-		<section id="team" class="py-28 px-6" style="background: #f7f3ef">
-			<div class="max-w-6xl mx-auto">
-				<div class="from-top text-center mb-16">
-					<p
-						class="text-[11px] font-black uppercase tracking-[0.4em] mb-3"
-						style="color: #e24c4b"
-					>
-						{{ t("team.label") }}
-					</p>
-					<h2
-						class="text-4xl md:text-6xl font-black tracking-tight"
-						style="color: #212121"
-					>
-						{{ t("team.title") }}
-					</h2>
-				</div>
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-					<div
-						v-for="(member, i) in team"
-						:key="member.name"
-						class="from-bottom"
-						:style="{ animationDelay: `${i * 100}ms` }"
-					>
-						<div
-							class="aspect-[3/4] rounded-[2rem] overflow-hidden mb-5 relative group cursor-pointer"
-							style="box-shadow: 0 8px 32px rgba(33, 33, 33, 0.12)"
-							@click="openModal('team', member)"
-						>
-							<img
-								:src="member.img"
-								:alt="member.name"
-								class="w-full h-full object-cover grayscale-[60%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
-							/>
-							<div
-								class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5"
-								style="
-									background: linear-gradient(
-										to top,
-										rgba(226, 76, 75, 0.85),
-										transparent
-									);
-								"
-							>
-								<span
-									class="text-white text-[11px] font-black uppercase tracking-widest"
-									>{{ t("team.more") }}</span
-								>
-							</div>
-						</div>
-						<h4
-							class="text-lg font-black mb-1 tracking-tight"
-							style="color: #212121"
-						>
-							{{ member.name }}
-						</h4>
-						<p
-							class="font-black uppercase tracking-widest text-[10px]"
-							style="color: #e24c4b"
-						>
-							{{ member.bio }}
-						</p>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<ProjectTeam />
-		<!-- <HoneyComp /> -->
-
-		<!-- ══ FOOTER ══ -->
-		<footer class="text-white py-20 px-6" style="background: #212121">
-			<div class="max-w-6xl mx-auto">
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-16 mb-16">
-					<div class="from-left">
-						<h2
-							class="font-black text-4xl tracking-tight mb-4"
-							style="color: #e24c4b"
-						>
-							WeEmpower.
-						</h2>
-						<p
-							class="text-xs font-bold uppercase tracking-widest leading-loose mb-8 whitespace-pre-line"
-							style="color: rgba(255, 255, 255, 0.35)"
-						>
-							{{ t("footer.org") }}
-						</p>
-						<div class="flex gap-3">
-							<a
-								v-for="lbl in ['T', 'F', 'I']"
-								:key="lbl"
-								href="#"
-								class="w-10 h-10 rounded-full flex items-center justify-center text-xs font-black transition-all duration-200 hover:-translate-y-0.5"
-								style="
-									border: 1px solid rgba(255, 255, 255, 0.15);
-									color: rgba(255, 255, 255, 0.6);
-								"
-								@mouseover="
-									(($event.currentTarget.style.background = '#E24C4B'),
-									($event.currentTarget.style.borderColor = '#E24C4B'))
-								"
-								@mouseout="
-									(($event.currentTarget.style.background = 'transparent'),
-									($event.currentTarget.style.borderColor =
-										'rgba(255,255,255,0.15)'))
-								"
-								>{{ lbl }}</a
-							>
-						</div>
-					</div>
-
-					<div class="from-bottom">
-						<h4
-							class="text-xs font-black uppercase tracking-[0.3em] mb-6 italic"
-							style="color: rgba(255, 255, 255, 0.3)"
-						>
-							{{ t("footer.contactTitle") }}
-						</h4>
-						<ul>
-							<li
-								v-for="[icon, text] in footerContacts"
-								:key="icon"
-								class="flex gap-3 text-sm py-3"
-								style="
-									color: rgba(255, 255, 255, 0.5);
-									border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-								"
-							>
-								<span>{{ icon }}</span>
-								<span>{{ text }}</span>
-							</li>
-						</ul>
-					</div>
-
-					<div class="from-right rounded-3xl p-8" style="background: #e24c4b">
-						<h4 class="text-white font-black text-xl mb-3 leading-tight">
-							{{ t("footer.ctaTitle") }}
-						</h4>
-						<p
-							class="text-sm mb-6 leading-relaxed"
-							style="color: rgba(255, 255, 255, 0.8)"
-						>
-							{{ t("footer.ctaDesc") }}
-						</p>
-						<button
-							class="w-full font-black py-3.5 rounded-2xl text-xs uppercase tracking-widest hover:scale-[1.02] hover:shadow-xl transition-all duration-200"
-							style="background: #fff; color: #e24c4b"
-							@click="openModal('contact')"
-						>
-							{{ t("footer.ctaBtn") }}
-						</button>
-					</div>
-				</div>
-
-				<div
-					class="pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em]"
-					style="
-						border-top: 1px solid rgba(255, 255, 255, 0.06);
-						color: rgba(255, 255, 255, 0.2);
-					"
-				>
-					<span>{{ t("footer.copy") }}</span>
-					<!-- <span>{{ t("footer.undef") }}</span> -->
-				</div>
-			</div>
-		</footer>
-
-		<!-- BACK TO TOP -->
-		<Transition name="fade">
-			<button
-				v-if="showBackTop"
-				class="fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center z-[500] transition-all duration-200 hover:-translate-y-1"
-				style="
-					background: #e24c4b;
-					box-shadow: 0 8px 24px rgba(226, 76, 75, 0.35);
-				"
-				@click="window.scrollTo({ top: 0, behavior: 'smooth' })"
-			>
-				<svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
-					<path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
-				</svg>
-			</button>
-		</Transition>
-
-		<!-- ══ MODAL ══ -->
-		<Transition name="fade">
-			<div
-				v-if="modal.open"
-				class="fixed inset-0 z-[1000] flex items-center justify-center p-4"
-				style="background: rgba(33, 33, 33, 0.8); backdrop-filter: blur(12px)"
-				@click.self="closeModal"
-			>
-				<Transition name="scale">
-					<div
-						v-if="modal.open"
-						class="rounded-3xl p-8 w-full max-w-md relative shadow-2xl"
-						style="background: #fff"
-					>
-						<button
-							class="absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-all"
-							style="background: #f7f3ef; color: #212121"
-							@click="closeModal"
-						>
-							✕
-						</button>
-
-						<!-- Contact -->
-						<template v-if="modal.type === 'contact'">
-							<h3 class="text-2xl font-black mb-1" style="color: #212121">
-								{{ t("modal.contactTitle") }}
-							</h3>
-							<p
-								class="text-[11px] font-black uppercase tracking-widest mb-6"
-								style="color: #e24c4b"
-							>
-								{{ t("modal.contactSubtitle") }}
-							</p>
-							<div v-if="!formSent" class="flex flex-col gap-3">
-								<input
-									v-model="form.name"
-									type="text"
-									:placeholder="t('modal.name')"
-									class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors"
-									style="border: 1.5px solid #efeae5; color: #212121"
-								/>
-								<input
-									v-model="form.email"
-									type="email"
-									:placeholder="t('modal.email')"
-									class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors"
-									style="border: 1.5px solid #efeae5; color: #212121"
-								/>
-								<textarea
-									v-model="form.message"
-									rows="3"
-									:placeholder="t('modal.message')"
-									class="w-full px-4 py-3 rounded-xl text-sm outline-none transition-colors resize-none"
-									style="border: 1.5px solid #efeae5; color: #212121"
-								/>
-								<button
-									class="w-full text-white py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all hover:-translate-y-0.5"
-									style="
-										background: #e24c4b;
-										box-shadow: 0 4px 16px rgba(226, 76, 75, 0.3);
-									"
-									@click="submitForm"
-								>
-									{{ t("modal.send") }}
-								</button>
-							</div>
-							<div v-else class="text-center py-8">
-								<div class="text-5xl mb-4">✅</div>
-								<h4 class="text-xl font-black mb-2" style="color: #212121">
-									{{ t("modal.sentTitle") }}
-								</h4>
-								<p class="text-sm" style="color: #888">
-									{{ t("modal.sentDesc") }}
-								</p>
-							</div>
-						</template>
-
-						<!-- Video -->
-						<template v-else-if="modal.type === 'video'">
-							<h3 class="text-xl font-black mb-4" style="color: #212121">
-								{{ t("modal.videoTitle") }}
-							</h3>
-							<div
-								class="aspect-video rounded-2xl overflow-hidden"
-								style="background: #212121"
-							>
-								<video controls autoplay class="w-full h-full rounded-2xl">
-									<source
-										src="https://assets.mixkit.co/videos/preview/mixkit-group-of-people-working-on-a-project-in-an-office-42713-large.mp4"
-										type="video/mp4"
-									/>
-								</video>
-							</div>
-						</template>
-
-						<!-- Team -->
-						<template v-else-if="modal.type === 'team' && modal.data">
-							<img
-								:src="modal.data.img"
-								:alt="modal.data.name"
-								class="w-20 h-20 rounded-full object-cover mb-4 border-4"
-								style="border-color: #f7f3ef"
-							/>
-							<h3 class="text-2xl font-black mb-1" style="color: #212121">
-								{{ modal.data.name }}
-							</h3>
-							<p
-								class="text-[11px] font-black uppercase tracking-widest mb-4"
-								style="color: #e24c4b"
-							>
-								{{ modal.data.role }}
-							</p>
-							<p class="text-sm leading-relaxed" style="color: #666">
-								{{ modal.data.bio }}
-							</p>
-						</template>
-					</div>
-				</Transition>
-			</div>
-		</Transition>
-	</main>
+    <!-- CTA -->
+    <section class="border-t border-neutral-900 bg-neutral-900 py-14 text-white sm:py-16">
+      <div class="container text-center">
+        <h2 class="text-2xl font-bold sm:text-3xl lg:text-4xl">
+          {{ $t('cta.title') }}
+        </h2>
+        <p class="mx-auto mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-white/85 sm:text-base">
+          {{ $t('cta.subtitle') }}
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
+          <NuxtLink
+            to="/about"
+            class="inline-flex min-h-11 w-full min-w-[200px] items-center justify-center bg-white px-6 py-2.5 text-sm font-semibold text-neutral-900 transition hover:bg-gray-100 sm:w-auto"
+          >
+            {{ $t('cta.partner') }}
+          </NuxtLink>
+          <NuxtLink
+            to="/about"
+            class="inline-flex min-h-11 w-full min-w-[200px] items-center justify-center border border-white px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+          >
+            {{ $t('cta.support') }}
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
-<style>
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap");
-
-body {
-	font-family: "DM Sans", sans-serif;
-}
-
-/* Hero background — red/orange mesh instead of blue */
-.hero-mesh {
-	position: absolute;
-	inset: 0;
-	background:
-		radial-gradient(
-			ellipse 80% 60% at 20% 40%,
-			rgba(226, 76, 75, 0.3) 0%,
-			transparent 60%
-		),
-		radial-gradient(
-			ellipse 60% 80% at 80% 60%,
-			rgba(245, 124, 0, 0.18) 0%,
-			transparent 60%
-		),
-		radial-gradient(
-			ellipse 40% 40% at 60% 20%,
-			rgba(255, 193, 7, 0.12) 0%,
-			transparent 50%
-		);
-}
-
-.hero-grid {
-	position: absolute;
-	inset: 0;
-	background-image:
-		linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-	background-size: 60px 60px;
-}
-
-/* Red → Orange gradient text */
-.hero-gradient-text {
-	background: linear-gradient(135deg, #e24c4b, #f57c00);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
-}
-
-/* Floating shapes — warm tones */
-.shape {
-	position: absolute;
-	border-radius: 50%;
-	filter: blur(60px);
-	pointer-events: none;
-}
-
-.shape-1 {
-	width: 400px;
-	height: 400px;
-	top: -100px;
-	left: -100px;
-	background: rgba(226, 76, 75, 0.18);
-	animation: float1 8s ease-in-out infinite;
-}
-
-.shape-2 {
-	width: 300px;
-	height: 300px;
-	top: 30%;
-	right: -80px;
-	background: rgba(245, 124, 0, 0.14);
-	animation: float2 10s ease-in-out infinite;
-}
-
-.shape-3 {
-	width: 200px;
-	height: 200px;
-	bottom: 10%;
-	left: 30%;
-	background: rgba(255, 193, 7, 0.1);
-	animation: float1 12s ease-in-out infinite reverse;
-}
-
-.shape-4 {
-	width: 250px;
-	height: 250px;
-	bottom: -80px;
-	right: 20%;
-	background: rgba(226, 76, 75, 0.1);
-	animation: float2 9s ease-in-out infinite;
-}
-
-@keyframes float1 {
-	0%,
-	100% {
-		transform: translate(0, 0) scale(1);
-	}
-
-	50% {
-		transform: translate(30px, -30px) scale(1.05);
-	}
-}
-
-@keyframes float2 {
-	0%,
-	100% {
-		transform: translate(0, 0) scale(1);
-	}
-
-	50% {
-		transform: translate(-20px, 20px) scale(0.95);
-	}
-}
-
-/* Scroll animations */
-.from-top {
-	opacity: 0;
-	transform: translateY(-40px);
-	transition:
-		opacity 0.7s ease,
-		transform 0.7s ease;
-}
-
-.from-bottom {
-	opacity: 0;
-	transform: translateY(50px);
-	transition:
-		opacity 0.7s ease,
-		transform 0.7s ease;
-}
-
-.from-left {
-	opacity: 0;
-	transform: translateX(-50px);
-	transition:
-		opacity 0.8s ease,
-		transform 0.8s ease;
-}
-
-.from-right {
-	opacity: 0;
-	transform: translateX(50px);
-	transition:
-		opacity 0.8s ease,
-		transform 0.8s ease;
-}
-
-.from-top.anim-in,
-.from-bottom.anim-in,
-.from-left.anim-in,
-.from-right.anim-in {
-	opacity: 1;
-	transform: translate(0, 0);
-}
-
-/* Ticker */
-.ticker-track {
-	animation: ticker 30s linear infinite;
-}
-
-@keyframes ticker {
-	from {
-		transform: translateX(0);
-	}
-
-	to {
-		transform: translateX(-50%);
-	}
-}
-
-/* Vue transitions */
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.3s;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
-}
-
-.slide-right-enter-active,
-.slide-right-leave-active {
-	transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-right-enter-from,
-.slide-right-leave-to {
-	transform: translateX(100%);
-}
-
-.scale-enter-active,
-.scale-leave-active {
-	transition:
-		transform 0.3s,
-		opacity 0.3s;
-}
-
-.scale-enter-from,
-.scale-leave-to {
-	transform: scale(0.92);
-	opacity: 0;
-}
-
-/* Reels — Instagram gradient stays */
-.reels-gradient {
-	background: linear-gradient(135deg, #e1306c, #f77737);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
-}
-
-.reel-card {
-	display: flex;
-	flex-direction: column;
-}
-
-.reel-phone {
-	position: relative;
-	background: #1a1d27;
-	border-radius: 28px;
-	overflow: hidden;
-	aspect-ratio: 9/16;
-	box-shadow:
-		0 0 0 1.5px rgba(255, 255, 255, 0.06),
-		0 20px 60px rgba(0, 0, 0, 0.25),
-		inset 0 1px 0 rgba(255, 255, 255, 0.04);
-	transition:
-		transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-		box-shadow 0.4s;
-}
-
-.reel-card:hover .reel-phone {
-	transform: translateY(-8px) scale(1.02);
-	box-shadow:
-		0 0 0 1.5px rgba(226, 76, 75, 0.4),
-		0 32px 80px rgba(0, 0, 0, 0.3),
-		inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
-.reel-notch {
-	position: absolute;
-	top: 10px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 48px;
-	height: 5px;
-	background: rgba(255, 255, 255, 0.1);
-	border-radius: 3px;
-	z-index: 10;
-}
-
-.reel-video-wrap {
-	position: absolute;
-	inset: 0;
-	border-radius: 28px;
-	overflow: hidden;
-}
-
-.reel-video-wrap iframe {
-	width: 100%;
-	height: 100%;
-	border: none;
-}
-
-.reel-label {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	padding: 1rem 0.75rem 0.75rem;
-	background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	z-index: 5;
-}
-
-.reel-label span {
-	color: rgba(255, 255, 255, 0.7);
-	font-size: 0.6rem;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.1em;
-}
-
-/* Utility */
-.line-clamp-2 {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
+<style scoped>
 .line-clamp-3 {
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

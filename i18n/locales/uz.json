@@ -1,610 +1,90 @@
 {
-  "nav": {
-    "orgSubtitle": "Markaziy Osiyo Rivojlanish Markazi",
-    "project": "Loyiha",
-    "activity": "Faoliyat",
-    "impact": "Ta'sir",
-    "team": "Jamoa",
-    "contact": "Bog'lanish"
+  "navigation": {
+    "home": "Bosh sahifa",
+    "research": "Tadqiqotlar",
+    "projects": "Loyihalar",
+    "publications": "Nashrlar",
+    "events": "Tadbirlar",
+    "about": "Biz haqimizda",
+    "subscribe": "Obuna",
+    "news": "Yangiliklar"
+  },
+  "home": {
+    "hero_kicker": "Siyosat tadqiqotlari · Tadbirlar · Nashrlar",
+    "stats": {
+      "publications": "Nashrlar",
+      "projects": "Loyihalar",
+      "partners": "Hamkorlar",
+      "years": "Yillik tajriba"
+    },
+    "research_eyebrow": "Tadqiqotlarimiz",
+    "research_stat": "150+ nashr bazamizda",
+    "expert_eyebrow": "Ekspert fikri",
+    "expert_title": "Qisqa tahlil",
+    "expert_more": "Barcha qisqa tahlillar",
+    "events_eyebrow": "Munozaralar va almashinuv",
+    "events_title": "Yaqinlashayotgan tadbirlar",
+    "events_subtitle": "Tadbirlarimizda qatnashing — so'nggi tendentsiyalar va tadqiqotlar.",
+    "when": "Qachon",
+    "where": "Qayerda",
+    "speakers": "Spikerlar",
+    "register": "Ro'yxatdan o'tish",
+    "events_view_all": "Barcha tadbirlar",
+    "videos_eyebrow": "Media",
+    "videos_title": "Videolar",
+    "videos_subtitle": "Tanlangan yozuvlar va muhokamalar.",
+    "watch": "Tomosha qilish",
+    "team_eyebrow": "Jamoa",
+    "team_title": "Bizning jamoa",
+    "team_subtitle": "Dalilga asoslangan siyosat uchun tadqiqotchilar va mutaxassislar.",
+    "views": "{n} marta ko'rilgan"
+  },
+  "pub_types": {
+    "policy_contribution": "Siyosat hissasi",
+    "report": "Hisobot",
+    "policy_brief": "Qisqa siyosat qog'ozi",
+    "study": "O'rganish",
+    "analysis": "Tahlil",
+    "working_paper": "Ishchi qog'oz"
   },
   "hero": {
-    "title1": "O'zbekistonda",
-    "title2": "Ayollar",
-    "title3": "Tashabbuslarini",
-    "title4": "Rivojlantirish",
-    "desc": "Farg'ona va Toshkent viloyatlarida 40+ NNT bilan hamkorlikda fuqarolik jamiyatini mustahkamlash — 2025–2027.",
-    "btnExplore": "Loyihani o'rganish",
-    "btnVideo": "▶ Video",
-    "stat": {
-      "ngo": "Hamkor NNT",
-      "region": "Viloyat",
-      "years": "Davomiyligi",
-      "yearsVal": "3 yil"
-    },
-    "card": {
-      "milestone": "3-Bosqich yakunlanmoqda",
-      "milestoneSub": "Milestone 3 · 2026",
-      "process": "Jarayon"
-    },
-    "badge": {
-      "ngo": "40+ NNT",
-      "ngoSub": "Hamkor tashkilotlar",
-      "label": "UNDEF · UDF-23-987-UZB"
-    }
+    "title": "O'zbekiston uchun oldinga fikrlash",
+    "subtitle": "Biz barqaror rivojlanish uchun tadqiqotlar, tahlillar va siyosat tavsiyalari bilan shug'ullanuvchi yetakchi tahlil markazimiz.",
+    "explore_research": "Tadqiqotlarni o'rganish",
+    "learn_more": "Batafsil ma'lumot",
+    "impact_year": "Ta'sir yili"
   },
-  "ticker": [
-    "40+ Hamkor NNTlar",
-    "Farg'ona va Toshkent",
-    "2025–2027 Loyiha davri",
-    "UNDEF moliyalashtirmoqda",
-    "3-Bosqich amalga oshirilmoqda",
-    "2026 May: Davra Suhbati"
-  ],
-  "tasks": {
-    "label": "Biz nima qilyapmiz?",
-    "title": "Yangiliklar",
-    "more": "Batafsil",
-    "items": [
-      {
-        "title": "Xaritalash va Tahlil",
-        "desc": "40 ta ayollar NNTlarining ehtiyojlarini chuqur o'rganish va tahlil qilish."
-      },
-      {
-        "title": "Hamkorlik Tarmog'i",
-        "desc": "Tajriba almashish va hamkorlik uchun kuchli platforma yaratish."
-      },
-      {
-        "title": "Salohiyatni Oshirish",
-        "desc": "Liderlik va strategik rejalashtirish bo'yicha amaliy treninglar."
-      },
-      {
-        "title": "Advokatsiya",
-        "desc": "Gender tengligi va ijtimoiy tashabbuslarni milliy darajada ilgari surish."
-      },
-      {
-        "title": "Amaliy Toolkit",
-        "desc": "Strategik qo'llanmalar va ma'lumotnomalar tayyorlash va tarqatish."
-      },
-      {
-        "title": "Barqaror Rivojlanish",
-        "desc": "Mahalliy tashabbuslarni milliy darajaga olib chiqish va mustahkamlash."
-      }
-    ]
+  "research": {
+    "title": "Tanlangan Tadqiqotlar",
+    "subtitle": "Bizning so'nggi tadqiqot natijalari va siyosat tavsiyalarini o'rganing.",
+    "view_all": "Barcha Tadqiqotlarni Ko'rish"
   },
-  "reels": {
-    "title": "Project",
-    "subtitle": "Instagram formatidagi qisqa video–hisobotlar",
-    "label": "YouTube Shorts",
-    "cta": "Barcha Reelslarni ko'rish",
-    "items": [
-      "NNT faoliyati haqida",
-      "Ayollar tashabbusi",
-      "Farg'ona viloyati",
-      "Loyiha natijalari"
-    ]
+  "about": {
+    "title": "Biz Kimmiz",
+    "paragraph1": "Biz O'zbekistonda dalilga asoslangan tadqiqotlar va strategik tavsiyalar orqali ijobiy o'zgarishlarni amalga oshirishga bag'ishlangan tadqiqotchilar, tahlilchilar va siyosat mutaxassislaridan iborat jamoamiz.",
+    "paragraph2": "Bizning ishimiz iqtisodiy rivojlanish, ijtimoiy siyosat, boshqaruv va atrof-muhit barqarorligi kabi turli sohalarni qamrab oladi.",
+    "learn_more": "Biz Haqimizda Batafsil",
+    "contact": "Biz bilan Bog'laning"
   },
-  "impact": {
-    "label": "Ta'sir ko'rsatgichlari",
-    "title1": "Ayollar yetakchiligi —",
-    "title2": "jamiyat tayanchi",
-    "desc": "Loyiha 3-bosqich (Milestone 3) yakuniga yetmoqda. Biz 40 ta tashkilotni birlashtirdik va ular hozirda o'z hududlarida ijtimoiy o'zgarishlar qilmoqda.",
-    "stat1": "Hamkor NNTlar",
-    "stat2": "Asosiy yo'nalish",
-    "stat3": "Yil davomida",
-    "quote": "Mazkur loyiha bizga nafaqat zarur bilim va ko’nikmalarni egallash imkonini bermoqda, balki o’zaro qo’llab-quvvatlash orqali mustahkam hamjamiyatni barpo etishga xizmat qilmoqda.",
-    "cite": "“Nodirabegim” NNT rahbari, Nodiraxon Xudoyberdiyeva"
-  },
-  "team": {
-    "label": "Jamoamiz",
-    "title": "Loyihani boshqarayotgan ekspertlar",
-    "more": "Batafsil →",
-    "members": [
-      {
-        "name": "Feruza Madaliyeva",
-        "role": "Loyiha experti",
-        "bio": "NNT rahbari"
-      },
-      {
-        "name": "Nargiza Xudaynazarova",
-        "role": "Loyiha koordinatori",
-        "bio": "Ayollar imkoniyatlarini kengaytirish loyihasi menejeri"
-      },
-      {
-        "name": "Zafar Saydaliyev",
-        "role": "Loyiha experti",
-        "bio": "Monitoring va baholash"
-      },
-      {
-        "name": "Saida Gaziyeva",
-        "role": "Loyiha mutahassisi",
-        "bio": "Tarjimon"
-      }
-    ]
+  "cta": {
+    "title": "Bizning Missiyamizda Ishtirok Etish",
+    "subtitle": "Hamkor tadqiqotlar va ta'sirli siyosat tashabbuslari orqali O'zbekiston kelajagini shakllantirishda bizga qo'shiling.",
+    "partner": "Biz bilan Hamkorlik Qiling",
+    "support": "Bizning Ishimizni Qo'llang"
   },
   "footer": {
-    "org": "BMT Demokratik Jamg'armasi (UNDEF) ko'magida\nO'zbekistonda fuqarolik jamiyatini rivojlantirish.",
-    "contactTitle": "Aloqa ma'lumotlari",
-    "phone": "+998 (73) 244-11-22",
-    "email": "info taraqqiyotngo.uz",
-    "address": "Farg'ona shahar, Oq Yo'l ko'chasi, 49G",
-    "ctaTitle": "Hamkor bo'lishni xohlaysizmi?",
-    "ctaDesc": "Loyihamizga qo'shiling va o'zgarishlarning bir qismi bo'ling.",
-    "ctaBtn": "Ariza yuborish",
-    "copy": "© 2026 TARAQQIYOT MARKAZI. Barcha huquqlar himoyalangan.",
-    "undef": "UNDEF mulki"
+    "description": "O'zbekistonda barqaror rivojlanish uchun tadqiqotlar va siyosat tavsiyalari beruvchi yetakchi tahlil markazi.",
+    "quick_links": "Tezkor Havolalar",
+    "contact": "Aloqa",
+    "newsletter": "Yangiliklar Byulleteni",
+    "newsletter_desc": "Eng so'nggi yangiliklar va tadqiqotlar uchun obuna bo'ling.",
+    "email_placeholder": "Email manzilingiz",
+    "subscribe": "Obuna Bo'lish",
+    "all_rights_reserved": "Barcha huquqlar himoyalangan.",
+    "privacy_policy": "Maxfiylik Siyosati",
+    "terms_of_service": "Xizmat Shartlari"
   },
-  "modal": {
-    "contactTitle": "Bog'lanish",
-    "contactSubtitle": "Bizga xabar yuboring",
-    "name": "Ismingiz",
-    "email": "Email manzilingiz",
-    "message": "Xabaringiz...",
-    "send": "Yuborish",
-    "sentTitle": "Xabar yuborildi!",
-    "sentDesc": "Tez orada siz bilan bog'lanamiz.",
-    "videoTitle": "Loyiha haqida video"
-  },
-  "detail": {
-    "back": "Orqaga qaytish",
-    "taskLabel": "Yo'nalish",
-    "resultsTitle": "Kutilayotgan natijalar",
-    "projectInfo": "Loyiha ma'lumotlari",
-    "period": "Loyiha davri",
-    "regions": "Hududlar",
-    "regionsVal": "Farg'ona va Toshkent",
-    "funder": "Moliyalashtiruvchi",
-    "code": "Loyiha kodi",
-    "prev": "Oldingi yo'nalish",
-    "next": "Keyingi yo'nalish",
-    "resultsLabel": "Natijalar"
-  },
-  "stages": {
-    "eyebrow": "Loyiha yo'l xaritasi",
-    "title": "Amalga oshirish bosqichlari",
-    "currentBadge": "HOZIRGI BOSQICH",
-    "items": [
-      {
-        "title": "Natija 1: Ehtiyojlar va Tarmoq",
-        "heading": "Salohiyatni mustahkamlash",
-        "date": "2025 — 2026 I bosqich",
-        "activities": [
-          "Ehtiyojlarni xaritalash va diagnostik tahlil o'tkazish.",
-          "Toshkent va Farg'onada 40 ta NNTdan iborat tarmoq yaratish.",
-          "Salohiyatni oshirish bo'yicha strategik reja ishlab chiqish.",
-          "Tarmoq davra suhbati orqali advokatsiya yo'nalishlarini belgilash."
-        ]
-      },
-      {
-        "title": "Natija 2: Bilim va Mentorlik",
-        "heading": "Bilim va ko'nikmalarni oshirish",
-        "date": "2026 — II bosqich (hozir)",
-        "activities": [
-          "Liderlik, Fundraising va Loyiha yozish bo'yicha treninglar.",
-          "Individual va guruhli mentorlik sessiyalari.",
-          "NNT va tashabbuskor guruhlar uchun maxsus o'quv dasturlari.",
-          "Tashkilotlararo qo'shma hamkorlik loyihalarini yaratish."
-        ]
-      },
-      {
-        "title": "II-Davra suhbati (May 2026)",
-        "heading": "Natijalar taqdimoti",
-        "date": "May 2026",
-        "activities": [
-          "Loyiha natijalari va erishilgan yutuqlar taqdimoti.",
-          "Tarmoq faoliyati tahlili va muammolar muhokamasi.",
-          "Kelgusi barqarorlik va rivojlanish yo'llarini belgilash."
-        ]
-      },
-      {
-        "title": "Natija 3: Barqarorlik va Faollik",
-        "heading": "Barqaror hamkorlik va advokatsiya",
-        "date": "2026 — III bosqich",
-        "activities": [
-          "Mahalliy darajada kichik pilot tashabbuslarni amalga oshirish.",
-          "Hududiy va tarmoq doirasida qo'shma advokatsiya tadbirlari.",
-          "Muntazam uchrashuvlar orqali tarmoqni kengaytirish.",
-          "Yakuniy natijalar taqdimoti va istiqbolli rejalar."
-        ]
-      }
-    ]
-  },
-  "project_team": {
-    "title_part1": "Nodavlat notijorat tashkilotlar",
-    "title_connector": "va ",
-    "title_part2": "tashabbuskor guruhlar",
-    "member_quote": "Jamiyat rivoji va ijtimoiy barqarorlik yo'lida faol hamkorlik qilamiz.",
-    "cta_portfolio": "Batafsil ma'lumot",
-    "partners": [
-      {
-        "id": 1,
-        "nnt": "QALB NURI AYOLLAR VA ULARNING OILALARINI IJTIMOIY-HUQUQIY QO‘LLAB-QUVVATLASH MARKAZI",
-        "name": "TO’XTASINOVA DAMIRA ISMAILOVNA",
-        "phones": [
-          "+998905820477"
-        ],
-        "address": "Farg’ona viloyati, Farg’ona shahri, Quruvchilar ko’chasi, 4-uy",
-        "mission": "Gender tenglikka erishish, gender zo‘ravonlikning oldini olish, oila institutini mustahkamlash, kelajak avlodni har tomonlama uyg‘un rivojlangan shaxs sifatida tarbiyalash va shakllantirish, xotin-qizlarning ijtimoiy-siyosiy faolligini oshirish sohasida ijtimoiy-huquqiy xizmatlar ko‘rsatish."
-      },
-      {
-        "id": 2,
-        "nnt": "ZIYONUR FARGʻONA VILOYATI MARKAZI",
-        "name": "DAVRONOVA O’G’ILOY ABDUVAHOBOVNA",
-        "phones": [
-          "+998911219594"
-        ],
-        "address": "Farg’ona shahri, B. Marginoniy ko’chasi, 105-uy",
-        "mission": "Xotin-qizlar va o‘smirlarni ijtimoiy-huquqiy jihatdan qo‘llab-quvvatlash, xotin-qizlar va o‘smirlarga ijtimoiy, iqtisodiy, huquqiy, madaniy-ma’rifiy, ekologik, ma’naviy va boshqa sohalarda yordam ko‘rsatish, shuningdek, ularda sog‘lom turmush tarzini shakllantirishga ko‘maklashishdan iborat.."
-      },
-      {
-        "id": 3,
-        "nnt": "TADBIRKOR AYOLLAR BIZNES MARKAZI",
-        "name": "O’RINBOYEVA HILOLA AVAZOVNA",
-        "phones": [
-          "+998911219594"
-        ],
-        "address": "Qo’qon shahri, A. Jomiy ko’chasi, 47/1",
-        "mission": "O‘zbekistonda amalga oshirilayotgan islohotlarni qo‘llab-quvvatlashda tadbirkorlik bilan shug‘ullanuvchi fuqarolar, xotin-qizlar va yoshlarning manfaatlarini qo‘llab-quvvatlovchi va himoya qiluvchi kuchlarni birlashtirish, xususan, xotin-qizlar va yoshlarning faol ishtirokini ta’minlash, ularning iqtisodiy va ma’naviy-ma’rifiy ko‘nikmalarini rivojlantirishga ko‘maklashish."
-      },
-      {
-        "id": 4,
-        "nnt": "EZGU NIYAT NNT",
-        "name": "KARIMOVA XALIMA O’LMASOVNA",
-        "phones": [
-          "+998905086123"
-        ],
-        "address": "Qo’qon shahri, Qo’qon Sadosi ko’chasi, 24-uy",
-        "mission": "Imkoniyati cheklangan bolalarning sog‘lom jamiyatga moslashuvi va integratsiyasiga ko‘maklashish; imkoniyati cheklangan bolalarni tarbiyalayotgan yosh ayollarning huquqiy, ijtimoiy va iqtisodiy manfaatlarini qo‘llab-quvvatlash."
-      },
-      {
-        "id": 5,
-        "nnt": "SALOMATLIK PLYUS EKOLOGIYA NNT",
-        "name": "NAZAROVA XADICHA ABDULLAYEVNA",
-        "phones": [
-          "+998905564876"
-        ],
-        "address": "Qo’qon shahri, Toshxovuz ko’chasi, 4/2",
-        "mission": "Farg‘ona viloyatida onalar, bolalar, ayollar, o‘smirlar va aholi o‘rtasida sog‘lom turmush tarzini shakllantirishga, har bir shaxsning o‘z sog‘lig‘ini saqlashga bo‘lgan munosabatini o‘zgartirishga, aholining yangicha ekologik dunyoqarashini shakllantirishga, ekologik vaziyatni barqarorlashtirishga ko‘maklashish."
-      },
-      {
-        "id": 6,
-        "nnt": "NODIRABEGIM MARKAZI",
-        "name": "TURG’UNOVA NODIRA ALISHEROVNA",
-        "phones": [
-          "+998991071429"
-        ],
-        "address": "Farg’ona shahri, Farobiy ko’chasi, 9-uy",
-        "mission": "Xotin-qizlarni turli sohalarda qo‘llab-quvvatlash va rivojlantirish, ularga ta’lim, sog‘liqni saqlash, iqtisodiy resurslar, jamiyat hayotida faol ishtirok etish va ijtimoiy hayotning boshqa jabhalarida teng imkoniyatlar va foydalanish imkoniyatini ta’minlashdan iborat."
-      },
-      {
-        "id": 7,
-        "nnt": "EKOSAN FARG‘ONA BO‘LIMI",
-        "name": "ISAKOVA NILUFAR AHMADQULOVNA",
-        "phones": [
-          "+998906320977"
-        ],
-        "address": "Farg’ona shahri, Al-Farg’oniy ko’chasi, 64-uy",
-        "mission": "Atrof-muhitga salbiy ta’sirni kamaytirish, ekologik ongni rivojlantirish, sog‘lom turmush tarzini targ‘ib qilish va tabiatni muhofaza qilish tashabbuslarini amalga oshirish orqali O‘zbekiston va Markaziy Osiyoda ekologik barqaror rivojlanishni qo‘llab-quvvatlash."
-      },
-      {
-        "id": 8,
-        "nnt": "AGRAR SOHA AYOLLARI UYUSHMASI",
-        "name": "TESHABOYEVA MUHTARAMA ARIFJONOVNA",
-        "phones": [
-          "+998949105515"
-        ],
-        "address": "Farg’ona shahri, B. Marg’inoniy ko’chasi, 105-uy",
-        "mission": "Iqlimga chidamli qishloq xo‘jaligini rivojlantirish orqali qishloq ayollarining imkoniyatlarini kengaytirish, ularga iqtisodiy ustunlik berish va o‘z salohiyatlarini to‘liq ro‘yobga chiqarish imkoniyatini berishdir."
-      },
-      {
-        "id": 9,
-        "nnt": "AZIM-TAFAKKUR",
-        "name": "NOSIROVA MAHFUZA ALISHEROVNA",
-        "phones": [
-          "+998911450145"
-        ],
-        "address": "Qo’qon shahri, Qo’qon Sadosi ko’chasi, 59-uy",
-        "mission": "Farg‘ona viloyati yoshlarining huquqiy, madaniy, iqtisodiy va ijtimoiy bilimlarini oshirish orqali ularning demokratik va fuqarolik jamiyati qurishda, O‘zbekiston Respublikasidagi yangi o‘zgarishlarda faol qo‘llab-quvvatlash."
-      },
-      {
-        "id": 10,
-        "nnt": "FUQAROLIK TASHABBUSLARNI QO‘LLAB-QUVVATLASH MARKAZI",
-        "name": "HAMIDOVA GULSHAN MAHAMADRASHID QIZI",
-        "phones": [
-          "+998939766776"
-        ],
-        "address": "Farg’ona shahri, B. Margiloniy ko’chasi, 105-uy",
-        "mission": " Аholining real ehtiyojlari va xalqaro tajribalarni moslashtirishga asoslangan holda, taʼlim hamda va siyosat darajasida barqaror yechihamjamiyatmlarni joriy etish orqali ijtimoiy adolat va gender tengligiga koʼmaklashish."
-      },
-      {
-        "id": 11,
-        "nnt": "DEBATERON",
-        "name": "SHIKINA ANASTASIYA ALEKSANDROVNA",
-        "phones": [
-          "+998913978304"
-        ],
-        "address": "Farg’ona davlat universiteti",
-        "mission": "Bizning vazifamiz - butun Markaziy Osiyo mintaqasi yoshlarini birlashtiradigan ta’lim va madaniy tashabbuslarni yaratish va muvofiqlashtirish. Biz xalqaro konferensiyalar, bag‘rikenglik va tinchlik loyihalari orqali do‘stlik va hamkorlik makonini shakllantirishga intilamiz, devorlar o‘rniga ko‘priklar qurishga yordam beramiz. Maqsadimiz - yoshlarni yanada ochiq, tinch va barqaror kelajak uchun birgalikda harakat qilishga ilhomlantirish."
-      },
-      {
-        "id": 12,
-        "nnt": "PSIXOLOGIK YORDAM",
-        "name": "UZOQOVA MUHARRAM ABDUBANOBOVNA",
-        "phones": [
-          "+998911281813"
-        ],
-        "address": "Qo’shtepa tumani",
-        "mission": "Bizning vazifamiz - zo‘ravonlikka uchragan xotin-qizlar va ularning farzandlariga psixologik yordam ko‘rsatish."
-      },
-      {
-        "id": 13,
-        "nnt": "CRAFT HOUSE",
-        "name": "YULDASHEVA NARGIZA ERKINOVNA",
-        "phones": [
-          "+998939751050"
-        ],
-        "address": "Farg’ona shahri, Murabbiylar ko’chasi, 26-uy",
-        "mission": "'Craft House' milliy hunarmandchilikni asrab-avaylash, uni zamonaviy talablarga moslashtirish, kelajak avlodlarga yetkazish va xalqaro miqyosda targ‘ib qilishni o‘z vazifasi deb biladi."
-      },
-      {
-        "id": 14,
-        "nnt": "YASHIL PATRULLAR",
-        "name": "ABDUVAHABOVA FOTIMA UKTAMOVNA",
-        "phones": [
-          "+998905803123"
-        ],
-        "address": "Farg’ona shahri, Oq yo’l ko’chasi, 49-uy",
-        "mission": "Bizning vazifamiz - tabiatni asrab-avaylash, atrof-muhitga salbiy ta’sirni kamaytirish, hayot sifatini yaxshilash. Mamlakat hayotida fuqarolik jamiyatining rolini kuchaytirish, ekologik ma’rifat, dunyoqarash va ta’limni rivojlantirish. Tabiatni muhofaza qilish dasturlari, loyihalari va tadbirlarini ishlab chiqish va amalga oshirish. Bolalar va yoshlarni tabiatga ehtiyotkorona munosabatda bo‘lishga o‘rgatish."
-      },
-      {
-        "id": 15,
-        "nnt": "EKOIQTISOD",
-        "name": "ISAKOVA ZEBO MURODOVNA",
-        "phones": [
-          "+998903086996"
-        ],
-        "address": "Farg’ona viloyati",
-        "mission": "Bizning vazifamiz - yashil iqtisodiyot, ekologik ta’lim va barqaror tadbirkorlikni rivojlantirish orqali kelajak avlodlar uchun sog‘lom va barqaror muhitni yaratishdan iborat. Ayollar va yoshlar uchun iqtisodiy imkoniyatlarni kengaytirish, ekologik barqarorlikni mustahkamlash va jamiyatda fuqarolik faolligini oshirish ustida ish olib boradi. "
-      },
-      {
-        "id": 16,
-        "nnt": "OBOD TA'LIM",
-        "name": "MUHAMMADJONOV ISLOMJON MURODJON O’GLI",
-        "phones": [
-          "+998911232122"
-        ],
-        "address": "Farg’ona tumani",
-        "mission": "Bizning vazifamiz - kam ta’minlangan va ijtimoiy himoyaga muhtoj yoshlar va xotin-qizlarga bepul ta’lim berish, ularning zamonaviy kasblar va xorijiy tillar bo‘yicha savodxonligini oshirish."
-      },
-      {
-        "id": 17,
-        "nnt": "BUVIJONLAR MAKTABI",
-        "name": "MIRZAHMEDOVA SHOHIDAXON AKBAROVNA",
-        "phones": [
-          "+998950410753"
-        ],
-        "address": "Furqat tumani",
-        "mission": "Bizning vazifamiz - O‘zbekistonda oilalar mustahkamligini ta’minlash, nizolarni kamaytirish, oilalarda farovonlik va barqarorlikni oshirish, yoshlarni oilaviy hayotga tayyorlash, ularning karyerasiga rahbarlik qilish, tadbirkorlik g‘oyalarini rivojlantirishga ko‘maklashish."
-      },
-      {
-        "id": 18,
-        "nnt": "INNOVATSIYA",
-        "name": "ABDURAHIMOVA FERUZA BOHADIROVNA",
-        "phones": [
-          "+998904051757"
-        ],
-        "address": "Farg’ona shahri",
-        "mission": "Bizning vazifamiz  - ta’lim va madaniy tashabbuslar orqali yoshlarda yetakchilik qobiliyatlarini, faollikni va ilm-fanga bo‘lgan muhabbatni rivojlantirish. Biz kitob o‘qishga ilhomlantiramiz, atrof-muhitga e’tibor va g‘amxo‘rlikni shakllantiramiz, shuningdek, shaxsiy o‘sish va ijtimoiy mas’uliyat muhitini yaratish orqali yordamga muhtoj bo‘lganlarni qo‘llab-quvvatlaymiz."
-      },
-      {
-        "id": 19,
-        "nnt": "EL YURT ISHONCHI",
-        "name": "HAMIDOVA GULNOZA AKRAMJON QIZI",
-        "phones": [
-          "+998913265545"
-        ],
-        "address": "Farg’ona shahri",
-        "mission": "Bizning vazifamiz  - yosh mutaxassislarni dunyoning eng yaxshi 100 ta universitetiga kirish uchun tayyorlash, ularni bakalavriat, magistratura va aspirantura dasturlarida o‘qishga, shuningdek, ilmiy-tadqiqot amaliyotlarini o‘tashga tayyorlash, ularning ilmiy salohiyatini oshirish maqsadida turli maqolalar va ilmiy ishlar yozishda, davlat grantlarini olishda amaliy yordam ko‘rsatish."
-      },
-      {
-        "id": 20,
-        "nnt": "MUNIBRO",
-        "name": "TOSHTEMIROVA NILUFAR NAZIMOVNA",
-        "phones": [
-          "+998913265545"
-        ],
-        "address": "Farg’ona shahri",
-        "mission": "Bizning vazifamiz - ayollarni hunarmandchilikka o‘rgatish, tadbirkorlik ko‘nikmalarini rivojlantirish, ularning iqtisodiy va ijtimoiy salohiyatini oshirishga ko‘maklashish. Biz o‘z daromadimiz hisobidan ayollarning moliyaviy mustaqilligini mustahkamlash, milliy madaniy merosni qayta tiklash va jamiyatning ijtimoiy barqarorligiga hissa qo‘shishga intilamiz."
-      },
-      {
-        "id": 21,
-        "nnt": "QIZLAR OVOZI",
-        "name": "UBAYDULLAYEVA ZARNIGOR HASANBOY QIZI",
-        "phones": [
-          "+998904089403"
-        ],
-        "address": "Farg’ona shahri",
-        "mission": "Bizning vazifamiz - yosh xotin-qizlarning jamiyatdagi faolligini oshirish, ularning kelajakda kasbiy va ilmiy rivojlanishi uchun ijodiy maydon yaratish, volontyorlik guruhlari orqali yosh xotin-qizlar o‘rtasida hamkorlikni yo‘lga qo‘yish."
-      },
-      {
-        "id": 22,
-        "nnt": "NIHOL",
-        "name": "SHIRIN RASHIDOVA",
-        "phones": [
-          "+998909256146"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Fuqarolik jamiyatini qurishda, jamiyatni demokratlashtirishni rivojlantirish va taraqqiyotni ta'lim, treninglar va maslahatlashuvlarni tashkil etish orqali huquq va erkinliklardan foydalanishda fuqarolar, ayniqsa yoshlar, ayollar va nogironlar, xususan, qishloq aholisi tashabbuslarini har tomonlama rivojlantirish va qo'llab-quvvatlash."
-      },
-      {
-        "id": 23,
-        "nnt": "INKLYUZIV JAMIYAT",
-        "name": "TILLAYEVA NODIRA DONIYOROVNA",
-        "phones": [
-          "+998977002054"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Nogironligi bo‘lgan shaxslar va ularning oila a’zolari huquqlarini himoya qilishga ko‘maklashish, shuningdek, ularning har tomonlama rivojlanishi uchun inklyuziv jamiyat (barcha fuqarolar uchun teng imkoniyatlarga ega bo‘lgan jamiyat) yaratish."
-      },
-      {
-        "id": 24,
-        "nnt": "BARQAROR HAYOT",
-        "name": "ILMURODOVA OLIYA VLADIMIROVNA",
-        "phones": [
-          "+998909180820"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Fuqarolarni Vatanga sadoqat ruhida tarbiyalash, jumladan, yosh avlodga chuqur bilim va kasbiy ko‘nikmalarni egallashda ko‘maklashish, aholining ma’naviy, madaniy, vatanparvarlik hamda ijtimoiy-huquqiy savodxonligini oshirish axborot kampaniyalari, ijtimoiy, ijtimoiy-iqtisodiy, ta’limiy, sog‘lomlashtirish va boshqa dasturlarni amalga oshirish orqali ta’minlanadi, shuningdek, ularning huquq va manfaatlarini himoya qilishga ko‘mak beriladi."
-      },
-      {
-        "id": 25,
-        "nnt": "ILM NURI",
-        "name": "ALIMJANOVA DILBAR MAG’RIBJANOVNA",
-        "phones": [
-          "+998935858585"
-        ],
-        "address": "Toshkent shahri",
-        "mission": " Ta’lim, ommaviy axborot vositalari va huquqiy ma’rifat, jamoatchilik ishtiroki hamda davlat va fuqarolik jamiyati hamkorligi orqali ayollar, yoshlar, keksalar va boshqa zaif guruhlarning ijtimoiy farovonligi hamda huquq va imkoniyatlarini kengaytirishga ko‘maklashish."
-      },
-      {
-        "id": 26,
-        "nnt": "OQ YELKAN",
-        "name": "YOQUBJANOVA SHAHZODA RUSTAMOVNA",
-        "phones": [
-          "+998903124224"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Turli ijtimoiy, ma’rifiy va axborot dasturlarini amalga oshirish orqali aholining ma’naviy, madaniy, huquqiy savodxonligini oshirish. Biz mamlakatni har tomonlama rivojlantirish va fuqarolarimizning ijtimoiy manfaatlarini ta’minlash uchun davlat va fuqarolik jamiyati sa’y-harakatlarini birlashtirishga intilamiz."
-      },
-      {
-        "id": 27,
-        "nnt": "GARMONIYA",
-        "name": "TESHEBAYEVA AYGUL IRKINBAYEVNA",
-        "phones": [
-          "+998990002590"
-        ],
-        "address": "Toshkent viloyati",
-        "mission": "Jamiyatda ayollar, yoshlar va bolalarning hayot sifatini yaxshilash, ularning huquq va manfaatlarini himoya qilish, psixologik, ijtimoiy va huquqiy yordam ko‘rsatish orqali barqaror rivojlanishga va sog‘lom ijtimoiy muhitni shakllantirishga ko‘maklashish."
-      },
-      {
-        "id": 28,
-        "nnt": "O’ZBEKISTON VOLONTYORLARI ASSOTSIATSIYASI",
-        "name": "ABIDOVA SHIRIN RAHIMJANOVNA",
-        "phones": [
-          "+998909080811"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Volontyorlik faoliyatini tashkil etishda tashabbuslarni rag‘batlantirish va qo‘llab-quvvatlash, volontyorlarning huquq va manfaatlarini himoya qilish."
-      },
-      {
-        "id": 29,
-        "nnt": "IMKONIYAT",
-        "name": "MAHMUDOVA HILOLA ULUGBEKOVNA",
-        "phones": [
-          "+998911334083"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Biz har bir inson davolanish, parvarish va munosib hayot kechirish imkoniyatiga ega bo‘lgan, stigma va diskriminatsiyadan xoli inklyuziv jamiyat yaratishga intilamiz."
-      },
-      {
-        "id": 30,
-        "nnt": "IXLOS",
-        "name": "ASILABONU G’ULOMOVA",
-        "phones": [
-          "+998938861104"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Biz har bir inson davolanish, parvarish va munosib hayot kechirish imkoniyatiga ega bo‘lgan, stigma va diskriminatsiyadan xoli inklyuziv jamiyat yaratishga intilamiz."
-      },
-      {
-        "id": 31,
-        "nnt": "KUMUSH AVLOD",
-        "name": "ASHIROVA VIKTORIYA EDUARDOVNA",
-        "phones": [
-          "+998903572698"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - keksalarni ijtimoiy faoliyatga jalb qilish, sog‘lom turmush tarzini qo‘llab-quvvatlash, ruhiy salomatlik va bo‘sh vaqtni mazmunli o‘tkazish orqali ularning hayot sifatini oshirish."
-      },
-      {
-        "id": 32,
-        "nnt": "OLTIN QANOT",
-        "name": "QODIROVA DILNOZA",
-        "phones": [
-          "+998994835323"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "“Oltin qanot” volontyorlar jamoasi maqsadi – O‘zbekistonda volontyorlik faoliyatini qo‘llab-quvvatlash, rivojlantirish va amalga oshirishga ko‘maklashish. Ijtimoiy, ekologiya, ta’lim va madaniy sohalarda volontyorlik ishlarini yanada yaxshilashdan iborat."
-      },
-      {
-        "id": 33,
-        "nnt": "HAYOT MAKONI",
-        "name": "ABDULLAEVA KAMILA ULUG'BEKOVNA",
-        "phones": [
-          "+998903910059"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - shaxsiy rivojlanish va ekologik mas'uliyatni rag'batlantiradigan sog'lom, barqaror va uyg'un jamiyatni yaratishdir. Biz ta’lim dasturlari va loyihalari orqali odamlarni faol va sog‘lom turmush tarziga ilhomlantirish, ekologik tashabbuslarni qo‘llab-quvvatlash, noyob ko‘nikmalarni rivojlantirishga intilamiz."
-      },
-      {
-        "id": 34,
-        "nnt": "TUMARIS",
-        "name": "CHERNOSKULOVA YELENA ALEKSEYEVNA",
-        "phones": [
-          "+998909016986"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - ayollarni birlashtirish va ularning etakchilik va professional salohiyatini ochish uchun qo'llab-quvvatlashdir. Ayollarning jamiyat manfaati yo‘lida yetakchiligi, bilim olishi va tadbirkorligini rivojlantirish. Yangi maqsadlarga erishish uchun bir-birini ilhomlantiradigan ayollar hamjamiyatini yaratish.Ijtimoiy-iqtisodiy rivojlanishda xotin-qizlarning rolini kengaytirish va ularning asosiy tarmoqlardagi ta’sirini kuchaytirish."
-      },
-      {
-        "id": 35,
-        "nnt": "HAQIQIY CHIRCHIQLIKLAR",
-        "name": "TSAY SVETLANA ALEKSANDROVNA",
-        "phones": [
-          "+998971572729"
-        ],
-        "address": "Chirchiq shahri",
-        "mission": "Bizning vazifamiz - amaliy ishlar orqali ona shahrimiz bilan faxrlanish va unga muhabbat uyg‘otish. Maqsadimiz fuqarolarni shahar tozaligi, go‘zalligi va xavfsizligi uchun vatanparvarlik harakatiga birlashtirishdir."
-      },
-      {
-        "id": 36,
-        "nnt": "AYOL TINCHLIK HAVFSIZLIK",
-        "name": "ABBOS MANSUROV",
-        "phones": [
-          "+998917842201"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - Barqaror tinchlikni o'rnatish, muloqot madaniyatini rivojlantirish va ayollarning qaror qabul qilish jarayonlarida teng ishtirokini rag'batlantirish orqali yoshlarni, ayniqsa qizlarni jalb qilishni rag'batlantirish orqali BMT Xavfsizlik Kengashining 1325-rezolyutsiyasi tamoyillarini ilgari surish."
-      },
-      {
-        "id": 37,
-        "nnt": "SCANDI.UZ",
-        "name": "TURSUNOVA DONA MAVLYANOVNA",
-        "phones": [
-          "+998977319403"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - sog‘lom va faol turmush tarzini targ‘ib qilish, skandinavcha yurishi ixlosmandlarini birlashtirish, bilim va tajriba almashish, shuningdek, salomatlikni mustahkamlash va jamiyatni rivojlantirish uchun samarali yurish texnikasini o‘rgatishdan iborat."
-      },
-      {
-        "id": 38,
-        "nnt": "TA’LIM VA HUNAR",
-        "name": "MUHITDINOVA MARG’UBA HOJIAKBAROVNA",
-        "phones": [
-          "+998909267990"
-        ],
-        "address": "Toshkent shahri",
-        "mission": "Bizning vazifamiz - sog‘lom turmush tarzini targ‘ib qilish, shaxsiy rivojlanish va mahallada onalar va oilalar bilan ochiq muloqot qilish orqali qizlarga hayotda o‘z yo‘lini topishga ko‘maklashishdir."
-      },
-      {
-        "id": 39,
-        "nnt": "VOLONTYORLAR AKADEMIYASI",
-        "name": "SA'ATBEK MUZAFFAROV",
-        "phones": [
-          "+998949240115"
-        ],
-        "address": "Toshkent shahri, Olmazor tumani",
-        "mission": "Volontyorlar akademiyasi vazifasi - O'zbekistonda Volontyorlarni o'qitish, ta'lim va Volontyorlar orqali bepul darslar tashkil etishga qaratilgan nodavlat ta'lim muassasasi"
-      }
-    ]
+  "common": {
+    "read_more": "Batafsil"
   }
 }

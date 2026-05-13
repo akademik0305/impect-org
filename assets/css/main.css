@@ -32,38 +32,41 @@
 /* 2. CSS VARIABLES (:ROOT) */
 :root {
   --ui-radius: var(--radius-lg);
-  
-  /* Brand Colors - Mijoz bergan palitra */
-  --brand-red: #E24C4B;       /* Empower Red */
-  --brand-orange: #F57C00;    /* Energy Orange */
-  --brand-yellow: #FFC107;    /* Sunshine Yellow */
-  --brand-beige: #F7F3EF;     /* Soft Beige */
-  --brand-neutral: #EFEAE5;   /* Light Neutral */
-  --brand-charcoal: #212121;  /* Charcoal */
 
-  /* Map existing logic to new variables */
-  --color-primary: var(--brand-red);
-  --color-secondary: var(--brand-charcoal);
-  --color-background: var(--brand-beige);
-  --color-text: var(--brand-charcoal);
-  --color-bg: var(--brand-beige);
+  /* Minimal neutral palette (content still uses brand-* Tailwind where needed) */
+  --brand-navy: #171717;
+  --brand-blue: #404040;
+  --brand-light-blue: #737373;
+  --brand-white: #ffffff;
+  --brand-light-gray: #fafafa;
+  --brand-gray: #737373;
+  --brand-dark-gray: #171717;
+  --brand-accent: #404040;
+
+  --color-primary: var(--brand-navy);
+  --color-secondary: var(--brand-dark-gray);
+  --color-background: var(--brand-white);
+  --color-text: var(--brand-dark-gray);
+  --color-bg: var(--brand-white);
 }
 
 /* 3. TAILWIND @THEME */
 @theme {
   /* Brand colors mapping */
-  --color-brand-red: var(--brand-red);
-  --color-brand-orange: var(--brand-orange);
-  --color-brand-yellow: var(--brand-yellow);
-  --color-brand-beige: var(--brand-beige);
-  --color-brand-neutral: var(--brand-neutral);
-  --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-light-blue: var(--brand-light-blue);
+  --color-brand-white: var(--brand-white);
+  --color-brand-light-gray: var(--brand-light-gray);
+  --color-brand-gray: var(--brand-gray);
+  --color-brand-dark-gray: var(--brand-dark-gray);
+  --color-brand-accent: var(--brand-accent);
 
   /* Legacy & UI mapping */
-  --color-primary: var(--brand-red);
-  --color-secondary: var(--brand-charcoal);
-  --color-background: var(--brand-beige);
-  --ui-primary: var(--brand-red);
+  --color-primary: var(--brand-navy);
+  --color-secondary: var(--brand-dark-gray);
+  --color-background: var(--brand-white);
+  --ui-primary: var(--brand-navy);
 
   /* Fonts */
   --font-inter: 'Inter', sans-serif;
@@ -97,8 +100,21 @@ html {
 
 body {
   font-family: var(--font-inter);
-  color: var(--brand-charcoal);
-  background-color: var(--brand-beige);
+  color: var(--brand-dark-gray);
+  background-color: #fafafa;
+  /* Nuqta pattern — minimalist fon */
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(23, 23, 23, 0.07) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+  background-attachment: fixed;
+}
+
+/* Wrapper shaffof — body dagi nuqtalar fon sifatida ko‘rinadi */
+.site-surface {
+  background-color: transparent;
 }
 
 button {
@@ -109,34 +125,37 @@ input {
   outline: none;
 }
 
-/* 5. COMPONENTS & LAYOUT */
+/* 5. COMPONENTS & LAYOUT — CEPS-style wide readable column */
 .container {
   width: 100%;
-  max-width: 1280px; /* var(--xl) */
-  margin: 0 auto;
-  padding: 0 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 3vw, 1.75rem);
+  padding-right: clamp(1rem, 3vw, 1.75rem);
 }
 
-@media (max-width: 1280px) { .container { max-width: 1024px; } }
-@media (max-width: 1024px) { .container { max-width: 768px; } }
-@media (max-width: 768px) { .container { max-width: 640px; } }
-@media (max-width: 600px) { .container { padding: 0 16px; max-width: 450px; } }
-@media (max-width: 450px) { .container { max-width: 100%; } }
+.section-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-gray);
+}
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  background-color: var(--brand-charcoal);
+  width: 8px;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: var(--brand-neutral);
-  border-radius: 2px;
+  background-color: #f4f4f5;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 2px;
-  background-color: var(--brand-red);
+  border-radius: 9999px;
+  background-color: #d4d4d8;
 }
 
 /* Swiper custom styles */
@@ -147,14 +166,14 @@ swiper-container::part(wrapper) {
 swiper-container::part(bullet) {
   width: 16px;
   height: 10px;
-  background-color: var(--brand-charcoal);
+  background-color: var(--brand-gray);
   border-radius: 10px;
 }
 
 swiper-container::part(bullet-active) {
   width: 20px;
   height: 10px;
-  background-color: var(--brand-red);
+  background-color: var(--brand-navy);
   border-radius: 10px;
 }
 

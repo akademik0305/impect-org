@@ -9,30 +9,8 @@ export default defineNuxtConfig({
 	},
 
 	ssr: false,
-	// SEO va meta
-	// experimental: {
-	// 	payloadExtraction: false,
-	// },
 
-	runtimeConfig: {
-		public: {
-			// apiBaseUrl: process.env.API_BASE_URL,
-			supabaseUrl: process.env.SUPABASE_URL,
-			supabaseKey: process.env.SUPABASE_KEY,
-		},
-	},
-
-	modules: [
-		"@nuxt/eslint",
-		"@nuxt/ui",
-		"@nuxtjs/i18n",
-		"@pinia/nuxt",
-		"@nuxtjs/supabase",
-	],
-
-	supabase: {
-		redirect: false, // o'zimiz boshqaramiz
-	},
+	modules: ["@nuxt/ui", "@nuxtjs/i18n"],
 
 	vite: {
 		plugins: [tailwindcss()],
@@ -41,7 +19,7 @@ export default defineNuxtConfig({
 
 	i18n: {
 		defaultLocale: "uz",
-		langDir: "./locales/",
+		langDir: "locales",
 		bundle: {
 			optimizeTranslationDirective: false,
 		},
