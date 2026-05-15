@@ -6,10 +6,10 @@ const teamMembers = [
   {
     id: 1,
     name: "Dr. Aziz Karimov",
-    role: "Bosh Direktor",
-    bio: "Iqtisodiy siyosat va rivojlanish iqtisodiyoti bo'yicha 25 yillik tajriba. O'zbekiston Respublikasi Iqtisodiyot vazirligida maslahatchi bo'lib ishlagan. Xalqaro konferensiyalarda ma'ruzalar qilgan, 50 dan ortiq ilmiy maqolalar muallifi.",
-    expertise: ["Iqtisodiy siyosat", "Rivojlanish strategiyasi", "Investitsiyalar"],
-    education: "O'zbekiston Milliy Universiteti, PhD",
+    role: "Executive Director",
+    bio: "25 years of experience in economic policy and development economics. Former adviser at the Ministry of Economy of Uzbekistan. Speaker at international conferences and author of 50+ academic articles.",
+    expertise: ["Economic policy", "Development strategy", "Investment"],
+    education: "National University of Uzbekistan, PhD",
     email: "a.karimov@impect.org",
     phone: "+998 90 123 45 67",
     image: fakeImg('about-m1', 400, 400),
@@ -19,10 +19,10 @@ const teamMembers = [
   {
     id: 2,
     name: "Dilnoza Rahimova",
-    role: "Loyihalar Direktori",
-    bio: "Xalqaro loyihalarni boshqarish va monitoring bo'yicha 15 yillik tajriba. BMT, Jahon Banki va boshqa xalqaro tashkilotlar bilan hamkorlikda 30 dan ortiq loyihalarni muvaffaqiyatli amalga oshirgan.",
-    expertise: ["Loyihalar boshqaruvi", "Monitoring", "Xalqaro hamkorlik"],
-    education: "Toshkent Davlat Iqtisodiyot Universiteti, Magistr",
+    role: "Director of Projects",
+    bio: "15 years managing and monitoring international projects. Successfully delivered 30+ projects with the UN, World Bank, and other international partners.",
+    expertise: ["Project management", "Monitoring", "International cooperation"],
+    education: "Tashkent State University of Economics, Master’s",
     email: "d.rahimova@impect.org",
     phone: "+998 90 234 56 78",
     image: fakeImg('about-m2', 400, 400),
@@ -32,10 +32,10 @@ const teamMembers = [
   {
     id: 3,
     name: "Bobur Alimov",
-    role: "Bosh Tadqiqotchi",
-    bio: "Katta ma'lumotlar tahlili va statistik modellashtirish bo'yicha ekspert. Sun'iy intellekt va mashinani o'rganish sohasida 10 yillik tajribaga ega. O'zbekistonning raqamli transformatsiyasi loyihalarida faol ishtirok etadi.",
-    expertise: ["Data tahlili", "AI va ML", "Statistika"],
-    education: "Toshkent Axborot Texnologiyalari Universiteti, PhD",
+    role: "Lead Researcher",
+    bio: "Expert in big data analysis and statistical modelling. 10 years in AI and machine learning. Active contributor to Uzbekistan’s digital transformation projects.",
+    expertise: ["Data analysis", "AI & ML", "Statistics"],
+    education: "Tashkent University of Information Technologies, PhD",
     email: "b.alimov@impect.org",
     phone: "+998 90 345 67 89",
     image: fakeImg('about-m3', 400, 400),
@@ -45,10 +45,10 @@ const teamMembers = [
   {
     id: 4,
     name: "Malika Tashmatova",
-    role: "Kommunikatsiya Menejeri",
+    role: "Communications Manager",
     bio: "Ommaviy aloqolar va media strategiyasi bo'yicha 12 yillik tajriba. Yirik xalqaro kompaniyalarda PR bo'yicha direktor lavozimlarida ishlagan. Impect.org ning obro'sini oshirish va media aloqalarini rivojlantirish uchun mas'ul.",
     expertise: ["Ommaviy aloqolar", "Media strategiya", "Kontent marketing"],
-    education: "O'zbekiston Davlat Jahon Tillari Universiteti, Magistr",
+    education: "Uzbekistan State World Languages University, Master’s",
     email: "m.tashmatova@impect.org",
     phone: "+998 90 456 78 90",
     image: fakeImg('about-m4', 400, 400),
@@ -58,10 +58,10 @@ const teamMembers = [
   {
     id: 5,
     name: "Dr. Jamshid Bekmurodov",
-    role: "Katta Tadqiqotchi",
-    bio: "Atrof-muhit muhofazasi va barqaror rivojlanish bo'yicha 20 yillik tajriba. BMTning Atrof-muhit dasturida ekspert sifatida faol ishtirok etgan. O'zbekistonning ekologik muammolari bo'yicha ko'plab tadqiqotlar muallifi.",
-    expertise: ["Atrof-muhit", "Barqaror rivojlanish", "Ekologiya"],
-    education: "O'zbekiston Milliy Universiteti, PhD",
+    role: "Senior Researcher",
+    bio: "20 years in environmental protection and sustainable development. Expert for the UN Environment Programme. Author of numerous studies on Uzbekistan’s ecological challenges.",
+    expertise: ["Environment", "Sustainable development", "Ecology"],
+    education: "National University of Uzbekistan, PhD",
     email: "j.bekmurodov@impect.org",
     phone: "+998 90 567 89 01",
     image: fakeImg('about-m5', 400, 400),
@@ -71,10 +71,10 @@ const teamMembers = [
   {
     id: 6,
     name: "Dr. Sanobar Akhmedova",
-    role: "Ta'lim Bo'yicha Mutaxassis",
-    bio: "Ta'lim tizimini modernizatsiya qilish va raqamli ta'limni joriy etish bo'yicha 18 yillik tajriba. O'zbekiston ta'lim tizimini isloh qilish bo'yicha Davlat komissiyasi a'zosi.",
-    expertise: ["Ta'lim siyosati", "Raqamli ta'lim", "Ta'lim texnologiyalari"],
-    education: "Toshkent Davlat Pedagogika Universiteti, PhD",
+    role: "Education Specialist",
+    bio: "18 years modernizing education systems and introducing digital learning. Member of the state commission on education reform in Uzbekistan.",
+    expertise: ["Education policy", "Digital education", "EdTech"],
+    education: "Tashkent State Pedagogical University, PhD",
     email: "s.akhmedova@impect.org",
     phone: "+998 90 678 90 12",
     image: fakeImg('about-m6', 400, 400),
@@ -84,10 +84,10 @@ const teamMembers = [
   {
     id: 7,
     name: "Nodirbek Yusupov",
-    role: "Qishloq Xo'jaligi Mutaxassisi",
-    bio: "Qishloq xo'jaligini modernizatsiya qilish va agrotexnologiyalarni joriy etish bo'yicha 14 yillik tajriba. Aqliq qishloq xo'jaligi va zamonaviy sug'orish tizimlari bo'yicha ekspert.",
-    expertise: ["Qishloq xo'jaligi", "Agrotexnologiyalar", "Sug'orish tizimlari"],
-    education: "Toshkent Qishloq Xo'jaligi Instituti, Magistr",
+    role: "Agriculture Specialist",
+    bio: "14 years modernizing agriculture and introducing agrotechnologies. Expert in smart farming and modern irrigation systems.",
+    expertise: ["Agriculture", "Agrotechnology", "Irrigation systems"],
+    education: "Tashkent Institute of Agriculture, Master’s",
     email: "n.yusupov@impect.org",
     phone: "+998 90 789 01 23",
     image: fakeImg('about-m7', 400, 400),
@@ -97,10 +97,10 @@ const teamMembers = [
   {
     id: 8,
     name: "Dr. Kamola Umarova",
-    role: "Sog'liqni Saqlash Mutaxassisi",
-    bio: "Sog'liqni saqlash tizimini takomillashtirish va jamoat salomatligi bo'yicha 16 yillik tajriba. Jahon Sog'liqni Saqlash Tashkiloti bilan hamkorlikda ko'plab loyihalarda ishtirok etgan.",
-    expertise: ["Sog'liq siyosati", "Jamoat salomatligi", "Tibbiyot tizimlari"],
-    education: "Toshkent Tibbiyot Akademiyasi, PhD",
+    role: "Health Specialist",
+    bio: "16 years improving healthcare systems and public health. Participated in numerous projects with the World Health Organization.",
+    expertise: ["Health policy", "Public health", "Healthcare systems"],
+    education: "Tashkent Medical Academy, PhD",
     email: "k.umarova@impect.org",
     phone: "+998 90 890 12 34",
     image: fakeImg('about-m8', 400, 400),
@@ -111,23 +111,23 @@ const teamMembers = [
 
 const values = [
   {
-    title: "Ishonch",
-    description: "Biz o'z ishimizda to'g'rilik, shaffoflik va professionallikni asq qilamiz. Hamkorlarimiz va mijozlarimiz bilan uzoq muddatli ishonchli aloqalarni o'rnatamiz.",
+    title: "Integrity",
+    description: "Biz o'z ishimizda to'g'rilik, shaffoflik va professionallikni asq qilamiz. Our partners va mijozlarimiz bilan uzoq muddatli ishonchli aloqalarni o'rnatamiz.",
     icon: "shield"
   },
   {
-    title: "Innovatsiya",
-    description: "Biz doimiy ravishda yangi yondashuvlar va zamonaviy usullarni qidiramiz. Ilmiy tadqiqotlar va amaliy yechimlar orqali ijobiy o'zgarishlarni amalga oshiramiz.",
+    title: "Innovation",
+    description: "We continuously seek new approaches and modern methods, delivering positive change through research and practical solutions.",
     icon: "lightbulb"
   },
   {
-    title: "Hamkorlik",
-    description: "Biz hamkorlikni muhim deb hisoblaymiz. Davlat organlari, xalqaro tashkilotlar, biznes sektori va fuqorolik jamiyati bilan hamkorlik qilamiz.",
+    title: "Collaboration",
+    description: "We value partnership with government, international organizations, business, and civil society.",
     icon: "users"
   },
   {
-    title: "Ta'sir",
-    description: "Bizning ishimizning haqiqiy ta'siriga erishishga intilamiz. Tadqiqotlarimiz va tavsiyalarimiz jamiyat hayotiga ijobiy o'zgarishlar keltirishini ta'minlaymiz.",
+    title: "Impact",
+    description: "We strive for measurable impact, ensuring our research and recommendations bring positive change to society.",
     icon: "target"
   }
 ]
@@ -135,65 +135,65 @@ const values = [
 const milestones = [
   {
     year: "2015",
-    title: "Impekt.org tashkil etildi",
-    description: "O'zbekistonda barqaror rivojlanish bo'yicha tadqiqotlar olib borish maqsadida tashkilot asos solindi."
+    title: "Impect.org founded",
+    description: "The organization was established to conduct research on sustainable development in Uzbekistan."
   },
   {
     year: "2017",
-    title: "Birinchi xalqaro loyiha",
-    description: "BMT bilan hamkorlikda birinchi xalqaro loyiha boshlandi - iqtisodiy islohotlar bo'yicha tadqiqot."
+    title: "First international project",
+    description: "First international project with the UN — research on economic reforms."
   },
   {
     year: "2019",
-    title: "Markaziy ofis ochildi",
-    description: "Toshkent shahrida zamonaviy markaziy ofis va tadqiqot markazi ochildi."
+    title: "Head office opened",
+    description: "A modern head office and research centre opened in Tashkent."
   },
   {
     year: "2021",
-    title: "50+ loyiha",
-    description: "Turli sohalarda 50 dan ortiq loyiha muvaffaqiyatli yakunlandi."
+    title: "50+ projects",
+    description: "More than 50 projects successfully completed across sectors."
   },
   {
     year: "2023",
-    title: "Xalqaro tan olinishi",
-    description: "Impekt.org xalqaro miqyosda tan olingan tahlil markaziga aylandi."
+    title: "International recognition",
+    description: "Impect.org gained recognition as an internationally respected think tank."
   },
   {
     year: "2025",
-    title: "Yangi strategiya",
-    description: "2025-2030 yillarni qamrab olgan yangi rivojlanish strategiyasi qabul qilindi."
+    title: "New strategy",
+    description: "A new development strategy for 2025–2030 was adopted."
   }
 ]
 
 const partners = [
   {
-    name: "BMT Demokratik Jamg'armasi (UNDEF)",
-    type: "Xalqaro tashkilot",
+    name: "UN Democracy Fund (UNDEF)",
+    type: "International organization",
     logo: fakeImg('partner-undef', 280, 120),
   },
   {
-    name: "Jahon Banki",
-    type: "Xalqaro tashkilot",
+    name: "World Bank",
+    type: "International organization",
     logo: fakeImg('partner-wb', 280, 120),
   },
   {
-    name: "O'zbekiston Respublikasi Iqtisodiyot vazirligi",
-    type: "Davlat organi",
+    name: "Ministry of Economy of Uzbekistan",
+    type: "Government agency",
     logo: fakeImg('partner-moe', 280, 120),
   },
   {
-    name: "O'zbekiston Milliy Universiteti",
-    type: "Ta'lim muassasi",
+    name: "National University of Uzbekistan",
+    type: "Educational institution",
     logo: fakeImg('partner-nuu', 280, 120),
   },
   {
     name: "IT Park",
-    type: "Texnologiya markazi",
+    type: "Technology hub",
     logo: fakeImg('partner-itpark', 280, 120),
   },
   {
     name: "Asian Development Bank",
-    type: "Xalqaro tashkilot",
+    type: "International organization",
     logo: fakeImg('partner-adb', 280, 120),
   }
 ]
@@ -202,17 +202,17 @@ const partners = [
 <template>
   <div class="min-h-screen">
     <!-- Hero Section -->
-    <section class="border-b border-neutral-200/90 bg-white py-16 sm:py-20">
+    <section class="border-b border-neutral-200/90 bg-transparent py-16 sm:py-20">
       <div class="container">
         <div class="max-w-2xl">
           <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
-            {{ $t('about.title') }}
+            Who We Are
           </h1>
           <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
-            {{ $t('about.paragraph1') }}
+            We are a team of dedicated researchers, analysts, and policy experts committed to driving positive change in Uzbekistan through evidence-based research and strategic recommendations.
           </p>
           <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
-            {{ $t('about.paragraph2') }}
+            Our work spans across various sectors including economic development, social policy, governance, and environmental sustainability.
           </p>
         </div>
       </div>
@@ -223,15 +223,15 @@ const partners = [
       <div class="container">
         <div class="grid md:grid-cols-2 gap-12">
           <div class="space-y-6">
-            <h2 class="text-3xl font-bold text-brand-dark-gray">Missiyamiz</h2>
+            <h2 class="text-3xl font-bold text-brand-dark-gray">Our mission</h2>
             <p class="text-gray-600 leading-relaxed">
-              O'zbekistonda barqaror rivojlanishga erishish uchun dalilga asoslangan tadqiqotlar, chuqur tahlillar va amaliy siyosat tavsiyalarini ishlab chiqarish orqali ijobiy o'zgarishlarni amalga oshirish.
+              To drive positive change through evidence-based research, in-depth analysis, and practical policy recommendations for sustainable development in Uzbekistan.
             </p>
           </div>
           <div class="space-y-6">
-            <h2 class="text-3xl font-bold text-brand-dark-gray">Viziyamiz</h2>
+            <h2 class="text-3xl font-bold text-brand-dark-gray">Our vision</h2>
             <p class="text-gray-600 leading-relaxed">
-              Markaziy Osiyoda yetakchi tahlil markaziga aylanish, O'zbekistonning rivojlanishiga ilmiy asoslangan yechimlar taklif etish va jamiyat hayotiga haqiqiy ta'sir ko'rsatish.
+              To become a leading think tank in Central Asia, offering science-based solutions for Uzbekistan’s development and making a real impact on society.
             </p>
           </div>
         </div>
@@ -243,10 +243,10 @@ const partners = [
       <div class="container">
         <div class="text-center mb-12">
           <h2 class="text-3xl lg:text-4xl font-bold text-brand-dark-gray mb-4">
-            Bizning Qadriyatlarimiz
+            Our values
           </h2>
           <p class="text-gray-600 max-w-2xl mx-auto">
-            Bizning ishimiz asosida yotgan asosiy qadriyatlar va tamoyillar.
+            The core values and principles that guide our work.
           </p>
         </div>
 
@@ -276,10 +276,10 @@ const partners = [
       <div class="container">
         <div class="text-center mb-12">
           <h2 class="text-3xl lg:text-4xl font-bold text-brand-dark-gray mb-4">
-            Bizning Jamoa
+            Our team
           </h2>
           <p class="text-gray-600 max-w-2xl mx-auto">
-            Bizning jamoamiz turli sohalarda tajribaga ega bo'lgan professionallardan iborat.
+            Our team brings together professionals with experience across diverse fields.
           </p>
         </div>
 
@@ -300,7 +300,7 @@ const partners = [
               <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ member.bio }}</p>
               
               <div class="mb-4">
-                <div class="text-sm text-gray-500 mb-2">Mutaxassislik:</div>
+                <div class="text-sm text-gray-500 mb-2">Expertise:</div>
                 <div class="flex flex-wrap gap-1">
                   <span 
                     v-for="skill in member.expertise" 
@@ -349,10 +349,10 @@ const partners = [
       <div class="container">
         <div class="text-center mb-12">
           <h2 class="text-3xl lg:text-4xl font-bold text-brand-dark-gray mb-4">
-            Tariximiz
+            Our history
           </h2>
           <p class="text-gray-600 max-w-2xl mx-auto">
-            Impakt.org rivojlanish yo'lidagi muhim bosqichlar.
+            Key milestones on Impect’s journey.
           </p>
         </div>
 
@@ -387,10 +387,10 @@ const partners = [
       <div class="container">
         <div class="text-center mb-12">
           <h2 class="text-3xl lg:text-4xl font-bold text-brand-dark-gray mb-4">
-            Hamkorlarimiz
+            Our partners
           </h2>
           <p class="text-gray-600 max-w-2xl mx-auto">
-            Biz bilan ishonchli hamkorlik qilayotgan tashkilotlar va muassasalar.
+            Organizations and institutions we work with in trusted partnership.
           </p>
         </div>
 
@@ -413,26 +413,26 @@ const partners = [
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-brand-navy text-white">
+    <section id="contact" class="scroll-mt-24 py-20 bg-brand-navy text-white">
       <div class="container text-center">
         <h2 class="text-3xl lg:text-4xl font-bold mb-4">
-          Bizga Qo'shiling
+          Join us
         </h2>
         <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-          Impakt.org jamoasiga qo'shiling va O'zbekiston rivojlanishiga o'z hissangizni qo'shing.
+          Join the Impect team and contribute to Uzbekistan’s development.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <NuxtLink 
             to="/about"
             class="px-8 py-3 bg-neutral-900 text-white font-medium hover:bg-neutral-800 transition-colors inline-block text-center"
           >
-            {{ $t('about.contact') }}
+            Contact Us
           </NuxtLink>
           <NuxtLink 
             to="/about"
             class="px-8 py-3 border border-neutral-300 text-neutral-900 font-medium hover:border-neutral-900 transition-colors inline-block text-center"
           >
-            Ish o'rni
+            Careers
           </NuxtLink>
         </div>
       </div>

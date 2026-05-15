@@ -2,37 +2,37 @@
 import { events } from '~/data/siteContent'
 
 const categories = [
-  'Barchasi',
-  'Iqtisodiyot',
-  'Texnologiya',
-  "Ta'lim",
-  'Atrof-muhit',
-  "Sog'liq",
-  "Qishloq xo'jaligi",
-  'Ijtimoiy siyosat',
+  'All',
+  'Economy',
+  'Technology',
+  'Education',
+  'Environment',
+  'Health',
+  'Agriculture',
+  'Social policy',
 ]
 
 const types = [
-  'Barchasi',
-  'Konferensiya',
+  'All',
+  'Conference',
   'Seminar',
-  'Uchrashuv',
-  'Ustalar sinfi',
-  'Sammit',
-  'Panel muhokamasi',
-  'Davra suhbati',
+  'Meeting',
+  'Workshop',
+  'Summit',
+  'Panel discussion',
+  'Roundtable',
 ]
 
-const selectedCategory = ref('Barchasi')
-const selectedType = ref('Barchasi')
+const selectedCategory = ref('All')
+const selectedType = ref('All')
 const searchQuery = ref('')
 
 const filteredEvents = computed(() => {
   let list = events
-  if (selectedCategory.value !== 'Barchasi') {
+  if (selectedCategory.value !== 'All') {
     list = list.filter((e) => e.category === selectedCategory.value)
   }
-  if (selectedType.value !== 'Barchasi') {
+  if (selectedType.value !== 'All') {
     list = list.filter((e) => e.type === selectedType.value)
   }
   if (searchQuery.value) {
@@ -59,7 +59,7 @@ const pastEvents = computed(() =>
 )
 
 const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('uz-UZ', {
+  return new Date(dateString).toLocaleDateString('en-GB', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -76,13 +76,13 @@ const regTone = (event) => {
 
 <template>
   <div>
-    <header class="border-b border-neutral-200/90 bg-white/95 py-12 sm:py-16">
+    <header class="border-b border-neutral-200/90 bg-transparent py-12 sm:py-16">
       <div class="container max-w-2xl">
         <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
-          Tadbirlar
+          Events
         </h1>
         <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
-          Forumlar, seminarlar va uchrashuvlar — batafsil sahifada dastur va spikerlar.
+          Forums, seminars, and meetings — agendas and speakers on each event page.
         </p>
       </div>
     </header>
@@ -90,7 +90,7 @@ const regTone = (event) => {
     <section class="py-12 sm:py-16">
       <div class="container">
         <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          Tanlangan
+          Featured
         </h2>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
           <article
@@ -126,13 +126,13 @@ const regTone = (event) => {
                   :to="`/events/${event.slug}`"
                   class="inline-flex min-h-10 flex-1 items-center justify-center bg-neutral-900 px-4 text-sm font-medium text-white transition hover:bg-neutral-800 sm:flex-none"
                 >
-                  Batafsil
+                  Read more
                 </NuxtLink>
                 <NuxtLink
                   :to="`/events/${event.slug}`"
                   class="inline-flex min-h-10 flex-1 items-center justify-center border border-neutral-200 px-4 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 sm:flex-none"
                 >
-                  Ro'yxatdan o'tish
+                  Register
                 </NuxtLink>
               </div>
             </div>
@@ -147,7 +147,7 @@ const regTone = (event) => {
           <input
             v-model="searchQuery"
             type="search"
-            placeholder="Qidirish..."
+            placeholder="Search..."
             class="min-h-10 w-full border border-neutral-200 bg-white px-3 text-sm focus:border-neutral-900 focus:outline-none lg:max-w-xs"
           >
           <select
@@ -173,7 +173,7 @@ const regTone = (event) => {
     <section class="py-12 sm:py-16">
       <div class="container">
         <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          Kelayotganlar
+          Upcoming
         </h2>
         <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <article
@@ -208,7 +208,7 @@ const regTone = (event) => {
                 :to="`/events/${event.slug}`"
                 class="mt-4 inline-flex min-h-10 items-center justify-center border border-neutral-900 px-4 text-sm font-medium text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
               >
-                Batafsil
+                Read more
               </NuxtLink>
             </div>
           </article>
@@ -219,7 +219,7 @@ const regTone = (event) => {
     <section v-if="pastEvents.length" class="border-t border-neutral-200/80 py-12 sm:py-16">
       <div class="container">
         <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          O'tganlar
+          Past
         </h2>
         <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <article
@@ -247,7 +247,7 @@ const regTone = (event) => {
                 :to="`/events/${event.slug}`"
                 class="mt-4 inline-block text-sm font-medium text-neutral-800 underline-offset-4 hover:underline"
               >
-                Materiallar
+                Materials
               </NuxtLink>
             </div>
           </article>

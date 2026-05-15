@@ -11,7 +11,7 @@
             <span class="text-xl font-semibold">Impect</span>
           </div>
           <p class="text-gray-300 text-sm leading-relaxed">
-            {{ $t('footer.description') }}
+            A leading think tank providing research and policy recommendations for sustainable development in Uzbekistan.
           </p>
           <div class="flex space-x-4">
             <a href="#" class="text-gray-300 hover:text-white transition-colors">
@@ -34,31 +34,31 @@
 
         <!-- Quick Links -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold">{{ $t('footer.quick_links') }}</h3>
+          <h3 class="text-lg font-semibold">Quick Links</h3>
           <ul class="space-y-2">
             <li>
-              <NuxtLink to="/research" class="text-gray-300 hover:text-white transition-colors text-sm">
-                {{ $t('navigation.research') }}
+              <NuxtLink to="/about" class="text-gray-300 hover:text-white transition-colors text-sm">
+                About us
               </NuxtLink>
             </li>
             <li>
               <NuxtLink to="/projects" class="text-gray-300 hover:text-white transition-colors text-sm">
-                {{ $t('navigation.projects') }}
+                Projects
               </NuxtLink>
             </li>
             <li>
               <NuxtLink to="/publications" class="text-gray-300 hover:text-white transition-colors text-sm">
-                {{ $t('navigation.publications') }}
+                Activities
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/events" class="text-gray-300 hover:text-white transition-colors text-sm">
-                {{ $t('navigation.events') }}
+              <NuxtLink to="/volunteer" class="text-gray-300 hover:text-white transition-colors text-sm">
+                Become a Volunteer
               </NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/about" class="text-gray-300 hover:text-white transition-colors text-sm">
-                {{ $t('navigation.about') }}
+              <NuxtLink to="/about#contact" class="text-gray-300 hover:text-white transition-colors text-sm">
+                Contact us
               </NuxtLink>
             </li>
           </ul>
@@ -66,7 +66,7 @@
 
         <!-- Contact Info -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold">{{ $t('footer.contact') }}</h3>
+          <h3 class="text-lg font-semibold">Contact</h3>
           <div class="space-y-2 text-sm text-gray-300">
             <div class="flex items-center space-x-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,15 +92,15 @@
 
         <!-- Newsletter -->
         <div class="space-y-4">
-          <h3 class="text-lg font-semibold">{{ $t('footer.newsletter') }}</h3>
+          <h3 class="text-lg font-semibold">Newsletter</h3>
           <p class="text-gray-300 text-sm">
-            {{ $t('footer.newsletter_desc') }}
+            Subscribe to our newsletter for the latest news and research.
           </p>
           <form @submit.prevent="subscribeNewsletter" class="space-y-2">
             <input
               v-model="email"
               type="email"
-              :placeholder="$t('footer.email_placeholder')"
+              placeholder="Your email address"
               class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white/40 transition-colors"
               required
             />
@@ -108,7 +108,7 @@
               type="submit"
               class="w-full px-4 py-2 bg-brand-navy text-white rounded-lg hover:bg-brand-blue transition-colors font-medium"
             >
-              {{ $t('footer.subscribe') }}
+              Subscribe
             </button>
           </form>
         </div>
@@ -118,14 +118,14 @@
       <div class="mt-12 pt-8 border-t border-gray-700">
         <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p class="text-gray-400 text-sm">
-            © {{ new Date().getFullYear() }} Impect. {{ $t('footer.all_rights_reserved') }}
+            © {{ new Date().getFullYear() }} Impect. All rights reserved.
           </p>
           <div class="flex space-x-6 text-sm">
             <a href="#" class="text-gray-400 hover:text-white transition-colors">
-              {{ $t('footer.privacy_policy') }}
+              Privacy Policy
             </a>
             <a href="#" class="text-gray-400 hover:text-white transition-colors">
-              {{ $t('footer.terms_of_service') }}
+              Terms of Service
             </a>
           </div>
         </div>
@@ -135,7 +135,6 @@
 </template>
 
 <script setup>
-const { $i18n } = useNuxtApp()
 const email = ref('')
 
 const subscribeNewsletter = () => {

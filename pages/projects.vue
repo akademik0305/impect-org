@@ -2,31 +2,31 @@
 import { projects } from '~/data/siteContent'
 
 const categories = [
-  'Barchasi',
-  'Iqtisodiy rivojlanish',
-  "Ta'lim",
-  'Atrof-muhit',
-  "Sog'liqni saqlash",
-  "Qishloq xo'jaligi",
-  'Bandlik',
-  'Madaniyat',
-  'Energetika',
+  'All',
+  'Economic development',
+  'Education',
+  'Environment',
+  'Healthcare',
+  'Agriculture',
+  'Employment',
+  'Culture',
+  'Energy',
 ]
 
 const statuses = [
-  { value: 'all', label: 'Barchasi' },
-  { value: 'active', label: 'Faol' },
-  { value: 'completed', label: 'Tugallangan' },
-  { value: 'planning', label: 'Rejalashtirilmoqda' },
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'planning', label: 'Planning' },
 ]
 
-const selectedCategory = ref('Barchasi')
+const selectedCategory = ref('All')
 const selectedStatus = ref('all')
 const searchQuery = ref('')
 
 const filteredProjects = computed(() => {
   let list = projects
-  if (selectedCategory.value !== 'Barchasi') {
+  if (selectedCategory.value !== 'All') {
     list = list.filter((p) => p.category === selectedCategory.value)
   }
   if (selectedStatus.value !== 'all') {
@@ -45,20 +45,20 @@ const filteredProjects = computed(() => {
 })
 
 const statusLabel = (s) => {
-  const m = { active: 'Faol', completed: 'Tugallangan', planning: 'Rejalashtirilmoqda' }
+  const m = { active: 'Active', completed: 'Completed', planning: 'Planning' }
   return m[s] || s
 }
 </script>
 
 <template>
   <div>
-    <header class="border-b border-neutral-200/90 bg-white/95 py-12 sm:py-16">
+    <header class="border-b border-neutral-200/90 bg-transparent py-12 sm:py-16">
       <div class="container max-w-2xl">
         <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
-          Loyihalar
+          Projects
         </h1>
         <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
-          Faol dasturlar, hamkorlar va natijalar — qisqa, aniq kartochkalar.
+          Active programmes, partners, and results — concise, clear cards.
         </p>
       </div>
     </header>
@@ -69,7 +69,7 @@ const statusLabel = (s) => {
           <input
             v-model="searchQuery"
             type="search"
-            placeholder="Qidirish..."
+            placeholder="Search..."
             class="min-h-10 w-full border border-neutral-200 bg-white px-3 text-sm focus:border-neutral-900 focus:outline-none lg:max-w-xs"
           >
           <select
@@ -127,19 +127,19 @@ const statusLabel = (s) => {
                 <div class="h-px bg-neutral-900" :style="{ width: `${project.progress}%` }" />
               </div>
               <p class="mt-2 text-xs text-neutral-500">
-                {{ project.progress }}% bajarildi
+                {{ project.progress }}% complete
               </p>
               <NuxtLink
                 :to="`/projects/${project.slug}`"
                 class="mt-4 inline-flex min-h-10 items-center justify-center border border-neutral-900 px-4 text-sm font-medium text-neutral-900 transition hover:bg-neutral-900 hover:text-white"
               >
-                Batafsil
+                Read more
               </NuxtLink>
             </div>
           </article>
         </div>
         <p v-if="filteredProjects.length === 0" class="mt-12 text-center text-sm text-neutral-500">
-          Loyiha topilmadi.
+          No projects found.
         </p>
       </div>
     </section>

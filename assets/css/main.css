@@ -1,33 +1,6 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-/* 1. FONTS */
-@font-face {
-  font-family: 'Prosto One';
-  src: url('~/assets/fonts/ProstoOne-Regular.woff2') format('woff2'),
-    url('~/assets/fonts/ProstoOne-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('Inter-Italic.woff2') format('woff2'),
-    url('~/assets/fonts/Inter-Italic.woff') format('woff');
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('~/assets/fonts/Inter-Regular.woff2') format('woff2'),
-    url('~/assets/fonts/Inter-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
 
 /* 2. CSS VARIABLES (:ROOT) */
 :root {
@@ -48,6 +21,11 @@
   --color-background: var(--brand-white);
   --color-text: var(--brand-dark-gray);
   --color-bg: var(--brand-white);
+
+  /* Dot grid background */
+  --page-bg: #ffffff;
+  --dot-grid-size: 26px;
+  --dot-color: rgba(23, 23, 23, 0.16);
 }
 
 /* 3. TAILWIND @THEME */
@@ -96,23 +74,29 @@
 /* 4. BASE STYLES */
 html {
   scroll-behavior: smooth;
+  background-color: var(--page-bg);
+}
+
+/* Fixed dot grid — reference-style subtle background */
+html::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--page-bg);
+  background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+  background-size: var(--dot-grid-size) var(--dot-grid-size);
+  background-position: 0 0;
+  pointer-events: none;
 }
 
 body {
   font-family: var(--font-inter);
   color: var(--brand-dark-gray);
-  background-color: #fafafa;
-  /* Nuqta pattern — minimalist fon */
-  background-image: radial-gradient(
-    circle at 1px 1px,
-    rgba(23, 23, 23, 0.07) 1px,
-    transparent 0
-  );
-  background-size: 22px 22px;
-  background-attachment: fixed;
+  background: transparent;
 }
 
-/* Wrapper shaffof — body dagi nuqtalar fon sifatida ko‘rinadi */
+/* Wrapper — dots show through page canvas */
 .site-surface {
   background-color: transparent;
 }

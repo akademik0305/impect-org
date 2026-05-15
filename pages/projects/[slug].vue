@@ -5,13 +5,13 @@ const route = useRoute()
 const slug = String(route.params.slug || '')
 const project = getProjectBySlug(slug)
 if (!project) {
-  throw createError({ statusCode: 404, statusMessage: 'Loyiha topilmadi' })
+  throw createError({ statusCode: 404, statusMessage: 'Project not found' })
 }
 
 const statusLabel: Record<string, string> = {
-  active: 'Faol',
-  completed: 'Tugallangan',
-  planning: 'Rejalashtirilmoqda',
+  active: 'Active',
+  completed: 'Completed',
+  planning: 'Planning',
 }
 
 useHead({
@@ -21,7 +21,7 @@ useHead({
 
 <template>
   <article class="page-detail min-h-[60vh]">
-    <header class="border-b border-neutral-200/80 bg-white/90 py-10 sm:py-14">
+    <header class="border-b border-neutral-200/80 bg-transparent py-10 sm:py-14">
       <div class="container max-w-3xl">
         <div class="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
           <span class="font-medium text-neutral-800">{{ statusLabel[project.status] }}</span>
@@ -52,19 +52,19 @@ useHead({
 
       <dl class="mt-10 grid gap-4 border border-neutral-200/90 bg-white p-5 text-sm sm:grid-cols-2">
         <div>
-          <dt class="text-neutral-500">Muddati</dt>
+          <dt class="text-neutral-500">Duration</dt>
           <dd class="mt-1 font-medium text-neutral-900">{{ project.startDate }} — {{ project.endDate }}</dd>
         </div>
         <div>
-          <dt class="text-neutral-500">Hudud</dt>
+          <dt class="text-neutral-500">Region</dt>
           <dd class="mt-1 font-medium text-neutral-900">{{ project.region }}</dd>
         </div>
         <div>
-          <dt class="text-neutral-500">Byudjet</dt>
+          <dt class="text-neutral-500">Budget</dt>
           <dd class="mt-1 font-medium text-neutral-900">{{ project.budget }}</dd>
         </div>
         <div>
-          <dt class="text-neutral-500">Jarayon</dt>
+          <dt class="text-neutral-500">Progress</dt>
           <dd class="mt-1 font-medium text-neutral-900">{{ project.progress }}%</dd>
         </div>
       </dl>
@@ -81,7 +81,7 @@ useHead({
 
       <div class="mt-10">
         <h2 class="text-sm font-semibold uppercase tracking-widest text-neutral-500">
-          Asosiy natijalar
+          Key outcomes
         </h2>
         <ul class="mt-4 list-inside list-disc space-y-2 text-neutral-700">
           <li v-for="h in project.highlights" :key="h">
@@ -92,7 +92,7 @@ useHead({
 
       <div class="mt-12 border-t border-neutral-200 pt-8">
         <NuxtLink to="/projects" class="text-sm font-medium text-neutral-900 underline-offset-4 hover:underline">
-          ← Barcha loyihalar
+          ← All projects
         </NuxtLink>
       </div>
     </div>

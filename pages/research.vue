@@ -2,23 +2,23 @@
 import { publications } from '~/data/siteContent'
 
 const categories = [
-  'Barchasi',
-  'Iqtisodiyot',
-  'Texnologiya',
-  'Atrof-muhit',
-  "Ta'lim",
-  "Sog'liq",
-  "Qishloq xo'jaligi",
-  'Ijtimoiy siyosat',
-  'Shaharsozlik',
+  'All',
+  'Economy',
+  'Technology',
+  'Environment',
+  'Education',
+  'Health',
+  'Agriculture',
+  'Social policy',
+  'Urban planning',
 ]
 
-const selectedCategory = ref('Barchasi')
+const selectedCategory = ref('All')
 const searchQuery = ref('')
 
 const filteredPublications = computed(() => {
   let list = publications
-  if (selectedCategory.value !== 'Barchasi') {
+  if (selectedCategory.value !== 'All') {
     list = list.filter((pub) => pub.category === selectedCategory.value)
   }
   if (searchQuery.value) {
@@ -38,13 +38,13 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
 
 <template>
   <div>
-    <header class="border-b border-neutral-200/90 bg-white/95 py-12 sm:py-16">
+    <header class="border-b border-neutral-200/90 bg-transparent py-12 sm:py-16">
       <div class="container max-w-2xl">
         <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
-          Tadqiqotlar va nashrlar
+          Research & publications
         </h1>
         <p class="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
-          So'nggi tahlillar, siyosat tavsiyalari va analitik materiallar — barchasi bir joyda.
+          Latest analyses, policy recommendations, and analytical materials — all in one place.
         </p>
       </div>
     </header>
@@ -52,7 +52,7 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
     <section class="py-12 sm:py-16">
       <div class="container">
         <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-          Tanlangan
+          Featured
         </h2>
         <div class="mt-6 grid gap-6 sm:grid-cols-2">
           <article
@@ -83,7 +83,7 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
                   {{ publication.abstract }}
                 </p>
                 <span class="mt-4 inline-block text-sm font-medium text-neutral-900 underline-offset-4 group-hover:underline">
-                  Batafsil
+                  Read more
                 </span>
               </div>
             </NuxtLink>
@@ -96,13 +96,13 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
       <div class="container">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-            Barcha nashrlar
+            All publications
           </h2>
           <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <input
               v-model="searchQuery"
               type="search"
-              placeholder="Qidirish..."
+              placeholder="Search..."
               class="min-h-10 w-full border border-neutral-200 bg-white px-3 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none sm:w-56"
             >
             <select
@@ -145,7 +145,7 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
                   {{ publication.abstract }}
                 </p>
                 <p class="mt-3 text-xs text-neutral-500">
-                  {{ publication.authors[0] }}{{ publication.authors.length > 1 ? ' va boshqalar' : '' }}
+                  {{ publication.authors[0] }}{{ publication.authors.length > 1 ? ' et al.' : '' }}
                 </p>
               </div>
             </NuxtLink>
@@ -153,7 +153,7 @@ const featuredPublications = computed(() => publications.filter((p) => p.feature
         </div>
 
         <p v-if="filteredPublications.length === 0" class="mt-12 text-center text-sm text-neutral-500">
-          Mos nashr topilmadi.
+          No publications found.
         </p>
       </div>
     </section>

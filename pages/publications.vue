@@ -1,33 +1,30 @@
 <script setup>
-/**
- * Nashrlar ro'yxati — tadqiqotlar sahifasi bilan bir xil ma'lumot manbasi,
- * navigatsiyadagi «Nashrlar» havolasi uchun.
- */
+/** Publications list — same data source as the research page. */
 import { publications } from '~/data/siteContent'
 
-const selectedCategory = ref('Barchasi')
+const selectedCategory = ref('All')
 
 const categories = [
-  'Barchasi',
+  'All',
   ...[...new Set(publications.map((p) => p.category))],
 ]
 
 const list = computed(() => {
-  if (selectedCategory.value === 'Barchasi') return publications
+  if (selectedCategory.value === 'All') return publications
   return publications.filter((p) => p.category === selectedCategory.value)
 })
 </script>
 
 <template>
   <div>
-    <header class="border-b border-neutral-200/90 bg-white/95 py-12 sm:py-16">
+    <header class="border-b border-neutral-200/90 bg-transparent py-12 sm:py-16">
       <div class="container flex max-w-3xl flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <div>
           <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
-            Nashrlar
+            Publications
           </h1>
           <p class="mt-3 text-sm text-neutral-600">
-            Barcha nashrlar tadqiqotlar bazasidan — batafsil sahifa orqali o'qish.
+            All publications from our research database — read the full article on each page.
           </p>
         </div>
         <select

@@ -5,7 +5,7 @@ const route = useRoute()
 const slug = String(route.params.slug || '')
 const publication = getPublicationBySlug(slug)
 if (!publication) {
-  throw createError({ statusCode: 404, statusMessage: 'Nashr topilmadi' })
+  throw createError({ statusCode: 404, statusMessage: 'Publication not found' })
 }
 
 useHead({
@@ -15,7 +15,7 @@ useHead({
 
 <template>
   <article class="page-detail">
-    <header class="border-b border-neutral-200/80 bg-white/90 py-10 sm:py-14">
+    <header class="border-b border-neutral-200/80 bg-transparent py-10 sm:py-14">
       <div class="container max-w-3xl">
         <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-neutral-500">
           {{ publication.category }} · {{ publication.date }}
@@ -61,7 +61,7 @@ useHead({
 
       <div class="mt-12 flex flex-col gap-3 border-t border-neutral-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
         <NuxtLink to="/research" class="text-sm font-medium text-neutral-900 underline-offset-4 hover:underline">
-          ← Barcha nashrlar
+          ← All publications
         </NuxtLink>
         <a
           :href="publication.downloadUrl"

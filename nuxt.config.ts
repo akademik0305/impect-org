@@ -2,6 +2,11 @@
 import tailwindcss from "@tailwindcss/vite"
 
 export default defineNuxtConfig({
+	app: {
+		head: {
+			htmlAttrs: { lang: "en" },
+		},
+	},
 	compatibilityDate: "2024-11-01",
 	devtools: { enabled: true },
 	colorMode: {
@@ -10,24 +15,10 @@ export default defineNuxtConfig({
 
 	ssr: false,
 
-	modules: ["@nuxt/ui", "@nuxtjs/i18n"],
+	modules: ["@nuxt/ui"],
 
 	vite: {
 		plugins: [tailwindcss()],
 	},
 	css: ["~/assets/css/main.css"],
-
-	i18n: {
-		defaultLocale: "uz",
-		langDir: "locales",
-		bundle: {
-			optimizeTranslationDirective: false,
-		},
-		locales: [
-			{ code: "uz", file: "uz.json", name: "O'zbek" },
-			{ code: "ru", file: "ru.json", name: "Русский" },
-			{ code: "en", file: "en.json", name: "English" },
-		],
-		detectBrowserLanguage: false,
-	},
 })
