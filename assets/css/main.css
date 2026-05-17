@@ -77,23 +77,14 @@ html {
   background-color: var(--page-bg);
 }
 
-/* Fixed dot grid — reference-style subtle background */
-html::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
+/* Dot grid — scrolls with page content */
+body {
+  font-family: var(--font-inter);
+  color: var(--brand-dark-gray);
   background-color: var(--page-bg);
   background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
   background-size: var(--dot-grid-size) var(--dot-grid-size);
   background-position: 0 0;
-  pointer-events: none;
-}
-
-body {
-  font-family: var(--font-inter);
-  color: var(--brand-dark-gray);
-  background: transparent;
 }
 
 /* Wrapper — dots show through page canvas */

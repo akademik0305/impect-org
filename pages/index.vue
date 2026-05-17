@@ -41,11 +41,13 @@ const upcomingFromSite = computed(() => {
 const featuredEvent = computed(() => upcomingFromSite.value[0])
 const moreEvents = computed(() => upcomingFromSite.value.slice(1))
 
-const stats = [
-  { number: '150+', label: 'Publications' },
-  { number: '50+', label: 'Projects' },
-  { number: '25+', label: 'Partners' },
-  { number: '10+', label: 'Years of experience' },
+const projectSupporters = [
+  { name: 'Interreg CENTRAL EUROPE', logo: '/partners/interreg.png' },
+  { name: 'Horizon Europe', logo: '/partners/commission.png' },
+  { name: 'Erasmus+', logo: '/partners/erasmus.png' },
+  { name: 'European Solidarity Corps', logo: '/partners/corps.png' },
+  { name: 'Freistaat Thüringen', logo: '/partners/freistaat.png.webp' },
+  { name: 'Auswärtiges Amt', logo: '/partners/auswartigen-amt.png' },
 ]
 
 const expertBriefs = [
@@ -174,23 +176,31 @@ const aboutGridB = fakeImg('about-grid-b', 500, 500)
       </div>
     </section>
 
-    <!-- Stats — horizontal metrics strip -->
-    <section class="border-b border-gray-200 py-10 sm:py-12">
+    <!-- Project supporters -->
+    <section class="border-b border-gray-200 bg-white py-8 sm:py-10 lg:py-12">
       <div class="container">
-        <div class="grid grid-cols-2 gap-px bg-gray-200 sm:grid-cols-4">
-          <div
-            v-for="stat in stats"
-            :key="stat.label"
-            class="flex flex-col items-center justify-center bg-white px-3 py-8 text-center sm:px-4"
+        <h2 class="mb-6 text-balance px-2 text-center text-base font-bold text-neutral-900 sm:mb-8 sm:text-lg lg:mb-10 lg:text-xl">
+          Our Projects Are Supported By:
+        </h2>
+        <ul
+          class="supporters-grid grid grid-cols-2 items-center justify-items-center gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-6 lg:gap-x-5 lg:gap-y-0 xl:gap-x-8"
+        >
+          <li
+            v-for="supporter in projectSupporters"
+            :key="supporter.logo"
+            class="flex w-full max-w-[9.5rem] items-center justify-center sm:max-w-[10.5rem] lg:max-w-[11.75rem]"
           >
-            <div class="text-2xl font-bold text-neutral-900 sm:text-3xl lg:text-4xl">
-              {{ stat.number }}
-            </div>
-            <div class="mt-1 max-w-[12rem] text-xs text-neutral-600 sm:text-sm">
-              {{ stat.label }}
-            </div>
-          </div>
-        </div>
+            <img
+              :src="supporter.logo"
+              :alt="supporter.name"
+              class="h-9 w-full max-h-28 object-contain object-center sm:h-11 md:h-12 lg:h-14 xl:h-[4.5rem]"
+              width="188"
+              height="72"
+              loading="lazy"
+              decoding="async"
+            >
+          </li>
+        </ul>
       </div>
     </section>
 
