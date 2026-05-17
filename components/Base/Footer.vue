@@ -4,11 +4,14 @@
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- About Section -->
         <div class="space-y-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <span class="text-brand-navy font-bold text-lg">I</span>
-            </div>
-            <span class="text-xl font-semibold">Impect</span>
+          <div class="flex items-center">
+            <img
+              :src="siteLogo"
+              alt="Impect"
+              class="h-9 w-auto rounded bg-white px-2 py-1"
+              width="140"
+              height="40"
+            >
           </div>
           <p class="text-gray-300 text-sm leading-relaxed">
             A leading think tank providing research and policy recommendations for sustainable development in Uzbekistan.
@@ -135,6 +138,8 @@
 </template>
 
 <script setup>
+import siteLogo from '~/assets/images/logo/logo.jpg'
+
 const email = ref('')
 
 const subscribeNewsletter = () => {

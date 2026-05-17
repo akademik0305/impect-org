@@ -1,5 +1,32 @@
 <template>
-  <header class="sticky top-0 z-50 border-b border-gray-200/80 bg-white/75 shadow-sm backdrop-blur-md">
+  <header class="site-header sticky top-0 z-50 border-b border-gray-200/80 bg-white/75 shadow-sm backdrop-blur-md">
+    <div
+      class="border-b border-neutral-800 bg-neutral-900 text-white"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="test-mode-marquee overflow-hidden py-1.5">
+        <div class="test-mode-marquee__track flex w-max">
+          <template
+            v-for="copy in 2"
+            :key="copy"
+          >
+            <span
+              v-for="n in 4"
+              :key="`${copy}-${n}`"
+              class="flex shrink-0 items-center gap-4 px-6 text-xs font-medium tracking-wide sm:text-sm"
+            >
+              This site is currently operating in test mode
+              <span
+                class="size-1 shrink-0 rounded-full bg-white/50"
+                aria-hidden="true"
+              />
+            </span>
+          </template>
+        </div>
+      </div>
+    </div>
+
     <div class="border-b border-gray-200/60 bg-transparent text-brand-dark-gray">
       <div class="container flex flex-wrap items-center justify-between gap-2 py-2 text-xs sm:text-sm">
         <time :datetime="isoToday" class="text-brand-gray">{{ formatToday }}</time>
@@ -19,11 +46,17 @@
       <div class="flex items-center justify-between h-16">
         <!-- Logo -->
         <div class="flex items-center">
-          <NuxtLink to="/" class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-brand-navy rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">I</span>
-            </div>
-            <span class="text-xl font-semibold text-brand-dark-gray">Impect</span>
+          <NuxtLink
+            to="/"
+            class="flex items-center"
+          >
+            <img
+              :src="siteLogo"
+              alt="Impect"
+              class="h-8 w-auto sm:h-9"
+              width="140"
+              height="40"
+            >
           </NuxtLink>
         </div>
 
@@ -84,7 +117,7 @@
       </div>
 
       <!-- Mobile Navigation -->
-      <div v-show="mobileMenuOpen" class="lg:hidden fixed left-0 right-0 top-[5.75rem] z-50 border-t border-gray-200 bg-white/95 py-4 shadow-lg backdrop-blur-md sm:top-[6.25rem]">
+      <div v-show="mobileMenuOpen" class="lg:hidden fixed left-0 right-0 top-[8.25rem] z-50 border-t border-gray-200 bg-white/95 py-4 shadow-lg backdrop-blur-md sm:top-[8.75rem]">
         <div class="container">
           <nav class="flex flex-col space-y-3" aria-label="Mobile">
             <NuxtLink 
@@ -138,6 +171,8 @@
 </template>
 
 <script setup>
+import siteLogo from '~/assets/images/logo/logo.jpg'
+
 const isoToday = computed(() => new Date().toISOString().slice(0, 10))
 
 const formatToday = computed(() =>
@@ -159,3 +194,32 @@ watch(() => useRoute().path, () => {
   mobileMenuOpen.value = false
 })
 </script>
+
+<style scoped>
+.test-mode-marquee__track {
+  animation: test-mode-marquee 32s linear infinite;
+}
+
+.test-mode-marquee:hover .test-mode-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes test-mode-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .test-mode-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+}
+</style>
